@@ -58,14 +58,44 @@
 
         .radio-group {
             display: flex;
-            gap: 2rem;
+            flex-direction: column;
+            gap: 1rem;
             margin-bottom: 1rem;
         }
 
         .radio-option {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
+            padding: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .radio-option:hover {
+            border-color: #667eea;
+        }
+
+        .radio-option.clean {
+            background-color: #f0fff4;
+        }
+
+        .radio-option.clean:hover,
+        .radio-option.clean.selected {
+            border-color: #28a745;
+            background-color: #d4edda;
+        }
+
+        .radio-option.leakage {
+            background-color: #fff5f5;
+        }
+
+        .radio-option.leakage:hover,
+        .radio-option.leakage.selected {
+            border-color: #dc3545;
+            background-color: #f8d7da;
         }
 
         .radio-option input[type="radio"] {
@@ -77,7 +107,14 @@
         .radio-option label {
             margin-bottom: 0;
             cursor: pointer;
-            font-weight: 500;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .radio-option .description {
+            font-size: 0.85rem;
+            color: #666;
+            font-weight: normal;
         }
 
         .form-group textarea {
@@ -220,17 +257,25 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label>Had Leakage?</label>
+                                        <label>Today's Status</label>
                                         <div class="radio-group">
-                                            <div class="radio-option">
-                                                <input type="radio" id="no" name="hadLeakage" value="false" <% if (entry
-                                                    && !entry.had_leakage) { %>checked<% } %> required>
-                                                    <label for="no">No 🟢 (Clean)</label>
+                                            <div class="radio-option clean"
+                                                onclick="this.querySelector('input').checked = true; updateSelection()">
+                                                <input type="radio" id="clean" name="hadLeakage" value="false" <% if
+                                                    (!entry || !entry.had_leakage) { %>checked<% } %> required>
+                                                    <label for="clean">
+                                                        ✅ Clean Day
+                                                        <div class="description">No leakage today</div>
+                                                    </label>
                                             </div>
-                                            <div class="radio-option">
-                                                <input type="radio" id="yes" name="hadLeakage" value="true" <% if (entry
-                                                    && entry.had_leakage) { %>checked<% } %> required>
-                                                    <label for="yes">Yes 🔴 (Leakage)</label>
+                                            <div class="radio-option leakage"
+                                                onclick="this.querySelector('input').checked = true; updateSelection()">
+                                                <input type="radio" id="leakage" name="hadLeakage" value="true" <% if
+                                                    (entry && entry.had_leakage) { %>checked<% } %> required>
+                                                    <label for="leakage">
+                                                        💧 Leakage
+                                                        <div class="description">Had leakage today</div>
+                                                    </label>
                                             </div>
                                         </div>
                                     </div>
@@ -264,8 +309,29 @@
         <%- include('partials/footer') %>
 
             <script>
+                function updateSelection() {
+                    const cleanOption = document.querySelector('.radio-option.clean');
+                    const leakageOption = document.querySelector('.radio-option.leakage');
+                    const cleanRadio = document.getElementById('clean');
+                    const leakageRadio = document.getElementById('leakage');
+
+                    cleanOption.classList.remove('selected');
+                    leakageOption.classList.remove('selected');
+
+                    if (cleanRadio.checked) {
+                        cleanOption.classList.add('selected');
+                    } else if (leakageRadio.checked) {
+                        leakageOption.classList.add('selected');
+                    }
+                }
+
+                // Initialize selection on page load
+                document.addEventListener('DOMContentLoaded', updateSelection);
+
                 function getDateForOffset(offset) {
-                    const date = new Date(document.getElementById('date').value);
+                    const dateInput = document.getElementById('date').value;
+                    const parts = dateInput.split('-');
+                    const date = new Date(parts[0], parts[1] - 1, parts[2]);
                     date.setDate(date.getDate() + offset);
                     const year = date.getFullYear();
                     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -275,12 +341,12 @@
 
                 function previousDay() {
                     const newDate = getDateForOffset(-1);
-                    window.location.href = `/entries/${newDate}`;
+                    window.location.href = '/entries/' + newDate;
                 }
 
                 function nextDay() {
                     const newDate = getDateForOffset(1);
-                    window.location.href = `/entries/${newDate}`;
+                    window.location.href = '/entries/' + newDate;
                 }
 
                 function deleteEntry() {

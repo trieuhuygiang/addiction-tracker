@@ -133,4 +133,17 @@ router.post('/entries/:id/delete', requireLogin, async (req, res) => {
   }
 });
 
+// Reset all progress (delete all entries for user)
+router.post('/entries/reset-all', requireLogin, async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    const deletedCount = await Entry.deleteAllByUser(userId);
+    console.log(`Reset progress: deleted ${deletedCount} entries for user ${userId}`);
+    res.redirect('/dashboard');
+  } catch (error) {
+    console.error('Reset progress error:', error);
+    res.redirect('/dashboard');
+  }
+});
+
 module.exports = router;

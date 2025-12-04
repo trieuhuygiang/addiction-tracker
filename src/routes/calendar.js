@@ -37,6 +37,12 @@ router.get('/calendar/:year?/:month?', requireLogin, async (req, res) => {
 
     // Get all entries for the month
     const entries = await Entry.findByUserInRange(userId, startDateStr, endDateStr);
+    
+    // Convert entry dates to strings for comparison
+    const entriesWithDateStr = entries.map(e => ({
+      ...e,
+      dateStr: new Date(e.date).toISOString().split('T')[0]
+    }));
 
     // Build calendar grid
     const firstDay = startDate.getDay(); // 0 = Sunday
@@ -49,7 +55,7 @@ router.get('/calendar/:year?/:month?', requireLogin, async (req, res) => {
     // Fill first week
     for (let i = firstDay; i < 7 && dayCounter <= daysInMonth; i++) {
       const dateStr = new Date(year, month - 1, dayCounter).toISOString().split('T')[0];
-      const entry = entries.find(e => e.date === dateStr);
+      const entry = entriesWithDateStr.find(e => e.dateStr === dateStr);
       
       week[i] = {
         day: dayCounter,
@@ -66,7 +72,7 @@ router.get('/calendar/:year?/:month?', requireLogin, async (req, res) => {
       week = new Array(7).fill(null);
       for (let i = 0; i < 7 && dayCounter <= daysInMonth; i++) {
         const dateStr = new Date(year, month - 1, dayCounter).toISOString().split('T')[0];
-        const entry = entries.find(e => e.date === dateStr);
+        const entry = entriesWithDateStr.find(e => e.dateStr === dateStr);
         
         week[i] = {
           day: dayCounter,

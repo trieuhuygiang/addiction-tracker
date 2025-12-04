@@ -106,7 +106,7 @@
 
             <div class="dashboard-header">
                 <h1>Welcome Back! 🎉</h1>
-                <div style="font-size:1.1rem;color:#667eea;">Logged in as: <%= userEmail %>
+                <div style="font-size:1.1rem;color:#667eea;">Logged in as: <%= userName %>
                 </div>
                 <form method="POST" action="/logout" style="margin: 0;">
                     <button type="submit" class="logout-btn">Logout</button>
@@ -169,6 +169,25 @@
                 <a href="/calendar" class="action-btn secondary">📅 Calendar</a>
                 <a href="/summary" class="action-btn">📊 Summary</a>
             </div>
+            
+            <div style="margin-top: 2rem; text-align: center;">
+                <button type="button" onclick="confirmReset()" class="reset-btn" style="background: #e74c3c; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; font-size: 0.9rem;">
+                    🗑️ Reset All Progress
+                </button>
+            </div>
+            
+            <form id="resetForm" method="POST" action="/entries/reset-all" style="display: none;"></form>
+            
+            <script>
+                function confirmReset() {
+                    if (confirm('Are you sure you want to reset ALL your progress? This will delete all your tracking entries and cannot be undone!')) {
+                        if (confirm('This action is PERMANENT. Are you absolutely sure?')) {
+                            document.getElementById('resetForm').submit();
+                        }
+                    }
+                }
+            </script>
+            
             <hr style="margin:2rem 0;">
             <h2 style="color:#667eea;">Your Progress</h2>
             <% if (progressEntries && progressEntries.length> 0) { %>

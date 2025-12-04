@@ -1,6 +1,7 @@
 const Entry = require('../models/Entry');
 
-// Calculate current streak (counting backwards from today)
+// Calculate current streak (counting consecutive tracked days backwards from today)
+// Leakage does NOT reset the streak - it's just a separate indicator
 const getCurrentStreak = async (userId) => {
   try {
     const entries = await Entry.findByUser(userId);
@@ -12,6 +13,12 @@ const getCurrentStreak = async (userId) => {
     // Sort entries by date descending
     entries.sort((a, b) => new Date(b.date) - new Date(a.date));
 
+    // Convert entry dates to strings for comparison
+    const entryDates = entries.map(e => {
+      const d = new Date(e.date);
+      return d.toISOString().split('T')[0];
+    });
+
     let streak = 0;
     const today = new Date();
     let currentDate = new Date(today);
@@ -20,21 +27,15 @@ const getCurrentStreak = async (userId) => {
     // Check each day going backwards from today
     for (let i = 0; i < 365; i++) {
       const dateStr = currentDate.toISOString().split('T')[0];
-      const entry = entries.find(e => e.date === dateStr);
-
-      // If no entry found for this day, break
-      if (!entry) {
+      
+      // If entry exists for this day (regardless of leakage status), count it
+      if (entryDates.includes(dateStr)) {
+        streak++;
+        currentDate.setDate(currentDate.getDate() - 1);
+      } else {
+        // No entry for this day, break the streak
         break;
       }
-
-      // If leakage found, break
-      if (entry.had_leakage) {
-        break;
-      }
-
-      // Clean day, increment streak
-      streak++;
-      currentDate.setDate(currentDate.getDate() - 1);
     }
 
     return streak;
@@ -44,7 +45,7 @@ const getCurrentStreak = async (userId) => {
   }
 };
 
-// Calculate longest streak
+// Calculate longest streak (consecutive tracked days)
 const getLongestStreak = async (userId) => {
   try {
     const entries = await Entry.findByUser(userId);
@@ -57,17 +58,25 @@ const getLongestStreak = async (userId) => {
     entries.sort((a, b) => new Date(a.date) - new Date(b.date));
 
     let longestStreak = 0;
-    let currentStreak = 0;
+    let currentStreak = 1;
 
-    for (const entry of entries) {
-      if (!entry.had_leakage) {
+    for (let i = 1; i < entries.length; i++) {
+      const prevDate = new Date(entries[i - 1].date);
+      const currDate = new Date(entries[i].date);
+      
+      // Check if dates are consecutive
+      const diffTime = currDate - prevDate;
+      const diffDays = diffTime / (1000 * 60 * 60 * 24);
+      
+      if (diffDays === 1) {
         currentStreak++;
-        longestStreak = Math.max(longestStreak, currentStreak);
       } else {
-        currentStreak = 0;
+        longestStreak = Math.max(longestStreak, currentStreak);
+        currentStreak = 1;
       }
     }
 
+    longestStreak = Math.max(longestStreak, currentStreak);
     return longestStreak;
   } catch (error) {
     console.error('Error calculating longest streak:', error);

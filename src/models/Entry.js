@@ -117,6 +117,19 @@ class Entry {
       throw error;
     }
   }
+
+  // Delete all entries for a user (reset progress)
+  static async deleteAllByUser(userId) {
+    try {
+      const result = await query(
+        'DELETE FROM entries WHERE user_id = $1 RETURNING id',
+        [userId]
+      );
+      return result.rowCount;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 module.exports = Entry;

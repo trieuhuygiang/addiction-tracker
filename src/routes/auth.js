@@ -107,9 +107,9 @@ router.post('/login', requireLogout, async (req, res) => {
 
     // Set session
     req.session.userId = user.id;
-    req.session.userEmail = user.email;
+    req.session.userName = user.username;
     req.session.isAdmin = user.is_admin || false;
-    console.log('Session set for user:', user.id, 'isAdmin:', req.session.isAdmin);
+    console.log('Session set for user:', user.id, 'username:', user.username, 'isAdmin:', req.session.isAdmin);
 
     // Save session before redirecting
     req.session.save((err) => {

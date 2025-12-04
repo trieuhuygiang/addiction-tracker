@@ -85,7 +85,7 @@ app.get('/dashboard', requireLogin, async (req, res) => {
   try {
     console.log('Dashboard route session:', req.session);
     const userId = req.session.userId;
-    const userEmail = req.session.userEmail;
+    const userName = req.session.userName;
     if (!userId) {
       console.log('No userId in session, redirecting to login');
       return res.redirect('/login');
@@ -105,7 +105,7 @@ app.get('/dashboard', requireLogin, async (req, res) => {
     res.render('dashboard', {
       title: 'Dashboard',
       streakSummary,
-      userEmail,
+      userName,
       progressEntries
     });
   } catch (error) {
@@ -120,7 +120,7 @@ app.get('/dashboard', requireLogin, async (req, res) => {
         leakageDays: 0,
         successRate: 0
       },
-      userEmail: req.session.userEmail,
+      userName: req.session.userName,
       progressEntries: []
     });
   }

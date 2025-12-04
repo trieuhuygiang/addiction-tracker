@@ -3,6 +3,43 @@ const router = express.Router();
 const { requireLogin } = require('../middleware/auth');
 const Entry = require('../models/Entry');
 
+// Quick check-in (from dashboard)
+router.post('/entries/quick', requireLogin, async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    const { date, hadLeakage } = req.body;
+
+    // Check if entry already exists
+    const existingEntry = await Entry.findByUserAndDate(userId, date);
+
+    if (existingEntry) {
+      // Update existing entry
+      await Entry.update(existingEntry.id, hadLeakage === 'true', existingEntry.note);
+    } else {
+      // Create new entry
+      await Entry.create(userId, date, hadLeakage === 'true', null);
+    }
+
+    res.redirect('/dashboard');
+  } catch (error) {
+    console.error('Quick check-in error:', error);
+    res.redirect('/dashboard');
+  }
+});
+
+// Relapse - delete all progress
+router.post('/entries/relapse', requireLogin, async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    const deletedCount = await Entry.deleteAllByUser(userId);
+    console.log(`Relapse: deleted ${deletedCount} entries for user ${userId}`);
+    res.redirect('/dashboard');
+  } catch (error) {
+    console.error('Relapse error:', error);
+    res.redirect('/dashboard');
+  }
+});
+
 // Get today's entry or a specific date's entry
 router.get('/entries/:date?', requireLogin, async (req, res) => {
   try {
@@ -119,17 +156,17 @@ router.post('/entries/:id/delete', requireLogin, async (req, res) => {
     const entryId = req.params.id;
 
     // Get entry to verify ownership
-    const entry = await Entry.findByUserAndDate(userId, new Date().toISOString().split('T')[0]);
+    const entry = await Entry.findById(entryId);
     
-    if (!entry || entry.id !== parseInt(entryId)) {
-      return res.status(403).json({ error: 'Unauthorized' });
+    if (!entry || entry.user_id !== userId) {
+      return res.status(403).redirect('/dashboard');
     }
 
     await Entry.delete(entryId);
-    res.json({ success: true });
+    res.redirect('/dashboard');
   } catch (error) {
     console.error('Delete entry error:', error);
-    res.status(500).json({ error: 'Failed to delete entry' });
+    res.redirect('/dashboard');
   }
 });
 

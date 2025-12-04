@@ -5,6 +5,7 @@ const session = require('express-session');
 const pgSession = require('connect-pg-simple')(session);
 const { pool } = require('./config/db');
 const { requireLogin, setUserData } = require('./middleware/auth');
+const Entry = require('./models/Entry');
 const authRoutes = require('./routes/auth');
 const entriesRoutes = require('./routes/entries');
 const calendarRoutes = require('./routes/calendar');
@@ -92,9 +93,15 @@ app.get('/dashboard', requireLogin, async (req, res) => {
     }
     const streakSummary = await getStreakSummary(userId);
 
+    // Get today's date
+    const today = new Date().toISOString().split('T')[0];
+    
+    // Check if today has been logged
+    const todayEntry = await Entry.findByUserAndDate(userId, today);
+
     // Fetch all progress entries for this user
     const result = await pool.query(
-      'SELECT date, had_leakage, note FROM entries WHERE user_id = $1 ORDER BY date DESC',
+      'SELECT id, date, had_leakage, note FROM entries WHERE user_id = $1 ORDER BY date DESC',
       [userId]
     );
     const progressEntries = result.rows.map(e => ({
@@ -106,7 +113,9 @@ app.get('/dashboard', requireLogin, async (req, res) => {
       title: 'Dashboard',
       streakSummary,
       userName,
-      progressEntries
+      progressEntries,
+      todayEntry,
+      today
     });
   } catch (error) {
     console.error('Dashboard error:', error);
@@ -121,7 +130,9 @@ app.get('/dashboard', requireLogin, async (req, res) => {
         successRate: 0
       },
       userName: req.session.userName,
-      progressEntries: []
+      progressEntries: [],
+      todayEntry: null,
+      today: new Date().toISOString().split('T')[0]
     });
   }
 });

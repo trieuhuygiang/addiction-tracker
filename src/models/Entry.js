@@ -79,6 +79,19 @@ class Entry {
     }
   }
 
+  // Find entry by id
+  static async findById(entryId) {
+    try {
+      const result = await query(
+        'SELECT * FROM entries WHERE id = $1',
+        [entryId]
+      );
+      return result.rows[0];
+    } catch (error) {
+      throw error;
+    }
+  }
+
   // Get count of leakage entries for a user
   static async getLeakageCount(userId) {
     try {

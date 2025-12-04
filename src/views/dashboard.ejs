@@ -113,6 +113,69 @@
                 </form>
             </div>
 
+            <!-- Quick Check-in for Today -->
+            <div class="quick-checkin"
+                style="background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+                <h2 style="color: #667eea; margin-bottom: 1rem;">📋 Today's Check-in (<%= today %>)</h2>
+                <% if (todayEntry) { %>
+                    <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                        <div style="font-size: 2rem;">
+                            <% if (todayEntry.had_leakage) { %>
+                                ⚠️
+                                <% } else { %>
+                                    ✅
+                                    <% } %>
+                        </div>
+                        <div style="flex: 1;">
+                            <p style="font-weight: bold; color: <%= todayEntry.had_leakage ? '#e74c3c' : '#28a745' %>;">
+                                Today: <%= todayEntry.had_leakage ? 'Leakage' : 'Clean' %>
+                            </p>
+                            <% if (todayEntry.note) { %>
+                                <p style="color: #666; font-size: 0.9rem;">Note: <%= todayEntry.note %>
+                                </p>
+                                <% } %>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <a href="/entries/<%= today %>"
+                                style="padding: 0.5rem 1rem; background: #667eea; color: white; border-radius: 5px; text-decoration: none; font-size: 0.9rem;">Edit</a>
+                        </div>
+                    </div>
+                    <% } else { %>
+                        <p style="color: #666; margin-bottom: 1rem;">You haven't logged today yet. How was your day?</p>
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;">
+                            <form method="POST" action="/entries/quick" style="display: inline;">
+                                <input type="hidden" name="date" value="<%= today %>">
+                                <input type="hidden" name="hadLeakage" value="false">
+                                <button type="submit"
+                                    style="padding: 1rem 2rem; background: #28a745; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold;">
+                                    ✅ Clean Day
+                                </button>
+                            </form>
+                            <form method="POST" action="/entries/quick" style="display: inline;">
+                                <input type="hidden" name="date" value="<%= today %>">
+                                <input type="hidden" name="hadLeakage" value="true">
+                                <button type="submit"
+                                    style="padding: 1rem 2rem; background: #e74c3c; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold;">
+                                    ⚠️ Leakage
+                                </button>
+                            </form>
+                            <a href="/entries/<%= today %>"
+                                style="padding: 1rem 2rem; background: #667eea; color: white; border: none; border-radius: 8px; text-decoration: none; font-size: 1rem; font-weight: bold;">
+                                📝 Add Note
+                            </a>
+                        </div>
+                        <div style="border-top: 1px solid #eee; padding-top: 1rem;">
+                            <form method="POST" action="/entries/relapse" style="display: inline;"
+                                onsubmit="return confirm('⚠️ RELAPSE - This will reset ALL your progress! Are you sure?') && confirm('This action cannot be undone. Are you absolutely sure?');">
+                                <button type="submit"
+                                    style="padding: 0.75rem 1.5rem; background: #333; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: bold;">
+                                    💔 Relapse (Reset All Progress)
+                                </button>
+                            </form>
+                        </div>
+                        <% } %>
+            </div>
+
             <div class="dashboard-grid">
                 <div class="stats-card">
                     <h2>Current Streak</h2>
@@ -169,15 +232,16 @@
                 <a href="/calendar" class="action-btn secondary">📅 Calendar</a>
                 <a href="/summary" class="action-btn">📊 Summary</a>
             </div>
-            
+
             <div style="margin-top: 2rem; text-align: center;">
-                <button type="button" onclick="confirmReset()" class="reset-btn" style="background: #e74c3c; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; font-size: 0.9rem;">
+                <button type="button" onclick="confirmReset()" class="reset-btn"
+                    style="background: #e74c3c; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; font-size: 0.9rem;">
                     🗑️ Reset All Progress
                 </button>
             </div>
-            
+
             <form id="resetForm" method="POST" action="/entries/reset-all" style="display: none;"></form>
-            
+
             <script>
                 function confirmReset() {
                     if (confirm('Are you sure you want to reset ALL your progress? This will delete all your tracking entries and cannot be undone!')) {
@@ -187,7 +251,7 @@
                     }
                 }
             </script>
-            
+
             <hr style="margin:2rem 0;">
             <h2 style="color:#667eea;">Your Progress</h2>
             <% if (progressEntries && progressEntries.length> 0) { %>
@@ -195,8 +259,9 @@
                     <thead style="background:#f5f5f5;">
                         <tr>
                             <th style="padding:0.5rem;">Date</th>
-                            <th style="padding:0.5rem;">Leakage</th>
+                            <th style="padding:0.5rem;">Status</th>
                             <th style="padding:0.5rem;">Note</th>
+                            <th style="padding:0.5rem;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -214,6 +279,16 @@
                                 </td>
                                 <td style="padding:0.5rem;border-bottom:1px solid #eee;">
                                     <%= entry.note || '-' %>
+                                </td>
+                                <td style="padding:0.5rem;border-bottom:1px solid #eee;">
+                                    <a href="/entries/<%= entry.date.toISOString().slice(0,10) %>"
+                                        style="color:#667eea;margin-right:0.5rem;">Edit</a>
+                                    <form method="POST" action="/entries/<%= entry.id %>/delete" style="display:inline;"
+                                        onsubmit="return confirm('Delete this entry?');">
+                                        <button type="submit"
+                                            style="background:none;border:none;color:#e74c3c;cursor:pointer;padding:0;">×
+                                            Delete</button>
+                                    </form>
                                 </td>
                             </tr>
                             <% }); %>

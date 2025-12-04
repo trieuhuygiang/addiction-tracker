@@ -288,21 +288,28 @@
 
                                     <div class="form-buttons">
                                         <button type="submit" class="submit-btn">💾 Save Entry</button>
-                                        <% if (entry) { %>
+                                        <% if (entry && entry.id) { %>
                                             <button type="button" class="delete-btn" onclick="deleteEntry()">🗑️
                                                 Delete</button>
                                             <% } %>
                                     </div>
                                 </form>
 
-                                <div class="date-navigation">
-                                    <a href="#" class="date-nav-btn" onclick="previousDay(); return false;">← Previous
-                                        Day</a>
-                                    <a href="/entries" class="date-nav-btn">Today</a>
-                                    <a href="#" class="date-nav-btn" onclick="nextDay(); return false;">Next Day →</a>
-                                </div>
+                                <% if (entry && entry.id) { %>
+                                    <form id="deleteForm" method="POST" action="/entries/<%= entry.id %>/delete"
+                                        style="display:none;"></form>
+                                    <% } %>
 
-                                <a href="/dashboard" class="back-link">← Back to Dashboard</a>
+                                        <div class="date-navigation">
+                                            <a href="#" class="date-nav-btn" onclick="previousDay(); return false;">←
+                                                Previous
+                                                Day</a>
+                                            <a href="/entries" class="date-nav-btn">Today</a>
+                                            <a href="#" class="date-nav-btn" onclick="nextDay(); return false;">Next Day
+                                                →</a>
+                                        </div>
+
+                                        <a href="/dashboard" class="back-link">← Back to Dashboard</a>
             </div>
         </div>
 
@@ -351,8 +358,7 @@
 
                 function deleteEntry() {
                     if (confirm('Are you sure you want to delete this entry?')) {
-                        // We'll implement this in the next step
-                        alert('Delete functionality coming soon');
+                        document.getElementById('deleteForm').submit();
                     }
                 }
             </script>

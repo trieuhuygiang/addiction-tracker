@@ -7,17 +7,17 @@ const Entry = require('../models/Entry');
 router.post('/entries/quick', requireLogin, async (req, res) => {
   try {
     const userId = req.session.userId;
-    const { date, hadLeakage } = req.body;
+    const { date, hadSlip } = req.body;
 
     // Check if entry already exists
     const existingEntry = await Entry.findByUserAndDate(userId, date);
 
     if (existingEntry) {
       // Update existing entry
-      await Entry.update(existingEntry.id, hadLeakage === 'true', existingEntry.note);
+      await Entry.update(existingEntry.id, hadSlip === 'true', existingEntry.note);
     } else {
       // Create new entry
-      await Entry.create(userId, date, hadLeakage === 'true', null);
+      await Entry.create(userId, date, hadSlip === 'true', null);
     }
 
     res.redirect('/dashboard');
@@ -86,7 +86,7 @@ router.get('/entries/:date?', requireLogin, async (req, res) => {
 router.post('/entries', requireLogin, async (req, res) => {
   try {
     const userId = req.session.userId;
-    const { date, hadLeakage, note } = req.body;
+    const { date, hadSlip, note } = req.body;
 
     // Validation
     if (!date) {
@@ -98,10 +98,10 @@ router.post('/entries', requireLogin, async (req, res) => {
       });
     }
 
-    if (hadLeakage === undefined) {
+    if (hadSlip === undefined) {
       return res.status(400).render('entries', {
         title: 'Log Entry',
-        error: 'Please select yes or no for leakage',
+        error: 'Please select Clean or Just a Little Bit',
         entry: null,
         date
       });
@@ -123,12 +123,12 @@ router.post('/entries', requireLogin, async (req, res) => {
     let savedEntry;
     if (existingEntry) {
       // Update existing entry
-      const leakageValue = hadLeakage === 'true' || hadLeakage === true;
-      savedEntry = await Entry.update(existingEntry.id, leakageValue, note || null);
+      const slipValue = hadSlip === 'true' || hadSlip === true;
+      savedEntry = await Entry.update(existingEntry.id, slipValue, note || null);
     } else {
       // Create new entry
-      const leakageValue = hadLeakage === 'true' || hadLeakage === true;
-      savedEntry = await Entry.create(userId, date, leakageValue, note || null);
+      const slipValue = hadSlip === 'true' || hadSlip === true;
+      savedEntry = await Entry.create(userId, date, slipValue, note || null);
     }
 
     res.render('entries', {

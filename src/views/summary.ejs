@@ -136,7 +136,7 @@
             border-radius: 3px;
         }
 
-        .entry-leakage {
+        .entry-slip {
             color: #721c24;
             background-color: #f8d7da;
             padding: 0.25rem 0.5rem;
@@ -252,8 +252,8 @@
                         </div>
 
                         <div class="stat-card">
-                            <div class="stat-label">Leakage Days</div>
-                            <div class="stat-value">🔴 <%= stats.leakageDays %>
+                            <div class="stat-label">Just a Little Bit Days</div>
+                            <div class="stat-value">🔴 <%= stats.slipDays %>
                             </div>
                             <div class="stat-sublabel">days</div>
                         </div>
@@ -309,8 +309,8 @@
                                                     </td>
                                                     <td>
                                                         <span
-                                                            class="<%= entry.had_leakage ? 'entry-leakage' : 'entry-clean' %>">
-                                                            <%= entry.hadLeakageText %>
+                                                            class="<%= entry.had_leakage ? 'entry-slip' : 'entry-clean' %>">
+                                                            <%= entry.statusText %>
                                                         </span>
                                                     </td>
                                                     <td>

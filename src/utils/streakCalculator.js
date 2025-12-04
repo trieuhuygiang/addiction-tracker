@@ -1,7 +1,7 @@
 const Entry = require('../models/Entry');
 
 // Calculate current streak (counting consecutive tracked days backwards from today)
-// Leakage does NOT reset the streak - it's just a separate indicator
+// Slip does NOT reset the streak - it's just a separate indicator
 const getCurrentStreak = async (userId) => {
   try {
     const entries = await Entry.findByUser(userId);
@@ -28,7 +28,7 @@ const getCurrentStreak = async (userId) => {
     for (let i = 0; i < 365; i++) {
       const dateStr = currentDate.toISOString().split('T')[0];
       
-      // If entry exists for this day (regardless of leakage status), count it
+      // If entry exists for this day (regardless of slip status), count it
       if (entryDates.includes(dateStr)) {
         streak++;
         currentDate.setDate(currentDate.getDate() - 1);
@@ -91,14 +91,14 @@ const getStreakSummary = async (userId) => {
     const longestStreak = await getLongestStreak(userId);
     const totalDays = await Entry.getTotalCount(userId);
     const cleanDays = await Entry.getCleanCount(userId);
-    const leakageDays = await Entry.getLeakageCount(userId);
+    const slipDays = await Entry.getSlipCount(userId);
 
     return {
       currentStreak,
       longestStreak,
       totalDays,
       cleanDays,
-      leakageDays,
+      slipDays,
       successRate: totalDays > 0 ? Math.round((cleanDays / totalDays) * 100) : 0
     };
   } catch (error) {

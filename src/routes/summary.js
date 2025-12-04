@@ -33,7 +33,7 @@ router.get('/summary', requireLogin, async (req, res) => {
       // Get recent entries (last 10)
       stats.recentEntries = allEntries.slice(0, 10).map(entry => ({
         ...entry,
-        hadLeakageText: entry.had_leakage ? '🔴 Leakage' : '🟢 Clean',
+        statusText: entry.had_leakage ? '🔴 Just a Little Bit' : '🟢 Clean',
         dateFormatted: formatDate(new Date(entry.date))
       }));
 
@@ -65,7 +65,7 @@ router.get('/summary', requireLogin, async (req, res) => {
         longestStreak: 0,
         totalDays: 0,
         cleanDays: 0,
-        leakageDays: 0,
+        slipDays: 0,
         successRate: 0,
         averageDaysPerMonth: 0,
         lastEntryDate: null,

@@ -2,7 +2,7 @@ const { query } = require('../config/db');
 
 /**
  * Auto-track clean entries for users who haven't logged today
- * This function creates a "Clean" entry (had_leakage = false) for all users
+ * This function creates a "Clean" entry (had_leakage = false, meaning no slip) for all users
  * who don't have an entry for the specified date
  */
 async function autoTrackClean(date = null) {

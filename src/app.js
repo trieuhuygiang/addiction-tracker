@@ -126,7 +126,7 @@ app.get('/dashboard', requireLogin, async (req, res) => {
         longestStreak: 0,
         totalDays: 0,
         cleanDays: 0,
-        leakageDays: 0,
+        slipDays: 0,
         successRate: 0
       },
       userName: req.session.userName,

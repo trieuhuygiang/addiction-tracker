@@ -2,11 +2,11 @@ const { query } = require('../config/db');
 
 class Entry {
   // Create a new entry
-  static async create(userId, date, hadLeakage, note = null) {
+  static async create(userId, date, hadSlip, note = null) {
     try {
       const result = await query(
         'INSERT INTO entries (user_id, date, had_leakage, note) VALUES ($1, $2, $3, $4) RETURNING *',
-        [userId, date, hadLeakage, note]
+        [userId, date, hadSlip, note]
       );
       return result.rows[0];
     } catch (error) {
@@ -54,11 +54,11 @@ class Entry {
   }
 
   // Update an entry
-  static async update(entryId, hadLeakage, note = null) {
+  static async update(entryId, hadSlip, note = null) {
     try {
       const result = await query(
         'UPDATE entries SET had_leakage = $1, note = $2, updated_at = NOW() WHERE id = $3 RETURNING *',
-        [hadLeakage, note, entryId]
+        [hadSlip, note, entryId]
       );
       return result.rows[0];
     } catch (error) {
@@ -92,8 +92,8 @@ class Entry {
     }
   }
 
-  // Get count of leakage entries for a user
-  static async getLeakageCount(userId) {
+  // Get count of slip entries for a user
+  static async getSlipCount(userId) {
     try {
       const result = await query(
         'SELECT COUNT(*) FROM entries WHERE user_id = $1 AND had_leakage = true',

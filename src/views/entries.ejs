@@ -88,12 +88,12 @@
             background-color: #d4edda;
         }
 
-        .radio-option.leakage {
+        .radio-option.slip {
             background-color: #fff5f5;
         }
 
-        .radio-option.leakage:hover,
-        .radio-option.leakage.selected {
+        .radio-option.slip:hover,
+        .radio-option.slip.selected {
             border-color: #dc3545;
             background-color: #f8d7da;
         }
@@ -340,20 +340,20 @@
                                         <div class="radio-group">
                                             <div class="radio-option clean"
                                                 onclick="this.querySelector('input').checked = true; updateSelection()">
-                                                <input type="radio" id="clean" name="hadLeakage" value="false" <% if
+                                                <input type="radio" id="clean" name="hadSlip" value="false" <% if
                                                     (!entry || !entry.had_leakage) { %>checked<% } %> required>
                                                     <label for="clean">
                                                         ✅ Clean Day
-                                                        <div class="description">No leakage today</div>
+                                                        <div class="description">Completely clean today</div>
                                                     </label>
                                             </div>
-                                            <div class="radio-option leakage"
+                                            <div class="radio-option slip"
                                                 onclick="this.querySelector('input').checked = true; updateSelection()">
-                                                <input type="radio" id="leakage" name="hadLeakage" value="true" <% if
-                                                    (entry && entry.had_leakage) { %>checked<% } %> required>
-                                                    <label for="leakage">
-                                                        💧 Leakage
-                                                        <div class="description">Had leakage today</div>
+                                                <input type="radio" id="slip" name="hadSlip" value="true" <% if (entry
+                                                    && entry.had_leakage) { %>checked<% } %> required>
+                                                    <label for="slip">
+                                                        💧 Just a Little Bit
+                                                        <div class="description">Had just a little bit today</div>
                                                     </label>
                                             </div>
                                         </div>
@@ -397,17 +397,17 @@
             <script>
                 function updateSelection() {
                     const cleanOption = document.querySelector('.radio-option.clean');
-                    const leakageOption = document.querySelector('.radio-option.leakage');
+                    const slipOption = document.querySelector('.radio-option.slip');
                     const cleanRadio = document.getElementById('clean');
-                    const leakageRadio = document.getElementById('leakage');
+                    const slipRadio = document.getElementById('slip');
 
                     cleanOption.classList.remove('selected');
-                    leakageOption.classList.remove('selected');
+                    slipOption.classList.remove('selected');
 
                     if (cleanRadio.checked) {
                         cleanOption.classList.add('selected');
-                    } else if (leakageRadio.checked) {
-                        leakageOption.classList.add('selected');
+                    } else if (slipRadio.checked) {
+                        slipOption.classList.add('selected');
                     }
                 }
 

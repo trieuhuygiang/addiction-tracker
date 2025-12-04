@@ -232,7 +232,7 @@
                         </div>
                         <div style="flex: 1; min-width: 150px;">
                             <p style="font-weight: bold; color: <%= todayEntry.had_leakage ? '#e74c3c' : '#28a745' %>;">
-                                Today: <%= todayEntry.had_leakage ? 'Leakage' : 'Clean' %>
+                                Today: <%= todayEntry.had_leakage ? 'Just a Little Bit' : 'Clean' %>
                             </p>
                             <% if (todayEntry.note) { %>
                                 <p style="color: #666; font-size: 0.9rem;">Note: <%= todayEntry.note %>
@@ -250,7 +250,7 @@
                             style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem;">
                             <form method="POST" action="/entries/quick" style="flex: 1; min-width: 120px;">
                                 <input type="hidden" name="date" value="<%= today %>">
-                                <input type="hidden" name="hadLeakage" value="false">
+                                <input type="hidden" name="hadSlip" value="false">
                                 <button type="submit"
                                     style="width: 100%; padding: 1rem; background: #28a745; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold;">
                                     ✅ Clean Day
@@ -258,10 +258,10 @@
                             </form>
                             <form method="POST" action="/entries/quick" style="flex: 1; min-width: 120px;">
                                 <input type="hidden" name="date" value="<%= today %>">
-                                <input type="hidden" name="hadLeakage" value="true">
+                                <input type="hidden" name="hadSlip" value="true">
                                 <button type="submit"
                                     style="width: 100%; padding: 1rem; background: #e74c3c; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold;">
-                                    ⚠️ Leakage
+                                    ⚠️ Just a Little Bit
                                 </button>
                             </form>
                             <a href="/entries/<%= today %>"
@@ -323,9 +323,9 @@
                 </div>
 
                 <div class="stats-card">
-                    <h2>Leakage Days</h2>
+                    <h2>Just a Little Bit Days</h2>
                     <div class="stats-value">
-                        <%= streakSummary.leakageDays %>
+                        <%= streakSummary.slipDays %>
                     </div>
                     <p style="color: #999; margin-top: 0.5rem;">days</p>
                 </div>

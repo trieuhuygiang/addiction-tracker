@@ -356,6 +356,170 @@ main {
     main {
         padding: 1.5rem 0;
     }
+
+    /* Dashboard Mobile */
+    .dashboard-container {
+        padding: 0 15px;
+        margin: 1rem auto;
+    }
+
+    .dashboard-header {
+        flex-direction: column;
+        gap: 0.75rem;
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .dashboard-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .stats-card {
+        padding: 1.25rem 1rem;
+    }
+
+    .stats-card h2 {
+        font-size: 0.75rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .stats-value {
+        font-size: 2rem;
+    }
+
+    .action-buttons {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .action-btn {
+        padding: 0.875rem;
+        font-size: 0.95rem;
+    }
+
+    /* Quick Check-in Mobile */
+    .quick-checkin {
+        padding: 1.25rem !important;
+        margin-bottom: 1.5rem !important;
+    }
+
+    .quick-checkin h2 {
+        font-size: 1.1rem !important;
+        margin-bottom: 0.75rem !important;
+    }
+
+    .quick-checkin-buttons {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .quick-checkin-buttons button,
+    .quick-checkin-buttons a {
+        width: 100%;
+        padding: 0.875rem 1rem !important;
+        font-size: 0.95rem !important;
+        text-align: center;
+    }
+
+    /* Progress Table Mobile */
+    .progress-table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .progress-table th,
+    .progress-table td {
+        padding: 0.5rem 0.4rem;
+        font-size: 0.85rem;
+    }
+
+    /* Entry Form Mobile */
+    .entry-form,
+    .entries-container {
+        padding: 0 15px;
+    }
+
+    .entry-form .form-group {
+        margin-bottom: 1.25rem;
+    }
+
+    .radio-group {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .radio-option {
+        padding: 1rem;
+    }
+
+    .form-buttons {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .form-buttons button,
+    .form-buttons .btn {
+        width: 100%;
+    }
+
+    .date-navigation {
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 0.5rem;
+    }
+
+    .date-nav-btn {
+        flex: 1;
+        text-align: center;
+        padding: 0.75rem 0.5rem;
+        font-size: 0.85rem;
+    }
+
+    /* Calendar Mobile */
+    .calendar-grid {
+        gap: 2px;
+    }
+
+    .calendar-day {
+        padding: 0.4rem;
+        font-size: 0.8rem;
+        min-height: 45px;
+    }
+
+    .calendar-header {
+        flex-direction: column;
+        gap: 0.75rem;
+        text-align: center;
+    }
+
+    .calendar-nav {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    /* Admin/Users Table Mobile */
+    .admin-table,
+    .users-table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        font-size: 0.85rem;
+    }
+
+    .admin-table th,
+    .admin-table td,
+    .users-table th,
+    .users-table td {
+        padding: 0.5rem;
+        white-space: nowrap;
+    }
 }
 
 @media (max-width: 480px) {
@@ -392,5 +556,109 @@ main {
 
     .feature-card h3 {
         font-size: 1.2rem;
+    }
+
+    /* Extra small screen adjustments */
+    .dashboard-header h1 {
+        font-size: 1.25rem;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+
+    .stats-card {
+        padding: 1rem 0.75rem;
+    }
+
+    .stats-card h2 {
+        font-size: 0.65rem;
+    }
+
+    .stats-value {
+        font-size: 1.5rem;
+    }
+
+    .stats-card p {
+        font-size: 0.75rem;
+    }
+
+    .quick-checkin h2 {
+        font-size: 1rem !important;
+    }
+
+    .quick-checkin-buttons button,
+    .quick-checkin-buttons a {
+        padding: 0.75rem !important;
+        font-size: 0.9rem !important;
+    }
+
+    .calendar-day {
+        padding: 0.25rem;
+        font-size: 0.7rem;
+        min-height: 35px;
+    }
+
+    .calendar-day .day-number {
+        font-size: 0.75rem;
+    }
+
+    /* Hide some table columns on very small screens */
+    .hide-mobile {
+        display: none;
+    }
+}
+
+/* ===== TOUCH-FRIENDLY IMPROVEMENTS ===== */
+@media (hover: none) and (pointer: coarse) {
+    /* Larger touch targets */
+    .btn,
+    .action-btn,
+    button,
+    a.btn {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    .nav-menu a,
+    .logout-link {
+        min-height: 48px;
+        display: flex;
+        align-items: center;
+    }
+
+    /* Remove hover effects on touch devices */
+    .feature-card:hover,
+    .action-btn:hover,
+    .btn:hover {
+        transform: none;
+    }
+
+    /* Active state for touch feedback */
+    .btn:active,
+    .action-btn:active,
+    button:active {
+        transform: scale(0.98);
+        opacity: 0.9;
+    }
+}
+
+/* ===== SAFE AREA FOR NOTCHED DEVICES ===== */
+@supports (padding: max(0px)) {
+    .navbar {
+        padding-left: max(1rem, env(safe-area-inset-left));
+        padding-right: max(1rem, env(safe-area-inset-right));
+    }
+
+    .footer {
+        padding-bottom: max(2rem, env(safe-area-inset-bottom));
+    }
+
+    .dashboard-container,
+    .entries-container,
+    .container {
+        padding-left: max(15px, env(safe-area-inset-left));
+        padding-right: max(15px, env(safe-area-inset-right));
     }
 }

@@ -96,6 +96,110 @@
         .action-btn.secondary {
             background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
         }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 0 15px;
+                margin: 1rem auto;
+            }
+
+            .dashboard-header {
+                flex-direction: column;
+                gap: 0.75rem;
+                text-align: center;
+            }
+
+            .dashboard-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+                margin-bottom: 2rem;
+            }
+
+            .stats-card {
+                padding: 1.25rem 1rem;
+            }
+
+            .stats-card h2 {
+                font-size: 0.7rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .stats-value {
+                font-size: 1.75rem;
+            }
+
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-checkin {
+                padding: 1.25rem !important;
+            }
+
+            .quick-checkin h2 {
+                font-size: 1rem !important;
+            }
+
+            .quick-checkin-buttons {
+                display: flex;
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .quick-checkin-buttons form,
+            .quick-checkin-buttons a {
+                width: 100%;
+            }
+
+            .quick-checkin-buttons button,
+            .quick-checkin-buttons a {
+                width: 100%;
+                display: block;
+                text-align: center;
+            }
+
+            .progress-section {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .progress-table {
+                min-width: 500px;
+            }
+
+            .progress-table th,
+            .progress-table td {
+                padding: 0.5rem;
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .dashboard-header h1 {
+                font-size: 1.25rem;
+            }
+
+            .stats-card {
+                padding: 1rem 0.75rem;
+            }
+
+            .stats-card h2 {
+                font-size: 0.6rem;
+            }
+
+            .stats-value {
+                font-size: 1.5rem;
+            }
+
+            .stats-card p {
+                font-size: 0.7rem;
+            }
+        }
     </style>
 </head>
 
@@ -126,7 +230,7 @@
                                     ✅
                                     <% } %>
                         </div>
-                        <div style="flex: 1;">
+                        <div style="flex: 1; min-width: 150px;">
                             <p style="font-weight: bold; color: <%= todayEntry.had_leakage ? '#e74c3c' : '#28a745' %>;">
                                 Today: <%= todayEntry.had_leakage ? 'Leakage' : 'Clean' %>
                             </p>
@@ -137,38 +241,39 @@
                         </div>
                         <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
                             <a href="/entries/<%= today %>"
-                                style="padding: 0.5rem 1rem; background: #667eea; color: white; border-radius: 5px; text-decoration: none; font-size: 0.9rem;">Edit</a>
+                                style="padding: 0.75rem 1.25rem; background: #667eea; color: white; border-radius: 8px; text-decoration: none; font-size: 0.9rem; font-weight: 600;">Edit</a>
                         </div>
                     </div>
                     <% } else { %>
                         <p style="color: #666; margin-bottom: 1rem;">You haven't logged today yet. How was your day?</p>
-                        <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;">
-                            <form method="POST" action="/entries/quick" style="display: inline;">
+                        <div class="quick-checkin-buttons"
+                            style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem;">
+                            <form method="POST" action="/entries/quick" style="flex: 1; min-width: 120px;">
                                 <input type="hidden" name="date" value="<%= today %>">
                                 <input type="hidden" name="hadLeakage" value="false">
                                 <button type="submit"
-                                    style="padding: 1rem 2rem; background: #28a745; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold;">
+                                    style="width: 100%; padding: 1rem; background: #28a745; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold;">
                                     ✅ Clean Day
                                 </button>
                             </form>
-                            <form method="POST" action="/entries/quick" style="display: inline;">
+                            <form method="POST" action="/entries/quick" style="flex: 1; min-width: 120px;">
                                 <input type="hidden" name="date" value="<%= today %>">
                                 <input type="hidden" name="hadLeakage" value="true">
                                 <button type="submit"
-                                    style="padding: 1rem 2rem; background: #e74c3c; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold;">
+                                    style="width: 100%; padding: 1rem; background: #e74c3c; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold;">
                                     ⚠️ Leakage
                                 </button>
                             </form>
                             <a href="/entries/<%= today %>"
-                                style="padding: 1rem 2rem; background: #667eea; color: white; border: none; border-radius: 8px; text-decoration: none; font-size: 1rem; font-weight: bold;">
+                                style="flex: 1; min-width: 120px; padding: 1rem; background: #667eea; color: white; border: none; border-radius: 8px; text-decoration: none; font-size: 1rem; font-weight: bold; text-align: center; display: flex; align-items: center; justify-content: center;">
                                 📝 Add Note
                             </a>
                         </div>
                         <div style="border-top: 1px solid #eee; padding-top: 1rem;">
-                            <form method="POST" action="/entries/relapse" style="display: inline;"
+                            <form method="POST" action="/entries/relapse" style="width: 100%;"
                                 onsubmit="return confirm('⚠️ RELAPSE - This will reset ALL your progress! Are you sure?') && confirm('This action cannot be undone. Are you absolutely sure?');">
                                 <button type="submit"
-                                    style="padding: 0.75rem 1.5rem; background: #333; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: bold;">
+                                    style="width: 100%; padding: 0.75rem 1.5rem; background: #333; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: bold;">
                                     💔 Relapse (Reset All Progress)
                                 </button>
                             </form>
@@ -253,52 +358,67 @@
             </script>
 
             <hr style="margin:2rem 0;">
-            <h2 style="color:#667eea;">Your Progress</h2>
+            <h2 style="color:#667eea; margin-bottom: 1rem;">Your Progress</h2>
             <% if (progressEntries && progressEntries.length> 0) { %>
-                <table style="width:100%;margin-bottom:2rem;border-collapse:collapse;">
-                    <thead style="background:#f5f5f5;">
-                        <tr>
-                            <th style="padding:0.5rem;">Date</th>
-                            <th style="padding:0.5rem;">Status</th>
-                            <th style="padding:0.5rem;">Note</th>
-                            <th style="padding:0.5rem;">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% progressEntries.forEach(entry=> { %>
+                <div class="progress-section" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+                    <table class="progress-table"
+                        style="width:100%;margin-bottom:2rem;border-collapse:collapse; min-width: 400px;">
+                        <thead style="background:#f5f5f5;">
                             <tr>
-                                <td style="padding:0.5rem;border-bottom:1px solid #eee;">
-                                    <%= entry.date.toISOString().slice(0,10) %>
-                                </td>
-                                <td style="padding:0.5rem;border-bottom:1px solid #eee;">
-                                    <% if (entry.had_leakage) { %>
-                                        <span style="color:#e74c3c;font-weight:bold;">Leakage</span>
-                                        <% } else { %>
-                                            <span style="color:#28a745;font-weight:bold;">Clean</span>
-                                            <% } %>
-                                </td>
-                                <td style="padding:0.5rem;border-bottom:1px solid #eee;">
-                                    <%= entry.note || '-' %>
-                                </td>
-                                <td style="padding:0.5rem;border-bottom:1px solid #eee;">
-                                    <a href="/entries/<%= entry.date.toISOString().slice(0,10) %>"
-                                        style="color:#667eea;margin-right:0.5rem;">Edit</a>
-                                    <form method="POST" action="/entries/<%= entry.id %>/delete" style="display:inline;"
-                                        onsubmit="return confirm('Delete this entry?');">
-                                        <button type="submit"
-                                            style="background:none;border:none;color:#e74c3c;cursor:pointer;padding:0;">×
-                                            Delete</button>
-                                    </form>
-                                </td>
+                                <th style="padding:0.75rem 0.5rem; text-align: left;">Date</th>
+                                <th style="padding:0.75rem 0.5rem; text-align: center;">Status</th>
+                                <th style="padding:0.75rem 0.5rem; text-align: left;" class="hide-on-small">Note</th>
+                                <th style="padding:0.75rem 0.5rem; text-align: center;">Actions</th>
                             </tr>
-                            <% }); %>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            <% progressEntries.forEach(entry=> { %>
+                                <tr>
+                                    <td
+                                        style="padding:0.75rem 0.5rem;border-bottom:1px solid #eee; white-space: nowrap;">
+                                        <%= entry.date.toISOString().slice(0,10) %>
+                                    </td>
+                                    <td
+                                        style="padding:0.75rem 0.5rem;border-bottom:1px solid #eee; text-align: center;">
+                                        <% if (entry.had_leakage) { %>
+                                            <span style="color:#e74c3c;font-weight:bold;">⚠️</span>
+                                            <% } else { %>
+                                                <span style="color:#28a745;font-weight:bold;">✅</span>
+                                                <% } %>
+                                    </td>
+                                    <td style="padding:0.75rem 0.5rem;border-bottom:1px solid #eee; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
+                                        class="hide-on-small">
+                                        <%= entry.note || '-' %>
+                                    </td>
+                                    <td
+                                        style="padding:0.75rem 0.5rem;border-bottom:1px solid #eee; text-align: center; white-space: nowrap;">
+                                        <a href="/entries/<%= entry.date.toISOString().slice(0,10) %>"
+                                            style="color:#667eea; padding: 0.25rem 0.5rem; font-size: 0.9rem;">✏️</a>
+                                        <form method="POST" action="/entries/<%= entry.id %>/delete"
+                                            style="display:inline;" onsubmit="return confirm('Delete this entry?');">
+                                            <button type="submit"
+                                                style="background:none;border:none;color:#e74c3c;cursor:pointer;padding:0.25rem 0.5rem; font-size: 0.9rem;">🗑️</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <% }); %>
+                        </tbody>
+                    </table>
+                </div>
                 <% } else { %>
-                    <div style="color:#999;text-align:center;padding:2rem;">No progress entries yet. Log your first
+                    <div style="color:#999;text-align:center;padding:2rem; background: white; border-radius: 10px;">No
+                        progress entries yet. Log your first
                         entry!</div>
                     <% } %>
         </div>
+
+        <style>
+            @media (max-width: 480px) {
+                .hide-on-small {
+                    display: none;
+                }
+            }
+        </style>
 
         <%- include('partials/footer') %>
 </body>

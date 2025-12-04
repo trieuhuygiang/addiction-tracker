@@ -4,11 +4,12 @@ A web application to track your addiction recovery progress with daily logs, str
 
 ## Features
 
-- 📊 **Daily Tracking** - Log your progress every day
+- 📊 **Daily Tracking** - Log your progress every day with quick check-in buttons
 - 🔥 **Streak Counter** - Track your current and longest streaks
 - 📅 **Calendar View** - Visualize your progress with a color-coded calendar
 - 📈 **Statistics** - View comprehensive summaries of your progress
 - 👑 **Admin Panel** - Manage users (admin only)
+- 📱 **Mobile Friendly** - Responsive design works great on phones
 
 ## Tech Stack
 
@@ -17,54 +18,83 @@ A web application to track your addiction recovery progress with daily logs, str
 - **View Engine**: EJS
 - **Authentication**: Express-session with bcrypt
 
-## Local Development
+## Quick Start (Local Development)
 
 ### Prerequisites
 
 - Node.js (v18 or higher)
 - PostgreSQL database
 
-### Setup
+### Step-by-Step Setup
 
-1. Clone the repository:
+1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/YOUR_USERNAME/addiction-tracker.git
+   git clone https://github.com/trieuhuygiang/addiction-tracker.git
    cd addiction-tracker
    ```
 
-2. Install dependencies:
+2. **Install dependencies:**
 
    ```bash
    npm install
    ```
 
-3. Create a `.env` file in the root directory:
+3. **Set up PostgreSQL database:**
+
+   ```bash
+   # Login to PostgreSQL
+   sudo -u postgres psql
+
+   # Create database and user
+   CREATE DATABASE addiction_tracker;
+   CREATE USER tracker_user WITH ENCRYPTED PASSWORD 'your_secure_password';
+   GRANT ALL PRIVILEGES ON DATABASE addiction_tracker TO tracker_user;
+   \q
+   ```
+
+4. **Create a `.env` file** in the root directory:
 
    ```env
    PORT=3000
    DB_HOST=localhost
    DB_PORT=5432
-   DB_USER=your_db_user
-   DB_PASSWORD=your_db_password
+   DB_USER=tracker_user
+   DB_PASSWORD=your_secure_password
    DB_NAME=addiction_tracker
    SESSION_SECRET=your_random_secret_key_here
    NODE_ENV=development
    ```
 
-4. Initialize the database:
+5. **Initialize the database tables:**
 
    ```bash
    npm run setup
    ```
 
-5. Start the server:
+6. **Start the server:**
 
    ```bash
    npm start
    ```
 
-6. Open http://localhost:3000 in your browser
+7. **Open your browser** and go to: http://localhost:3000
+
+### Running in Development Mode
+
+```bash
+# Start with auto-restart on file changes (if nodemon installed)
+npm run dev
+
+# Or standard start
+npm start
+```
+
+### Running in Production
+
+```bash
+NODE_ENV=production npm start
+```
 
 ## Deployment Options
 

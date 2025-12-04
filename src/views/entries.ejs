@@ -225,6 +225,85 @@
         .date-nav-btn:hover {
             background-color: #e0e0e0;
         }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            .entries-container {
+                padding: 0 15px;
+                margin: 1rem auto;
+            }
+
+            .entries-header {
+                margin-bottom: 1.5rem;
+                text-align: center;
+            }
+
+            .entries-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .entries-header p {
+                font-size: 0.9rem;
+            }
+
+            .entry-form {
+                padding: 1.25rem;
+            }
+
+            .form-group {
+                margin-bottom: 1.25rem;
+            }
+
+            .radio-option {
+                padding: 1rem;
+            }
+
+            .radio-option label {
+                font-size: 1rem;
+            }
+
+            .form-buttons {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .submit-btn,
+            .delete-btn {
+                width: 100%;
+                padding: 1rem;
+            }
+
+            .date-navigation {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+
+            .date-nav-btn {
+                flex: 1;
+                min-width: 80px;
+                text-align: center;
+                padding: 0.75rem 0.5rem;
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .entries-header h1 {
+                font-size: 1.25rem;
+            }
+
+            .radio-option {
+                padding: 0.875rem;
+            }
+
+            .radio-option label {
+                font-size: 0.95rem;
+            }
+
+            .radio-option .description {
+                font-size: 0.8rem;
+            }
+        }
     </style>
 </head>
 

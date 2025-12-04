@@ -4,6 +4,7 @@ const router = express.Router();
 const User = require('../models/User');
 const { query } = require('../config/db');
 const { requireAdmin } = require('../middleware/auth');
+const { autoTrackClean } = require('../utils/scheduler');
 
 // Admin Dashboard - List all users
 router.get('/admin', requireAdmin, async (req, res) => {
@@ -85,23 +86,23 @@ router.post('/admin/users/create', requireAdmin, async (req, res) => {
 // Update user (admin only)
 router.post('/admin/users/update', requireAdmin, async (req, res) => {
   try {
-    const { userId, email, username, password, isAdmin } = req.body;
+    const { userId, username, password, isAdmin } = req.body;
 
-    if (!userId || !email) {
-      return res.redirect('/admin?error=' + encodeURIComponent('User ID and email are required'));
+    if (!userId) {
+      return res.redirect('/admin?error=' + encodeURIComponent('User ID is required'));
     }
 
     // Build update query
-    let updateQuery = 'UPDATE users SET email = $1, username = $2, is_admin = $3';
-    let params = [email, username || null, isAdmin === 'on'];
+    let updateQuery = 'UPDATE users SET username = $1, is_admin = $2';
+    let params = [username || null, isAdmin === 'on'];
     
     // If password is provided, hash it
-    if (password && password.length >= 6) {
+    if (password && password.trim()) {
       const hashedPassword = await bcrypt.hash(password, 10);
-      updateQuery += ', password_hash = $4 WHERE id = $5';
+      updateQuery += ', password_hash = $3 WHERE id = $4';
       params.push(hashedPassword, userId);
     } else {
-      updateQuery += ' WHERE id = $4';
+      updateQuery += ' WHERE id = $3';
       params.push(userId);
     }
 
@@ -156,6 +157,18 @@ router.post('/admin/users/:id/toggle-admin', requireAdmin, async (req, res) => {
   } catch (error) {
     console.error('Error toggling admin:', error);
     res.redirect('/admin?error=' + encodeURIComponent('Error updating admin status'));
+  }
+});
+
+// Manual auto-track trigger (admin only)
+router.post('/admin/auto-track', requireAdmin, async (req, res) => {
+  try {
+    const { date } = req.body;
+    const result = await autoTrackClean(date || null);
+    res.redirect('/admin?success=' + encodeURIComponent(`Auto-tracked ${result.tracked} users as Clean`));
+  } catch (error) {
+    console.error('Error running auto-track:', error);
+    res.redirect('/admin?error=' + encodeURIComponent('Error running auto-track'));
   }
 });
 

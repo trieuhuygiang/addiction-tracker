@@ -1,0 +1,36 @@
+<header class="navbar">
+    <div class="navbar-container">
+        <div class="logo">
+            <a href="/">🧠 Addiction Tracker</a>
+        </div>
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <nav class="nav-menu" id="navMenu">
+            <% if (isAuthenticated) { %>
+                <ul>
+                    <li><a href="/dashboard">📊 Dashboard</a></li>
+                    <li><a href="/entries">📝 Log Entry</a></li>
+                    <li><a href="/calendar">📅 Calendar</a></li>
+                    <li><a href="/summary">📈 Summary</a></li>
+                    <% if (isAdmin) { %>
+                        <li><a href="/admin">👑 Admin</a></li>
+                        <% } %>
+                            <li>
+                                <form method="POST" action="/logout" style="display: inline;">
+                                    <button type="submit" class="logout-link">🚪 Logout</button>
+                                </form>
+                            </li>
+                </ul>
+                <% } else { %>
+                    <ul>
+                        <li><a href="/">🏠 Home</a></li>
+                        <li><a href="/login">🔐 Login</a></li>
+                        <li><a href="/signup">✍️ Sign Up</a></li>
+                    </ul>
+                    <% } %>
+        </nav>
+    </div>
+</header>

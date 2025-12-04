@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title %>
+    </title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <%- include('partials/header') %>
+
+        <main class="container">
+            <section class="hero">
+                <h1>Addiction Tracker</h1>
+                <p>Track your journey to a healthier, addiction-free life.</p>
+
+                <% if (!isAuthenticated) { %>
+                    <div class="cta-buttons">
+                        <a href="/signup" class="btn btn-primary">Get Started</a>
+                        <a href="/login" class="btn btn-secondary">Login</a>
+                    </div>
+                    <% } else { %>
+                        <div class="cta-buttons">
+                            <a href="/dashboard" class="btn btn-primary">Go to Dashboard</a>
+                        </div>
+                        <% } %>
+            </section>
+
+            <section class="features">
+                <h2>Features</h2>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h3>📊 Daily Tracking</h3>
+                        <p>Log your progress every day with simple yes/no entries and optional notes.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>🔥 Streak Counter</h3>
+                        <p>See your current streak and longest streak. Stay motivated!</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>📅 Calendar View</h3>
+                        <p>Visualize your progress with a color-coded calendar.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>📈 Statistics</h3>
+                        <p>View comprehensive summaries of your achievements and progress.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <%- include('partials/footer') %>
+</body>
+
+</html>

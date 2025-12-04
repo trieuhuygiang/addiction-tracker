@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title %>
+    </title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .calendar-container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 20px;
+        }
+
+        .calendar-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .calendar-header h1 {
+            color: #667eea;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .month-navigation {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .nav-btn {
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 0.3s;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .month-display {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            min-width: 200px;
+            text-align: center;
+        }
+
+        .calendar-table {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .calendar-weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+        }
+
+        .weekday {
+            padding: 1rem;
+            text-align: center;
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .weekday:last-child {
+            border-right: none;
+        }
+
+        .calendar-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid #e0e0e0;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            font-weight: 600;
+        }
+
+        .calendar-day:hover {
+            transform: scale(1.05);
+        }
+
+        .calendar-day.clean {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .calendar-day.clean:hover {
+            background-color: #c3e6cb;
+        }
+
+        .calendar-day.leakage {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .calendar-day.leakage:hover {
+            background-color: #f5c6cb;
+        }
+
+        .calendar-day.no-data {
+            background-color: #f9f9f9;
+            color: #999;
+        }
+
+        .calendar-day.no-data:hover {
+            background-color: #f0f0f0;
+        }
+
+        .calendar-day.other-month {
+            background-color: #fafafa;
+            color: #ccc;
+            cursor: default;
+        }
+
+        .calendar-day.other-month:hover {
+            transform: none;
+            background-color: #fafafa;
+        }
+
+        .day-number {
+            font-size: 1.1rem;
+        }
+
+        .day-indicator {
+            font-size: 0.8rem;
+            margin-top: 0.2rem;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .legend-color {
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1.5rem;
+            border: 1px solid #f5c6cb;
+        }
+
+        @media (max-width: 600px) {
+            .month-navigation {
+                gap: 1rem;
+            }
+
+            .calendar-day {
+                font-size: 0.9rem;
+            }
+
+            .day-number {
+                font-size: 0.9rem;
+            }
+
+            .legend {
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('partials/header') %>
+
+        <div class="calendar-container">
+            <a href="/dashboard" class="back-link">← Back to Dashboard</a>
+
+            <div class="calendar-header">
+                <h1>📅 Calendar</h1>
+                <p>View your progress by month</p>
+            </div>
+
+            <% if (error) { %>
+                <div class="error-message">
+                    <%= error %>
+                </div>
+                <% } %>
+
+                    <div class="month-navigation">
+                        <a href="/calendar/<%= year %>/<%=  month === 1 ? 12 : month - 1 %>" class="nav-btn">
+                            ← Previous
+                        </a>
+                        <div class="month-display">
+                            <%= monthName %>
+                                <%= year %>
+                        </div>
+                        <a href="/calendar/<%= month === 12 ? year + 1 : year %>/<%= month === 12 ? 1 : month + 1 %>"
+                            class="nav-btn">
+                            Next →
+                        </a>
+                    </div>
+
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #d4edda;"></div>
+                            <span>🟢 Clean</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #f8d7da;"></div>
+                            <span>🔴 Leakage</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #f9f9f9;"></div>
+                            <span>⚪ No Log</span>
+                        </div>
+                    </div>
+
+                    <% if (calendar) { %>
+                        <div class="calendar-table">
+                            <div class="calendar-weekdays">
+                                <div class="weekday">Sun</div>
+                                <div class="weekday">Mon</div>
+                                <div class="weekday">Tue</div>
+                                <div class="weekday">Wed</div>
+                                <div class="weekday">Thu</div>
+                                <div class="weekday">Fri</div>
+                                <div class="weekday">Sat</div>
+                            </div>
+
+                            <div class="calendar-days">
+                                <% calendar.forEach(week=> { %>
+                                    <% week.forEach(dayObj=> { %>
+                                        <% if (dayObj) { %>
+                                            <a href="/entries/<%= dayObj.date %>"
+                                                class="calendar-day <%= dayObj.status %>"
+                                                title="<%= dayObj.entry ? (dayObj.entry.had_leakage ? 'Leakage' : 'Clean') : 'No entry' %>">
+                                                <div class="day-number">
+                                                    <%= dayObj.day %>
+                                                </div>
+                                                <div class="day-indicator">
+                                                    <% if (dayObj.status==='clean' ) { %>
+                                                        🟢
+                                                        <% } else if (dayObj.status==='leakage' ) { %>
+                                                            🔴
+                                                            <% } else { %>
+                                                                ⚪
+                                                                <% } %>
+                                                </div>
+                                            </a>
+                                            <% } else { %>
+                                                <div class="calendar-day other-month"></div>
+                                                <% } %>
+                                                    <% }); %>
+                                                        <% }); %>
+                            </div>
+                        </div>
+                        <% } %>
+
+                            <div style="text-align: center; color: #666; margin-top: 2rem;">
+                                <p>Click any day to view or edit the entry</p>
+                            </div>
+        </div>
+
+        <%- include('partials/footer') %>
+</body>
+
+</html>

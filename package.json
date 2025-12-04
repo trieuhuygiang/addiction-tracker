@@ -1,0 +1,33 @@
+{
+  "name": "addiction-tracker",
+  "version": "1.0.0",
+  "description": "A web app to track your addiction recovery progress with daily logs, streaks, and calendar views",
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "dev": "node src/server.js",
+    "start": "node src/server.js",
+    "setup": "node src/config/init.js",
+    "setup-admin": "node src/config/setupAdmin.js"
+  },
+  "keywords": [
+    "addiction",
+    "recovery",
+    "tracker",
+    "streak",
+    "progress"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "connect-pg-simple": "^10.0.0",
+    "dotenv": "^16.0.0",
+    "ejs": "^3.1.9",
+    "express": "^4.22.1",
+    "express-session": "^1.17.3",
+    "pg": "^8.11.0"
+  }
+}

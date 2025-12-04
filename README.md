@@ -145,7 +145,7 @@ NODE_ENV=production npm start
 After setup, login with:
 
 - **Username**: admin
-- **Password**: 49914991
+- **Password**: 4991
 
 ## License
 

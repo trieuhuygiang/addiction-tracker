@@ -10,7 +10,8 @@
     "dev": "node src/server.js",
     "start": "node src/server.js",
     "setup": "node src/config/init.js",
-    "setup-admin": "node src/config/setupAdmin.js"
+    "setup-admin": "node src/config/setupAdmin.js",
+    "build": "npm run setup"
   },
   "keywords": [
     "addiction",

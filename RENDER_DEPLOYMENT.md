@@ -83,16 +83,16 @@ Fill in the following:
 
 Fill in the following:
 
-| Field              | Value                          |
-| ------------------ | ------------------------------ |
-| **Name**           | `addiction-tracker`            |
-| **Region**         | Same as your database          |
-| **Branch**         | `main`                         |
-| **Root Directory** | (leave empty)                  |
-| **Runtime**        | `Node`                         |
-| **Build Command**  | `npm install && npm run setup` |
-| **Start Command**  | `npm start`                    |
-| **Plan**           | `Free`                         |
+| Field              | Value                 |
+| ------------------ | --------------------- |
+| **Name**           | `addiction-tracker`   |
+| **Region**         | Same as your database |
+| **Branch**         | `main`                |
+| **Root Directory** | (leave empty)         |
+| **Runtime**        | `Node`                |
+| **Build Command**  | `npm install`         |
+| **Start Command**  | `npm start`           |
+| **Plan**           | `Free`                |
 
 ### 3.4 Add Environment Variables
 

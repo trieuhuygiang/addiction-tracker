@@ -2,7 +2,7 @@ services:
   - type: web
     name: addiction-tracker
     runtime: node
-    buildCommand: npm install && npm run setup
+    buildCommand: npm install
     startCommand: npm start
     envVars:
       - key: NODE_ENV

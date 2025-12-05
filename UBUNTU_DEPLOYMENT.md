@@ -5,6 +5,7 @@ This is a step-by-step guide to deploy the Addiction Tracker on a fresh Ubuntu s
 ---
 
 ## Table of Contents
+
 1. [Prerequisites](#prerequisites)
 2. [Server Setup](#server-setup)
 3. [Install Node.js](#install-nodejs)
@@ -36,6 +37,7 @@ ssh root@YOUR_SERVER_IP
 ```
 
 Or if you have a non-root user:
+
 ```bash
 ssh username@YOUR_SERVER_IP
 ```
@@ -155,25 +157,31 @@ sudo nano /etc/postgresql/*/main/pg_hba.conf
 ```
 
 Find this line:
+
 ```
 local   all             all                                     peer
 ```
 
 Change `peer` to `md5`:
+
 ```
 local   all             all                                     md5
 ```
 
 Also find and change:
+
 ```
 host    all             all             127.0.0.1/32            scram-sha-256
 ```
+
 to:
+
 ```
 host    all             all             127.0.0.1/32            md5
 ```
 
 Save and restart PostgreSQL:
+
 ```bash
 sudo systemctl restart postgresql
 ```
@@ -262,6 +270,7 @@ npm run setup
 ```
 
 You should see output like:
+
 ```
 Starting database initialization...
 ✓ Database addiction_tracker already exists
@@ -297,6 +306,7 @@ pm2 status
 ```
 
 You should see:
+
 ```
 ┌─────┬─────────────────────┬─────────────┬─────────┬─────────┬──────────┐
 │ id  │ name                │ mode        │ status  │ cpu     │ memory   │
@@ -326,6 +336,7 @@ pm2 save
 ### 6. Test the application
 
 Open your browser and go to:
+
 ```
 http://YOUR_SERVER_IP:3000
 ```
@@ -392,6 +403,7 @@ sudo systemctl restart nginx
 ### 5. Test
 
 Now you can access your app at:
+
 ```
 http://YOUR_DOMAIN_OR_IP
 ```
@@ -417,6 +429,7 @@ sudo certbot --nginx -d yourdomain.com
 ```
 
 Follow the prompts:
+
 - Enter your email
 - Agree to terms
 - Choose to redirect HTTP to HTTPS (recommended)
@@ -428,6 +441,7 @@ nano .env
 ```
 
 Change:
+
 ```env
 USE_HTTPS=true
 ```
@@ -453,6 +467,7 @@ sudo certbot renew --dry-run
 ### App not starting?
 
 Check logs:
+
 ```bash
 pm2 logs addiction-tracker --lines 50
 ```
@@ -460,6 +475,7 @@ pm2 logs addiction-tracker --lines 50
 ### Database connection error?
 
 1. Check PostgreSQL is running:
+
    ```bash
    sudo systemctl status postgresql
    ```
@@ -484,6 +500,7 @@ kill -9 PID_NUMBER
 ### Nginx errors?
 
 Check Nginx logs:
+
 ```bash
 sudo tail -f /var/log/nginx/error.log
 ```
@@ -491,6 +508,7 @@ sudo tail -f /var/log/nginx/error.log
 ### Permission denied errors?
 
 If running as non-root user:
+
 ```bash
 sudo chown -R $USER:$USER ~/addiction-tracker
 ```
@@ -498,6 +516,7 @@ sudo chown -R $USER:$USER ~/addiction-tracker
 ### Can't connect from browser?
 
 Check firewall:
+
 ```bash
 # Allow port 3000 (if not using Nginx)
 sudo ufw allow 3000
@@ -582,6 +601,7 @@ crontab -e
 ```
 
 Add this line (backs up daily at 2 AM):
+
 ```
 0 2 * * * pg_dump -U tracker_user -h localhost addiction_tracker > ~/backups/backup_$(date +\%Y\%m\%d).sql
 ```
@@ -593,7 +613,7 @@ Add this line (backs up daily at 2 AM):
 1. **Use a non-root user** for running the application
 2. **Keep system updated**: `sudo apt update && sudo apt upgrade`
 3. **Use strong passwords** for database
-4. **Enable firewall**: 
+4. **Enable firewall**:
    ```bash
    sudo ufw enable
    sudo ufw allow ssh
@@ -607,6 +627,7 @@ Add this line (backs up daily at 2 AM):
 ## Need Help?
 
 If you encounter issues:
+
 1. Check the logs: `pm2 logs addiction-tracker`
 2. Verify environment variables: `cat .env`
 3. Test database connection manually

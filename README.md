@@ -50,8 +50,14 @@ A web application to track your addiction recovery progress with daily logs, str
    CREATE DATABASE addiction_tracker;
    CREATE USER tracker_user WITH ENCRYPTED PASSWORD 'your_secure_password';
    GRANT ALL PRIVILEGES ON DATABASE addiction_tracker TO tracker_user;
+
+   # For PostgreSQL 15+: Grant schema permissions (required for table creation)
+   \c addiction_tracker
+   GRANT ALL ON SCHEMA public TO tracker_user;
    \q
    ```
+
+   > **Note:** PostgreSQL 15+ changed default permissions for the `public` schema. The `GRANT ALL ON SCHEMA public` command is required to allow the user to create tables.
 
 4. **Create a `.env` file** in the root directory:
 

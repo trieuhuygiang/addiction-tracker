@@ -24,20 +24,20 @@ const setupAdmin = async () => {
     console.log('✓ Added is_admin column to users table');
 
     // Check if admin user exists
-    const adminEmail = 'admin';
+    const adminUsername = 'admin';
     const adminPassword = '49914991';
     
     const existingAdmin = await client.query(
-      'SELECT id FROM users WHERE email = $1',
-      [adminEmail]
+      'SELECT id FROM users WHERE username = $1',
+      [adminUsername]
     );
 
     if (existingAdmin.rows.length > 0) {
       // Update existing admin user
       const hashedPassword = await bcrypt.hash(adminPassword, 10);
       await client.query(
-        'UPDATE users SET password_hash = $1, is_admin = TRUE WHERE email = $2',
-        [hashedPassword, adminEmail]
+        'UPDATE users SET password_hash = $1, is_admin = TRUE WHERE username = $2',
+        [hashedPassword, adminUsername]
       );
       console.log('✓ Updated existing admin user');
     } else {
@@ -45,7 +45,7 @@ const setupAdmin = async () => {
       const hashedPassword = await bcrypt.hash(adminPassword, 10);
       await client.query(
         'INSERT INTO users (email, username, password_hash, is_admin) VALUES ($1, $2, $3, $4)',
-        [adminEmail, 'Administrator', hashedPassword, true]
+        [null, adminUsername, hashedPassword, true]
       );
       console.log('✓ Created admin user');
     }

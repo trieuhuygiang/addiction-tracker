@@ -94,12 +94,12 @@ Render is a modern cloud platform that makes deployment easy with free PostgreSQ
 
 In the web service settings, add these environment variables:
 
-| Key | Value |
-|-----|-------|
-| `NODE_ENV` | `production` |
-| `DATABASE_URL` | (paste Internal Database URL from Step 2) |
-| `SESSION_SECRET` | (generate: `openssl rand -hex 32`) |
-| `USE_HTTPS` | `true` |
+| Key              | Value                                     |
+| ---------------- | ----------------------------------------- |
+| `NODE_ENV`       | `production`                              |
+| `DATABASE_URL`   | (paste Internal Database URL from Step 2) |
+| `SESSION_SECRET` | (generate: `openssl rand -hex 32`)        |
+| `USE_HTTPS`      | `true`                                    |
 
 **Note:** Render uses `DATABASE_URL` instead of individual DB variables.
 
@@ -110,7 +110,10 @@ The app should already support `DATABASE_URL`. If not, ensure your `src/config/d
 ```javascript
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+  ssl:
+    process.env.NODE_ENV === "production"
+      ? { rejectUnauthorized: false }
+      : false,
 });
 ```
 
@@ -126,6 +129,7 @@ const pool = new Pool({
 After first deployment, you need to initialize the database:
 
 **Option A: Using Render Shell**
+
 1. Go to your web service dashboard
 2. Click **Shell** tab
 3. Run: `npm run setup`
@@ -216,7 +220,12 @@ The app already runs database initialization on startup, so tables should be cre
    sudo -u postgres createuser nofap_user
    sudo -u postgres psql -c "ALTER USER nofap_user WITH PASSWORD 'your_secure_password';"
    sudo -u postgres psql -c "ALTER ROLE nofap_user CREATEDB;"
+
+   # For PostgreSQL 15+: Grant schema permissions (required for table creation)
+   sudo -u postgres psql -d nofap_tracker -c "GRANT ALL ON SCHEMA public TO nofap_user;"
    ```
+
+   > **Note:** PostgreSQL 15+ changed default permissions for the `public` schema. Without the schema grant, you'll get "permission denied for schema public" error.
 
 4. **Clone and setup:**
 
@@ -357,6 +366,16 @@ sudo tail -f /var/log/nginx/access.log
 ## Support & Troubleshooting
 
 ### Common Issues:
+
+**"Permission denied for schema public" error (PostgreSQL 15+):**
+
+This error occurs when running `npm run setup` because PostgreSQL 15+ changed default permissions for the `public` schema.
+
+**Fix:** Grant schema permissions to your database user:
+
+```bash
+sudo -u postgres psql -d your_database_name -c "GRANT ALL ON SCHEMA public TO your_user;"
+```
 
 **Database connection refused:**
 

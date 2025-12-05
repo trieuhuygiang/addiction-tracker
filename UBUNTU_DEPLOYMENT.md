@@ -137,9 +137,15 @@ GRANT ALL PRIVILEGES ON DATABASE addiction_tracker TO tracker_user;
 -- Allow user to create databases (needed for setup)
 ALTER USER tracker_user CREATEDB;
 
+-- For PostgreSQL 15+: Grant schema permissions (required for table creation)
+\c addiction_tracker
+GRANT ALL ON SCHEMA public TO tracker_user;
+
 -- Exit
 \q
 ```
+
+> **Note:** PostgreSQL 15+ changed default permissions for the `public` schema. Without the `GRANT ALL ON SCHEMA public` command, you'll get "permission denied for schema public" error when running `npm run setup`.
 
 ### 5. Test database connection
 

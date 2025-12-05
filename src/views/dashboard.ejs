@@ -449,7 +449,7 @@
                             { text: "How can a young person stay on the path of purity? By living according to your word.", source: "Psalm 119:9", type: "bible" },
                             { text: "But among you there must not be even a hint of sexual immorality, or of any kind of impurity.", source: "Ephesians 5:3", type: "bible" },
                             { text: "For this is the will of God, your sanctification: that you abstain from sexual immorality; that each one of you know how to control his own body in holiness and honor.", source: "1 Thessalonians 4:3-4", type: "bible" },
-                            
+
                             // Saints on Chastity & Purity
                             { text: "Pray, hope, and don't worry. Worry is useless. God is merciful and will hear your prayer.", source: "St. Padre Pio", type: "saint" },
                             { text: "You cannot be half a saint; you must be a whole saint or no saint at all.", source: "St. Thérèse of Lisieux", type: "saint" },
@@ -475,7 +475,7 @@
                             { text: "Chastity is a difficult, long-term matter; one must wait patiently for it to bear fruit, for the happiness of loving kindness which it must bring.", source: "St. Pope John Paul II", type: "saint" },
                             { text: "Lord, grant me chastity and continence, but not yet. [Before his conversion - showing the struggle is real]", source: "St. Augustine (before conversion)", type: "saint" },
                             { text: "Grant me chastity and continence, only not yet... O Lord, help me to be pure, but not yet. [Later:] Too late have I loved You!", source: "St. Augustine", type: "saint" },
-                            
+
                             // Power of the Rosary
                             { text: "The Rosary is the most excellent form of prayer and the most efficacious means of attaining eternal life.", source: "Pope Leo XIII", type: "rosary" },
                             { text: "The Rosary is the weapon for these times.", source: "St. Padre Pio", type: "rosary" },
@@ -495,7 +495,7 @@
                             { text: "The Rosary is the scourge of the devil.", source: "Pope Adrian VI", type: "rosary" },
                             { text: "If you wish peace to reign in your homes, recite the family Rosary.", source: "Pope Pius X", type: "rosary" },
                             { text: "Among all the devotions approved by the Church, none has been so favored by so many miracles as the devotion of the Most Holy Rosary.", source: "Pope Pius IX", type: "rosary" },
-                            
+
                             // Our Lady & Protection
                             { text: "Never be afraid of loving the Blessed Virgin too much. You can never love her more than Jesus did.", source: "St. Maximilian Kolbe", type: "mary" },
                             { text: "If you are in danger, she will hasten to free you. If you are troubled, she will console you. If you are sick, she will bring you relief. If you are in need, she will help you.", source: "St. Bernard of Clairvaux", type: "mary" },
@@ -510,7 +510,7 @@
                             const quote = emergencyQuotes[Math.floor(Math.random() * emergencyQuotes.length)];
                             // Set icon and label based on quote type
                             let icon, typeLabel;
-                            switch(quote.type) {
+                            switch (quote.type) {
                                 case 'bible':
                                     icon = '📖';
                                     typeLabel = 'Bible Verse';
@@ -527,12 +527,12 @@
                                     icon = '✝️';
                                     typeLabel = 'Saint Quote';
                             }
-                            
+
                             // Create modal
                             const modal = document.createElement('div');
                             modal.id = 'emergency-modal';
                             modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 10000; padding: 1rem;';
-                            
+
                             modal.innerHTML = `
                                 <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 2rem; border-radius: 15px; max-width: 500px; width: 100%; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.5); animation: modalFadeIn 0.3s ease;">
                                     <div style="font-size: 3rem; margin-bottom: 1rem;">${icon}</div>
@@ -549,18 +549,18 @@
                                     </div>
                                 </div>
                             `;
-                            
+
                             // Remove existing modal if any
                             const existing = document.getElementById('emergency-modal');
                             if (existing) existing.remove();
-                            
+
                             document.body.appendChild(modal);
-                            
+
                             // Close on background click
                             modal.addEventListener('click', (e) => {
                                 if (e.target === modal) modal.remove();
                             });
-                            
+
                             // Close on Escape key
                             document.addEventListener('keydown', function escHandler(e) {
                                 if (e.key === 'Escape') {
@@ -570,11 +570,18 @@
                             });
                         }
                     </script>
-                    
+
                     <style>
                         @keyframes modalFadeIn {
-                            from { opacity: 0; transform: scale(0.9); }
-                            to { opacity: 1; transform: scale(1); }
+                            from {
+                                opacity: 0;
+                                transform: scale(0.9);
+                            }
+
+                            to {
+                                opacity: 1;
+                                transform: scale(1);
+                            }
                         }
                     </style>
 

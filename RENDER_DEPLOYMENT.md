@@ -7,6 +7,7 @@ This guide walks you through deploying the Addiction Tracker app to [Render](htt
 ## Quick Overview
 
 You'll create:
+
 1. A **PostgreSQL database** (free tier: 1GB, 90 days)
 2. A **Web Service** (free tier: spins down after inactivity)
 
@@ -40,14 +41,14 @@ You'll create:
 
 Fill in the following:
 
-| Field | Value |
-|-------|-------|
-| **Name** | `addiction-tracker-db` |
-| **Database** | `addiction_tracker` |
-| **User** | `tracker_user` (or leave default) |
-| **Region** | Choose closest to your users (e.g., `Oregon (US West)`) |
-| **PostgreSQL Version** | `16` (or latest) |
-| **Plan** | `Free` |
+| Field                  | Value                                                   |
+| ---------------------- | ------------------------------------------------------- |
+| **Name**               | `addiction-tracker-db`                                  |
+| **Database**           | `addiction_tracker`                                     |
+| **User**               | `tracker_user` (or leave default)                       |
+| **Region**             | Choose closest to your users (e.g., `Oregon (US West)`) |
+| **PostgreSQL Version** | `16` (or latest)                                        |
+| **Plan**               | `Free`                                                  |
 
 ### 2.3 Create Database
 
@@ -82,16 +83,16 @@ Fill in the following:
 
 Fill in the following:
 
-| Field | Value |
-|-------|-------|
-| **Name** | `addiction-tracker` |
-| **Region** | Same as your database |
-| **Branch** | `main` |
-| **Root Directory** | (leave empty) |
-| **Runtime** | `Node` |
-| **Build Command** | `npm install` |
-| **Start Command** | `npm start` |
-| **Plan** | `Free` |
+| Field              | Value                 |
+| ------------------ | --------------------- |
+| **Name**           | `addiction-tracker`   |
+| **Region**         | Same as your database |
+| **Branch**         | `main`                |
+| **Root Directory** | (leave empty)         |
+| **Runtime**        | `Node`                |
+| **Build Command**  | `npm install`         |
+| **Start Command**  | `npm start`           |
+| **Plan**           | `Free`                |
 
 ### 3.4 Add Environment Variables
 
@@ -99,12 +100,12 @@ Scroll down to **Environment Variables** and click **Add Environment Variable**.
 
 Add these variables:
 
-| Key | Value |
-|-----|-------|
-| `NODE_ENV` | `production` |
-| `DATABASE_URL` | (paste the Internal Database URL from Step 2.4) |
-| `SESSION_SECRET` | (any random text - see examples below) |
-| `USE_HTTPS` | `true` |
+| Key              | Value                                           |
+| ---------------- | ----------------------------------------------- |
+| `NODE_ENV`       | `production`                                    |
+| `DATABASE_URL`   | (paste the Internal Database URL from Step 2.4) |
+| `SESSION_SECRET` | (any random text - see examples below)          |
+| `USE_HTTPS`      | `true`                                          |
 
 #### What is SESSION_SECRET?
 
@@ -125,6 +126,7 @@ JustTypeAnythingRandomHere12345!@#
 ```
 
 **Or generate one online:**
+
 - Go to [randomkeygen.com](https://randomkeygen.com)
 - Scroll to "CodeIgniter Encryption Keys"
 - Copy any key
@@ -144,6 +146,7 @@ Just pick something random and paste it as the value!
 ### 4.1 Check Build Logs
 
 Watch for these success indicators:
+
 ```
 ==> Build successful 🎉
 ==> Deploying...
@@ -173,6 +176,7 @@ Database pool connected
 **Error:** `Connection refused` or `Database not found`
 
 **Solution:**
+
 1. Make sure you used the **Internal Database URL** (not External)
 2. Verify the DATABASE_URL is correct in environment variables
 3. Check that the database is in the same region as the web service
@@ -180,11 +184,13 @@ Database pool connected
 ### App Shows Error Page
 
 **Check logs:**
+
 1. Go to your web service dashboard
 2. Click **Logs** tab
 3. Look for error messages
 
 **Common fixes:**
+
 - Verify all environment variables are set correctly
 - Make sure SESSION_SECRET is set
 - Redeploy by clicking **Manual Deploy** → **Deploy latest commit**
@@ -194,6 +200,7 @@ Database pool connected
 This is normal on the free tier. The app "spins down" after 15 minutes of inactivity and takes ~30 seconds to spin back up.
 
 **Solutions:**
+
 - Upgrade to a paid plan ($7/month) for always-on service
 - Use a service like [UptimeRobot](https://uptimerobot.com) to ping your app every 14 minutes (keeps it awake)
 
@@ -202,6 +209,7 @@ This is normal on the free tier. The app "spins down" after 15 minutes of inacti
 Free databases expire after 90 days.
 
 **Solution:**
+
 1. Create a new database
 2. Update the DATABASE_URL in your web service
 3. Redeploy
@@ -223,8 +231,8 @@ Or upgrade to a paid database plan.
 
 Add these DNS records at your domain provider:
 
-| Type | Name | Value |
-|------|------|-------|
+| Type    | Name      | Value                            |
+| ------- | --------- | -------------------------------- |
 | `CNAME` | `tracker` | `addiction-tracker.onrender.com` |
 
 For root domain (`yourdomain.com`):
@@ -260,13 +268,13 @@ Now every push to `main` branch will trigger a new deployment.
 
 ## Environment Variables Reference
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `NODE_ENV` | Yes | Set to `production` |
-| `DATABASE_URL` | Yes | PostgreSQL connection string |
-| `SESSION_SECRET` | Yes | Random string for session encryption |
-| `USE_HTTPS` | Yes | Set to `true` for Render |
-| `PORT` | No | Render sets this automatically |
+| Variable         | Required | Description                          |
+| ---------------- | -------- | ------------------------------------ |
+| `NODE_ENV`       | Yes      | Set to `production`                  |
+| `DATABASE_URL`   | Yes      | PostgreSQL connection string         |
+| `SESSION_SECRET` | Yes      | Random string for session encryption |
+| `USE_HTTPS`      | Yes      | Set to `true` for Render             |
+| `PORT`           | No       | Render sets this automatically       |
 
 ---
 
@@ -274,18 +282,18 @@ Now every push to `main` branch will trigger a new deployment.
 
 ### Free Tier Limits
 
-| Resource | Limit |
-|----------|-------|
+| Resource    | Limit                                    |
+| ----------- | ---------------------------------------- |
 | Web Service | 750 hours/month, spins down after 15 min |
-| PostgreSQL | 1GB storage, expires after 90 days |
-| Bandwidth | 100GB/month |
+| PostgreSQL  | 1GB storage, expires after 90 days       |
+| Bandwidth   | 100GB/month                              |
 
 ### Paid Plans (Optional)
 
-| Plan | Web Service | Database |
-|------|-------------|----------|
-| Starter | $7/month (always on) | $7/month (persistent) |
-| Standard | $25/month | $20/month |
+| Plan     | Web Service          | Database              |
+| -------- | -------------------- | --------------------- |
+| Starter  | $7/month (always on) | $7/month (persistent) |
+| Standard | $25/month            | $20/month             |
 
 ---
 
@@ -300,15 +308,19 @@ Now every push to `main` branch will trigger a new deployment.
 ## Quick Commands
 
 ### Check if app is running
+
 Visit your app URL or check the Render dashboard.
 
 ### View logs
+
 Go to your web service → **Logs** tab
 
 ### Restart service
+
 Go to your web service → **Manual Deploy** → **Clear build cache & deploy**
 
 ### Connect to database (advanced)
+
 Use the **External Database URL** with a PostgreSQL client like pgAdmin or DBeaver.
 
 ---

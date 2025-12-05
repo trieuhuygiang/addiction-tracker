@@ -31,6 +31,7 @@ const autoInitialize = async () => {
     await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token VARCHAR(255);`);
     await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token_expiry TIMESTAMP;`);
     await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS is_admin BOOLEAN DEFAULT FALSE;`);
+    await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS clock_start TIMESTAMP;`);
     
     // Make email nullable if it's not already
     await client.query(`ALTER TABLE users ALTER COLUMN email DROP NOT NULL;`).catch(() => {});
@@ -63,6 +64,18 @@ const autoInitialize = async () => {
         streak_days INT NOT NULL,
         start_date DATE,
         end_date DATE NOT NULL,
+        created_at TIMESTAMP DEFAULT NOW()
+      );
+    `);
+
+    // Create clock_history table for rewiring day counter
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS clock_history (
+        id SERIAL PRIMARY KEY,
+        user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        duration_seconds INT NOT NULL,
+        start_time TIMESTAMP NOT NULL,
+        end_time TIMESTAMP NOT NULL,
         created_at TIMESTAMP DEFAULT NOW()
       );
     `);

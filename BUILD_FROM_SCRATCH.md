@@ -31,6 +31,7 @@ Before starting, ensure you have:
 - **Text Editor** (VS Code recommended)
 
 Verify installations:
+
 ```bash
 node --version    # Should show v18.x.x or higher
 npm --version     # Should show 9.x.x or higher
@@ -115,12 +116,14 @@ PostgreSQL is a powerful, open-source relational database. Here's what you need 
 ### Step 1: Install PostgreSQL
 
 **On Ubuntu/Debian:**
+
 ```bash
 sudo apt update
 sudo apt install postgresql postgresql-contrib
 ```
 
 **On macOS (using Homebrew):**
+
 ```bash
 brew install postgresql@14
 brew services start postgresql@14
@@ -191,6 +194,7 @@ Enter the password when prompted. If successful, you'll see the database prompt.
 Our application uses 4 main tables:
 
 #### 1. `users` Table
+
 Stores user account information.
 
 ```sql
@@ -208,6 +212,7 @@ CREATE TABLE users (
 ```
 
 #### 2. `entries` Table
+
 Stores daily check-in entries.
 
 ```sql
@@ -227,6 +232,7 @@ CREATE INDEX idx_entries_user_date ON entries(user_id, date DESC);
 ```
 
 #### 3. `streak_history` Table
+
 Tracks completed streaks.
 
 ```sql
@@ -241,6 +247,7 @@ CREATE TABLE streak_history (
 ```
 
 #### 4. `clock_history` Table
+
 Tracks rewiring counter resets.
 
 ```sql
@@ -255,6 +262,7 @@ CREATE TABLE clock_history (
 ```
 
 #### 5. `session` Table
+
 Stores user sessions (managed by connect-pg-simple).
 
 ```sql
@@ -328,6 +336,7 @@ addiction-tracker/
 ```
 
 Create directories:
+
 ```bash
 mkdir -p src/{config,middleware,models,routes,utils,views/partials,public/{css,js}}
 ```
@@ -389,15 +398,18 @@ Thumbs.db
 ### Step 3: Create Database Connection (src/config/db.js)
 
 ```javascript
-const { Pool } = require('pg');
-require('dotenv').config();
+const { Pool } = require("pg");
+require("dotenv").config();
 
 // Create a connection pool
 // Support both DATABASE_URL (for cloud) and individual env vars (for local)
-const pool = process.env.DATABASE_URL 
+const pool = process.env.DATABASE_URL
   ? new Pool({
       connectionString: process.env.DATABASE_URL,
-      ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+      ssl:
+        process.env.NODE_ENV === "production"
+          ? { rejectUnauthorized: false }
+          : false,
     })
   : new Pool({
       host: process.env.DB_HOST,
@@ -408,12 +420,12 @@ const pool = process.env.DATABASE_URL
     });
 
 // Test the connection
-pool.on('connect', () => {
-  console.log('Database pool connected');
+pool.on("connect", () => {
+  console.log("Database pool connected");
 });
 
-pool.on('error', (err) => {
-  console.error('Unexpected error on idle client', err);
+pool.on("error", (err) => {
+  console.error("Unexpected error on idle client", err);
 });
 
 // Query helper function
@@ -432,14 +444,14 @@ module.exports = {
 This file automatically creates tables when the server starts:
 
 ```javascript
-const { pool } = require('./db');
-const bcrypt = require('bcrypt');
+const { pool } = require("./db");
+const bcrypt = require("bcrypt");
 
 const autoInitialize = async () => {
   const client = await pool.connect();
 
   try {
-    console.log('Checking database tables...');
+    console.log("Checking database tables...");
 
     // Create users table
     await client.query(`
@@ -511,22 +523,22 @@ const autoInitialize = async () => {
 
     // Create admin user if not exists
     const adminCheck = await client.query(
-      'SELECT id FROM users WHERE username = $1',
-      ['admin']
+      "SELECT id FROM users WHERE username = $1",
+      ["admin"]
     );
 
     if (adminCheck.rows.length === 0) {
-      const hashedPassword = await bcrypt.hash('admin123', 10);
+      const hashedPassword = await bcrypt.hash("admin123", 10);
       await client.query(
-        'INSERT INTO users (username, password_hash, is_admin) VALUES ($1, $2, $3)',
-        ['admin', hashedPassword, true]
+        "INSERT INTO users (username, password_hash, is_admin) VALUES ($1, $2, $3)",
+        ["admin", hashedPassword, true]
       );
-      console.log('✓ Admin user created (username: admin, password: admin123)');
+      console.log("✓ Admin user created (username: admin, password: admin123)");
     }
 
-    console.log('✓ Database tables ready');
+    console.log("✓ Database tables ready");
   } catch (error) {
-    console.error('Auto-init error:', error.message);
+    console.error("Auto-init error:", error.message);
   } finally {
     client.release();
   }
@@ -542,13 +554,13 @@ module.exports = autoInitialize;
 ### User Model (src/models/User.js)
 
 ```javascript
-const { query } = require('../config/db');
+const { query } = require("../config/db");
 
 class User {
   // Create a new user
   static async create(email, username, passwordHash) {
     const result = await query(
-      'INSERT INTO users (email, username, password_hash) VALUES ($1, $2, $3) RETURNING id, email, username, created_at',
+      "INSERT INTO users (email, username, password_hash) VALUES ($1, $2, $3) RETURNING id, email, username, created_at",
       [email, username, passwordHash]
     );
     return result.rows[0];
@@ -556,17 +568,16 @@ class User {
 
   // Find user by username
   static async findByUsername(username) {
-    const result = await query(
-      'SELECT * FROM users WHERE username = $1',
-      [username]
-    );
+    const result = await query("SELECT * FROM users WHERE username = $1", [
+      username,
+    ]);
     return result.rows[0];
   }
 
   // Find user by id
   static async findById(id) {
     const result = await query(
-      'SELECT id, email, username, created_at, clock_start FROM users WHERE id = $1',
+      "SELECT id, email, username, created_at, clock_start FROM users WHERE id = $1",
       [id]
     );
     return result.rows[0];
@@ -586,7 +597,9 @@ class User {
 
     values.push(id);
     const result = await query(
-      `UPDATE users SET ${fields.join(', ')} WHERE id = $${paramCount} RETURNING *`,
+      `UPDATE users SET ${fields.join(
+        ", "
+      )} WHERE id = $${paramCount} RETURNING *`,
       values
     );
     return result.rows[0];
@@ -595,7 +608,7 @@ class User {
   // Get all users (admin only)
   static async getAll() {
     const result = await query(
-      'SELECT id, email, username, is_admin, created_at FROM users ORDER BY created_at DESC'
+      "SELECT id, email, username, is_admin, created_at FROM users ORDER BY created_at DESC"
     );
     return result.rows;
   }
@@ -607,13 +620,13 @@ module.exports = User;
 ### Entry Model (src/models/Entry.js)
 
 ```javascript
-const { query } = require('../config/db');
+const { query } = require("../config/db");
 
 class Entry {
   // Create a new entry
   static async create(userId, date, hadSlip, note = null) {
     const result = await query(
-      'INSERT INTO entries (user_id, date, had_leakage, note) VALUES ($1, $2, $3, $4) RETURNING *',
+      "INSERT INTO entries (user_id, date, had_leakage, note) VALUES ($1, $2, $3, $4) RETURNING *",
       [userId, date, hadSlip, note]
     );
     return result.rows[0];
@@ -622,7 +635,7 @@ class Entry {
   // Find entry by user and date
   static async findByUserAndDate(userId, date) {
     const result = await query(
-      'SELECT * FROM entries WHERE user_id = $1 AND date = $2',
+      "SELECT * FROM entries WHERE user_id = $1 AND date = $2",
       [userId, date]
     );
     return result.rows[0];
@@ -631,7 +644,7 @@ class Entry {
   // Get all entries for a user
   static async findByUser(userId) {
     const result = await query(
-      'SELECT * FROM entries WHERE user_id = $1 ORDER BY date DESC',
+      "SELECT * FROM entries WHERE user_id = $1 ORDER BY date DESC",
       [userId]
     );
     return result.rows;
@@ -640,7 +653,7 @@ class Entry {
   // Update an entry
   static async update(entryId, hadSlip, note = null) {
     const result = await query(
-      'UPDATE entries SET had_leakage = $1, note = $2, updated_at = NOW() WHERE id = $3 RETURNING *',
+      "UPDATE entries SET had_leakage = $1, note = $2, updated_at = NOW() WHERE id = $3 RETURNING *",
       [hadSlip, note, entryId]
     );
     return result.rows[0];
@@ -649,7 +662,7 @@ class Entry {
   // Delete an entry
   static async delete(entryId) {
     const result = await query(
-      'DELETE FROM entries WHERE id = $1 RETURNING id',
+      "DELETE FROM entries WHERE id = $1 RETURNING id",
       [entryId]
     );
     return result.rows[0];
@@ -669,7 +682,7 @@ module.exports = Entry;
 // Middleware to check if user is logged in
 const requireLogin = (req, res, next) => {
   if (!req.session.userId) {
-    return res.redirect('/login');
+    return res.redirect("/login");
   }
   next();
 };
@@ -677,7 +690,7 @@ const requireLogin = (req, res, next) => {
 // Middleware to check if user is not logged in
 const requireLogout = (req, res, next) => {
   if (req.session.userId) {
-    return res.redirect('/dashboard');
+    return res.redirect("/dashboard");
   }
   next();
 };
@@ -685,12 +698,12 @@ const requireLogout = (req, res, next) => {
 // Middleware to check if user is admin
 const requireAdmin = (req, res, next) => {
   if (!req.session.userId) {
-    return res.redirect('/login');
+    return res.redirect("/login");
   }
   if (!req.session.isAdmin) {
-    return res.status(403).render('error', {
-      title: 'Access Denied',
-      message: 'You do not have permission to access this page.'
+    return res.status(403).render("error", {
+      title: "Access Denied",
+      message: "You do not have permission to access this page.",
     });
   }
   next();
@@ -720,37 +733,37 @@ module.exports = {
 ### Auth Routes (src/routes/auth.js)
 
 ```javascript
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const bcrypt = require('bcrypt');
-const User = require('../models/User');
-const { requireLogout } = require('../middleware/auth');
+const bcrypt = require("bcrypt");
+const User = require("../models/User");
+const { requireLogout } = require("../middleware/auth");
 
 // GET /login
-router.get('/login', requireLogout, (req, res) => {
-  res.render('login', { title: 'Login', error: null });
+router.get("/login", requireLogout, (req, res) => {
+  res.render("login", { title: "Login", error: null });
 });
 
 // POST /login
-router.post('/login', requireLogout, async (req, res) => {
+router.post("/login", requireLogout, async (req, res) => {
   const { username, password } = req.body;
 
   try {
     const user = await User.findByUsername(username);
 
     if (!user) {
-      return res.render('login', { 
-        title: 'Login', 
-        error: 'Invalid username or password' 
+      return res.render("login", {
+        title: "Login",
+        error: "Invalid username or password",
       });
     }
 
     const validPassword = await bcrypt.compare(password, user.password_hash);
 
     if (!validPassword) {
-      return res.render('login', { 
-        title: 'Login', 
-        error: 'Invalid username or password' 
+      return res.render("login", {
+        title: "Login",
+        error: "Invalid username or password",
       });
     }
 
@@ -758,38 +771,38 @@ router.post('/login', requireLogout, async (req, res) => {
     req.session.userId = user.id;
     req.session.isAdmin = user.is_admin;
 
-    res.redirect('/dashboard');
+    res.redirect("/dashboard");
   } catch (error) {
-    console.error('Login error:', error);
-    res.render('login', { 
-      title: 'Login', 
-      error: 'An error occurred. Please try again.' 
+    console.error("Login error:", error);
+    res.render("login", {
+      title: "Login",
+      error: "An error occurred. Please try again.",
     });
   }
 });
 
 // GET /signup
-router.get('/signup', requireLogout, (req, res) => {
-  res.render('signup', { title: 'Sign Up', error: null });
+router.get("/signup", requireLogout, (req, res) => {
+  res.render("signup", { title: "Sign Up", error: null });
 });
 
 // POST /signup
-router.post('/signup', requireLogout, async (req, res) => {
+router.post("/signup", requireLogout, async (req, res) => {
   const { username, password, confirmPassword } = req.body;
 
   if (password !== confirmPassword) {
-    return res.render('signup', { 
-      title: 'Sign Up', 
-      error: 'Passwords do not match' 
+    return res.render("signup", {
+      title: "Sign Up",
+      error: "Passwords do not match",
     });
   }
 
   try {
     const existingUser = await User.findByUsername(username);
     if (existingUser) {
-      return res.render('signup', { 
-        title: 'Sign Up', 
-        error: 'Username already exists' 
+      return res.render("signup", {
+        title: "Sign Up",
+        error: "Username already exists",
       });
     }
 
@@ -797,23 +810,23 @@ router.post('/signup', requireLogout, async (req, res) => {
     const user = await User.create(null, username, hashedPassword);
 
     req.session.userId = user.id;
-    res.redirect('/dashboard');
+    res.redirect("/dashboard");
   } catch (error) {
-    console.error('Signup error:', error);
-    res.render('signup', { 
-      title: 'Sign Up', 
-      error: 'An error occurred. Please try again.' 
+    console.error("Signup error:", error);
+    res.render("signup", {
+      title: "Sign Up",
+      error: "An error occurred. Please try again.",
     });
   }
 });
 
 // GET /logout
-router.get('/logout', (req, res) => {
+router.get("/logout", (req, res) => {
   req.session.destroy((err) => {
     if (err) {
-      console.error('Logout error:', err);
+      console.error("Logout error:", err);
     }
-    res.redirect('/');
+    res.redirect("/");
   });
 });
 
@@ -827,98 +840,104 @@ module.exports = router;
 ### Server Entry Point (src/server.js)
 
 ```javascript
-require('dotenv').config();
-const app = require('./app');
-const autoInitialize = require('./config/autoInit');
+require("dotenv").config();
+const app = require("./app");
+const autoInitialize = require("./config/autoInit");
 
 const PORT = process.env.PORT || 3000;
 
 // Initialize database tables then start server
-autoInitialize().then(() => {
-  app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-    console.log(`Environment: ${process.env.NODE_ENV}`);
+autoInitialize()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+      console.log(`Environment: ${process.env.NODE_ENV}`);
+    });
+  })
+  .catch((err) => {
+    console.error("Failed to initialize:", err);
+    process.exit(1);
   });
-}).catch((err) => {
-  console.error('Failed to initialize:', err);
-  process.exit(1);
-});
 ```
 
 ### Express App (src/app.js)
 
 ```javascript
-require('dotenv').config();
-const express = require('express');
-const path = require('path');
-const session = require('express-session');
-const pgSession = require('connect-pg-simple')(session);
-const cookieParser = require('cookie-parser');
-const { pool } = require('./config/db');
-const { requireLogin, setUserData } = require('./middleware/auth');
-const authRoutes = require('./routes/auth');
+require("dotenv").config();
+const express = require("express");
+const path = require("path");
+const session = require("express-session");
+const pgSession = require("connect-pg-simple")(session);
+const cookieParser = require("cookie-parser");
+const { pool } = require("./config/db");
+const { requireLogin, setUserData } = require("./middleware/auth");
+const authRoutes = require("./routes/auth");
 
 const app = express();
 
 // View engine setup
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, "public")));
 app.use(cookieParser());
 
 // Trust proxy for production (Render, Heroku, etc.)
-if (process.env.NODE_ENV === 'production') {
-  app.set('trust proxy', 1);
+if (process.env.NODE_ENV === "production") {
+  app.set("trust proxy", 1);
 }
 
 // Session configuration with PostgreSQL store
-app.use(session({
-  store: new pgSession({
-    pool: pool,
-    tableName: 'session'
-  }),
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  cookie: { 
-    secure: process.env.NODE_ENV === 'production' && process.env.USE_HTTPS === 'true',
-    httpOnly: true,
-    sameSite: 'lax',
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
-  }
-}));
+app.use(
+  session({
+    store: new pgSession({
+      pool: pool,
+      tableName: "session",
+    }),
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure:
+        process.env.NODE_ENV === "production" &&
+        process.env.USE_HTTPS === "true",
+      httpOnly: true,
+      sameSite: "lax",
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    },
+  })
+);
 
 // User data middleware
 app.use(setUserData);
 
 // Routes
-app.get('/', (req, res) => {
-  res.render('index', { title: 'Addiction Tracker' });
+app.get("/", (req, res) => {
+  res.render("index", { title: "Addiction Tracker" });
 });
 
 // Auth routes
-app.use('/', authRoutes);
+app.use("/", authRoutes);
 
 // Dashboard (protected)
-app.get('/dashboard', requireLogin, async (req, res) => {
-  res.render('dashboard', { title: 'Dashboard' });
+app.get("/dashboard", requireLogin, async (req, res) => {
+  res.render("dashboard", { title: "Dashboard" });
 });
 
 // 404 handler
 app.use((req, res) => {
-  res.status(404).render('404', { title: 'Page Not Found' });
+  res.status(404).render("404", { title: "Page Not Found" });
 });
 
 // Error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).render('error', { 
-    title: 'Error', 
-    message: 'Something went wrong!' 
+  res.status(500).render("error", {
+    title: "Error",
+    message: "Something went wrong!",
   });
 });
 
@@ -934,30 +953,32 @@ module.exports = app;
 ```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%= title %> | Addiction Tracker</title>
-    <link rel="stylesheet" href="/css/style.css">
-</head>
-<body>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
     <nav class="navbar">
-        <div class="nav-brand">
-            <a href="/">🎯 Addiction Tracker</a>
-        </div>
-        <div class="nav-links">
-            <% if (isAuthenticated) { %>
-                <a href="/dashboard">Dashboard</a>
-                <a href="/entries">Entries</a>
-                <a href="/calendar">Calendar</a>
-                <a href="/logout">Logout</a>
-            <% } else { %>
-                <a href="/login">Login</a>
-                <a href="/signup">Sign Up</a>
-            <% } %>
-        </div>
+      <div class="nav-brand">
+        <a href="/">🎯 Addiction Tracker</a>
+      </div>
+      <div class="nav-links">
+        <% if (isAuthenticated) { %>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/entries">Entries</a>
+        <a href="/calendar">Calendar</a>
+        <a href="/logout">Logout</a>
+        <% } else { %>
+        <a href="/login">Login</a>
+        <a href="/signup">Sign Up</a>
+        <% } %>
+      </div>
     </nav>
-    <main class="container">
+    <main class="container"></main>
+  </body>
+</html>
 ```
 
 ### Layout Partial - Footer (src/views/partials/footer.ejs)
@@ -978,32 +999,34 @@ module.exports = app;
 <%- include('partials/header') %>
 
 <div class="hero">
-    <h1>🎯 Track Your Recovery Journey</h1>
-    <p>A simple, private tool to help you stay accountable and see your progress.</p>
-    
-    <% if (!isAuthenticated) { %>
-        <div class="hero-buttons">
-            <a href="/signup" class="btn btn-primary">Get Started</a>
-            <a href="/login" class="btn btn-secondary">Login</a>
-        </div>
-    <% } else { %>
-        <a href="/dashboard" class="btn btn-primary">Go to Dashboard</a>
-    <% } %>
+  <h1>🎯 Track Your Recovery Journey</h1>
+  <p>
+    A simple, private tool to help you stay accountable and see your progress.
+  </p>
+
+  <% if (!isAuthenticated) { %>
+  <div class="hero-buttons">
+    <a href="/signup" class="btn btn-primary">Get Started</a>
+    <a href="/login" class="btn btn-secondary">Login</a>
+  </div>
+  <% } else { %>
+  <a href="/dashboard" class="btn btn-primary">Go to Dashboard</a>
+  <% } %>
 </div>
 
 <div class="features">
-    <div class="feature-card">
-        <h3>📊 Track Daily</h3>
-        <p>Log your daily check-ins with optional notes</p>
-    </div>
-    <div class="feature-card">
-        <h3>🔥 Build Streaks</h3>
-        <p>Watch your streak grow day by day</p>
-    </div>
-    <div class="feature-card">
-        <h3>📅 Calendar View</h3>
-        <p>See your progress at a glance</p>
-    </div>
+  <div class="feature-card">
+    <h3>📊 Track Daily</h3>
+    <p>Log your daily check-ins with optional notes</p>
+  </div>
+  <div class="feature-card">
+    <h3>🔥 Build Streaks</h3>
+    <p>Watch your streak grow day by day</p>
+  </div>
+  <div class="feature-card">
+    <h3>📅 Calendar View</h3>
+    <p>See your progress at a glance</p>
+  </div>
 </div>
 
 <%- include('partials/footer') %>
@@ -1015,27 +1038,27 @@ module.exports = app;
 <%- include('partials/header') %>
 
 <div class="auth-container">
-    <h2>Login</h2>
-    
-    <% if (error) { %>
-        <div class="alert alert-error"><%= error %></div>
-    <% } %>
-    
-    <form action="/login" method="POST">
-        <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username" required>
-        </div>
-        
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" required>
-        </div>
-        
-        <button type="submit" class="btn btn-primary">Login</button>
-    </form>
-    
-    <p class="auth-link">Don't have an account? <a href="/signup">Sign up</a></p>
+  <h2>Login</h2>
+
+  <% if (error) { %>
+  <div class="alert alert-error"><%= error %></div>
+  <% } %>
+
+  <form action="/login" method="POST">
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" required />
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Login</button>
+  </form>
+
+  <p class="auth-link">Don't have an account? <a href="/signup">Sign up</a></p>
 </div>
 
 <%- include('partials/footer') %>
@@ -1049,188 +1072,188 @@ module.exports = app;
 
 ```css
 :root {
-    --primary: #667eea;
-    --primary-dark: #5a67d8;
-    --success: #48bb78;
-    --danger: #e94560;
-    --warning: #ecc94b;
-    --bg-dark: #0f0f23;
-    --bg-card: #1a1a2e;
-    --text-light: #e4e4e4;
-    --text-muted: #888;
+  --primary: #667eea;
+  --primary-dark: #5a67d8;
+  --success: #48bb78;
+  --danger: #e94560;
+  --warning: #ecc94b;
+  --bg-dark: #0f0f23;
+  --bg-card: #1a1a2e;
+  --text-light: #e4e4e4;
+  --text-muted: #888;
 }
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: var(--bg-dark);
-    color: var(--text-light);
-    min-height: 100vh;
-    line-height: 1.6;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--bg-dark);
+  color: var(--text-light);
+  min-height: 100vh;
+  line-height: 1.6;
 }
 
 .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
 }
 
 /* Navigation */
 .navbar {
-    background: var(--bg-card);
-    padding: 1rem 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+  background: var(--bg-card);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .nav-brand a {
-    color: var(--primary);
-    text-decoration: none;
-    font-size: 1.5rem;
-    font-weight: bold;
+  color: var(--primary);
+  text-decoration: none;
+  font-size: 1.5rem;
+  font-weight: bold;
 }
 
 .nav-links a {
-    color: var(--text-light);
-    text-decoration: none;
-    margin-left: 1.5rem;
-    transition: color 0.3s;
+  color: var(--text-light);
+  text-decoration: none;
+  margin-left: 1.5rem;
+  transition: color 0.3s;
 }
 
 .nav-links a:hover {
-    color: var(--primary);
+  color: var(--primary);
 }
 
 /* Buttons */
 .btn {
-    display: inline-block;
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1rem;
-    text-decoration: none;
-    transition: all 0.3s;
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: all 0.3s;
 }
 
 .btn-primary {
-    background: var(--primary);
-    color: white;
+  background: var(--primary);
+  color: white;
 }
 
 .btn-primary:hover {
-    background: var(--primary-dark);
-    transform: translateY(-2px);
+  background: var(--primary-dark);
+  transform: translateY(-2px);
 }
 
 .btn-secondary {
-    background: transparent;
-    border: 2px solid var(--primary);
-    color: var(--primary);
+  background: transparent;
+  border: 2px solid var(--primary);
+  color: var(--primary);
 }
 
 /* Forms */
 .auth-container {
-    max-width: 400px;
-    margin: 3rem auto;
-    background: var(--bg-card);
-    padding: 2rem;
-    border-radius: 12px;
+  max-width: 400px;
+  margin: 3rem auto;
+  background: var(--bg-card);
+  padding: 2rem;
+  border-radius: 12px;
 }
 
 .form-group {
-    margin-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: var(--text-muted);
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-muted);
 }
 
 .form-group input {
-    width: 100%;
-    padding: 0.75rem;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 8px;
-    color: var(--text-light);
-    font-size: 1rem;
+  width: 100%;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: var(--text-light);
+  font-size: 1rem;
 }
 
 .form-group input:focus {
-    outline: none;
-    border-color: var(--primary);
+  outline: none;
+  border-color: var(--primary);
 }
 
 /* Alerts */
 .alert {
-    padding: 1rem;
-    border-radius: 8px;
-    margin-bottom: 1rem;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
 }
 
 .alert-error {
-    background: rgba(233, 69, 96, 0.2);
-    color: var(--danger);
-    border: 1px solid var(--danger);
+  background: rgba(233, 69, 96, 0.2);
+  color: var(--danger);
+  border: 1px solid var(--danger);
 }
 
 /* Hero Section */
 .hero {
-    text-align: center;
-    padding: 4rem 2rem;
+  text-align: center;
+  padding: 4rem 2rem;
 }
 
 .hero h1 {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
 }
 
 .hero p {
-    color: var(--text-muted);
-    font-size: 1.2rem;
-    margin-bottom: 2rem;
+  color: var(--text-muted);
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
 }
 
 .hero-buttons {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
 }
 
 /* Features */
 .features {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
-    margin-top: 3rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
 }
 
 .feature-card {
-    background: var(--bg-card);
-    padding: 2rem;
-    border-radius: 12px;
-    text-align: center;
+  background: var(--bg-card);
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: center;
 }
 
 .feature-card h3 {
-    margin-bottom: 1rem;
+  margin-bottom: 1rem;
 }
 
 /* Footer */
 .footer {
-    text-align: center;
-    padding: 2rem;
-    color: var(--text-muted);
-    margin-top: 3rem;
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-muted);
+  margin-top: 3rem;
 }
 ```
 
@@ -1308,16 +1331,17 @@ git push -u origin main
 
 In Render dashboard, add these environment variables:
 
-| Key | Value |
-|-----|-------|
-| `DATABASE_URL` | (paste Internal Database URL) |
-| `NODE_ENV` | `production` |
+| Key              | Value                                    |
+| ---------------- | ---------------------------------------- |
+| `DATABASE_URL`   | (paste Internal Database URL)            |
+| `NODE_ENV`       | `production`                             |
 | `SESSION_SECRET` | (generate a random 32+ character string) |
-| `USE_HTTPS` | `false` |
+| `USE_HTTPS`      | `false`                                  |
 
 ### Step 6: Deploy
 
 Click "Create Web Service". Render will:
+
 1. Pull your code from GitHub
 2. Run `npm install`
 3. Run `npm start`

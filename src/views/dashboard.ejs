@@ -333,6 +333,32 @@
                                 </div>
                             </div>
 
+                            <!-- Rank Display -->
+                            <div id="rank-display"
+                                style="margin-bottom: 1.5rem; padding: 1rem; background: rgba(102, 126, 234, 0.1); border-radius: 12px; border: 2px solid rgba(102, 126, 234, 0.3);">
+                                <div
+                                    style="display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+                                    <div id="rank-icon" style="font-size: 3rem;">🌱</div>
+                                    <div style="text-align: left;">
+                                        <div id="rank-title"
+                                            style="font-size: 1.4rem; font-weight: bold; color: #667eea;">Seedling</div>
+                                        <div id="rank-subtitle" style="color: #888; font-size: 0.85rem;">Beginning your
+                                            journey</div>
+                                    </div>
+                                </div>
+                                <div style="margin-top: 1rem;">
+                                    <div id="rank-progress-container"
+                                        style="background: rgba(0,0,0,0.3); border-radius: 10px; height: 12px; overflow: hidden;">
+                                        <div id="rank-progress-bar"
+                                            style="height: 100%; background: linear-gradient(90deg, #667eea, #e94560); border-radius: 10px; transition: width 0.5s ease; width: 0%;">
+                                        </div>
+                                    </div>
+                                    <div id="rank-progress-text"
+                                        style="color: #888; font-size: 0.8rem; margin-top: 0.5rem;">0 days to next rank
+                                    </div>
+                                </div>
+                            </div>
+
                             <form method="POST" action="/clock/reset" id="clock-reset-form" style="display: inline;">
                                 <button type="submit"
                                     onclick="return confirm('⚠️ Are you sure you want to reset your NoFap counter? This will save your current streak to history.');"
@@ -388,15 +414,39 @@
                                 </button>
                                 <% } %>
 
-                                    <div style="margin-top: 1rem;">
+                                    <div
+                                        style="margin-top: 1rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
                                         <a href="/clock-history"
                                             style="color: #667eea; text-decoration: none; font-size: 0.9rem;">
                                             📜 View Rewiring History
+                                        </a>
+                                        <span style="color: #444;">|</span>
+                                        <a href="#" onclick="showRankingSystem(); return false;"
+                                            style="color: #e94560; text-decoration: none; font-size: 0.9rem;">
+                                            🏆 View All Ranks
                                         </a>
                                     </div>
                     </div>
 
                     <script>
+                        // Semen Retention Ranks - Legendary Names (Global scope for access by showRankingSystem)
+                        const ranks = [
+                            { days: 0, icon: '🌑', title: 'The Fallen', subtitle: 'Rise from the ashes', color: '#666666' },
+                            { days: 7, icon: '🌒', title: 'The Awakened', subtitle: 'First week - The fog begins to lift', color: '#8BC34A' },
+                            { days: 14, icon: '🌓', title: 'The Initiate', subtitle: 'Two weeks - Your will grows stronger', color: '#4CAF50' },
+                            { days: 30, icon: '⚔️', title: 'Spartan Warrior', subtitle: '30 days - Forged in discipline', color: '#FF9800' },
+                            { days: 60, icon: '🔥', title: 'Phoenix Rising', subtitle: '60 days - Reborn from flames', color: '#FF5722' },
+                            { days: 90, icon: '🦁', title: 'The Conqueror', subtitle: '90 days - Brain reboot complete!', color: '#E91E63' },
+                            { days: 120, icon: '🐉', title: 'Dragon Slayer', subtitle: '120 days - Master of inner demons', color: '#9C27B0' },
+                            { days: 150, icon: '👑', title: 'The Sovereign', subtitle: '150 days - Ruler of your domain', color: '#673AB7' },
+                            { days: 180, icon: '🏛️', title: 'Titan of Will', subtitle: '180 days - Half year of iron resolve', color: '#3F51B5' },
+                            { days: 270, icon: '💎', title: 'Diamond Mind', subtitle: '270 days - Unshatterable spirit', color: '#00BCD4' },
+                            { days: 365, icon: '⭐', title: 'The Transcendent', subtitle: '1 Year - Beyond mortal desires', color: '#FFD700' },
+                            { days: 500, icon: '☀️', title: 'Solar Emperor', subtitle: '500 days - Radiating divine energy', color: '#FFA000' },
+                            { days: 730, icon: '🔱', title: 'The Immortal', subtitle: '2 Years - Legend walks among men', color: '#E040FB' },
+                            { days: 1000, icon: '👼', title: 'The Anointed One', subtitle: '1000+ days - Walking in divine grace', color: '#FFFFFF' }
+                        ];
+
                         // NoFap Clock Timer
                         (function () {
                             const clockDisplay = document.getElementById('clock-display');
@@ -420,6 +470,45 @@
                                 document.getElementById('clock-hours').textContent = hours.toString().padStart(2, '0');
                                 document.getElementById('clock-minutes').textContent = minutes.toString().padStart(2, '0');
                                 document.getElementById('clock-seconds').textContent = seconds.toString().padStart(2, '0');
+
+                                // Update rank based on days
+                                updateRank(days);
+                            }
+
+                            function updateRank(days) {
+                                let currentRank = ranks[0];
+                                let nextRank = ranks[1];
+
+                                for (let i = ranks.length - 1; i >= 0; i--) {
+                                    if (days >= ranks[i].days) {
+                                        currentRank = ranks[i];
+                                        nextRank = ranks[i + 1] || null;
+                                        break;
+                                    }
+                                }
+
+                                // Update display
+                                document.getElementById('rank-icon').textContent = currentRank.icon;
+                                document.getElementById('rank-title').textContent = currentRank.title;
+                                document.getElementById('rank-title').style.color = currentRank.color;
+                                document.getElementById('rank-subtitle').textContent = currentRank.subtitle;
+
+                                // Update progress bar
+                                if (nextRank) {
+                                    const progressDays = days - currentRank.days;
+                                    const totalDays = nextRank.days - currentRank.days;
+                                    const progressPercent = Math.min((progressDays / totalDays) * 100, 100);
+                                    const daysToNext = nextRank.days - days;
+
+                                    document.getElementById('rank-progress-bar').style.width = progressPercent + '%';
+                                    document.getElementById('rank-progress-bar').style.background = `linear-gradient(90deg, ${currentRank.color}, ${nextRank.color})`;
+                                    document.getElementById('rank-progress-text').innerHTML = `<span style="color: ${nextRank.color}">${nextRank.icon} ${nextRank.title}</span> in ${daysToNext} days`;
+                                } else {
+                                    // Max rank reached
+                                    document.getElementById('rank-progress-bar').style.width = '100%';
+                                    document.getElementById('rank-progress-bar').style.background = `linear-gradient(90deg, ${currentRank.color}, gold)`;
+                                    document.getElementById('rank-progress-text').innerHTML = '🎊 Maximum rank achieved! You are a master!';
+                                }
                             }
 
                             updateClock();
@@ -562,6 +651,64 @@
                             });
 
                             // Close on Escape key
+                            document.addEventListener('keydown', function escHandler(e) {
+                                if (e.key === 'Escape') {
+                                    modal.remove();
+                                    document.removeEventListener('keydown', escHandler);
+                                }
+                            });
+                        }
+
+                        // Show Ranking System Modal
+                        function showRankingSystem() {
+                            const rankList = ranks.map((rank, index) => {
+                                const nextRank = ranks[index + 1];
+                                const daysRange = nextRank ? `${rank.days} - ${nextRank.days - 1}` : `${rank.days}+`;
+                                return `
+                                    <div style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 8px; border-left: 4px solid ${rank.color};">
+                                        <div style="font-size: 2rem; min-width: 50px; text-align: center;">${rank.icon}</div>
+                                        <div style="flex: 1;">
+                                            <div style="font-weight: bold; color: ${rank.color}; font-size: 1.1rem;">${rank.title}</div>
+                                            <div style="color: #888; font-size: 0.85rem;">${rank.subtitle}</div>
+                                        </div>
+                                        <div style="color: #667eea; font-size: 0.9rem; font-weight: bold; min-width: 80px; text-align: right;">
+                                            ${daysRange} days
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('');
+
+                            const modal = document.createElement('div');
+                            modal.id = 'ranking-modal';
+                            modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; z-index: 10000; padding: 1rem;';
+
+                            modal.innerHTML = `
+                                <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 2rem; border-radius: 15px; max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.5); animation: modalFadeIn 0.3s ease;">
+                                    <div style="text-align: center; margin-bottom: 1.5rem;">
+                                        <div style="font-size: 3rem; margin-bottom: 0.5rem;">🏆</div>
+                                        <h2 style="color: #e94560; margin: 0; font-size: 1.5rem;">Semen Retention Ranks</h2>
+                                        <p style="color: #888; margin-top: 0.5rem; font-size: 0.9rem;">Your journey to mastery</p>
+                                    </div>
+                                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                        ${rankList}
+                                    </div>
+                                    <div style="text-align: center; margin-top: 1.5rem;">
+                                        <button onclick="this.closest('#ranking-modal').remove();" style="padding: 0.75rem 2rem; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold;">
+                                            ✖️ Close
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+
+                            const existing = document.getElementById('ranking-modal');
+                            if (existing) existing.remove();
+
+                            document.body.appendChild(modal);
+
+                            modal.addEventListener('click', (e) => {
+                                if (e.target === modal) modal.remove();
+                            });
+
                             document.addEventListener('keydown', function escHandler(e) {
                                 if (e.key === 'Escape') {
                                     modal.remove();

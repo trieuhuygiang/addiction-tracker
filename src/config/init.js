@@ -48,11 +48,24 @@ const initializeDatabase = async () => {
           email VARCHAR(255) UNIQUE NOT NULL,
           username VARCHAR(100),
           password_hash VARCHAR(255) NOT NULL,
+          reset_token VARCHAR(255),
+          reset_token_expiry TIMESTAMP,
           created_at TIMESTAMP DEFAULT NOW()
         );
       `;
       await mainClient.query(usersTableQuery);
       console.log('✓ Users table created or already exists');
+
+      // Add reset_token columns if they don't exist (for existing databases)
+      const addResetTokenColumn = `
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token VARCHAR(255);
+      `;
+      const addResetTokenExpiryColumn = `
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token_expiry TIMESTAMP;
+      `;
+      await mainClient.query(addResetTokenColumn);
+      await mainClient.query(addResetTokenExpiryColumn);
+      console.log('✓ Reset token columns added or already exist');
 
       // Create entries table
       const entriesTableQuery = `
@@ -77,6 +90,20 @@ const initializeDatabase = async () => {
       `;
       await mainClient.query(indexQuery);
       console.log('✓ Index created for entries table');
+
+      // Create streak_history table
+      const streakHistoryTableQuery = `
+        CREATE TABLE IF NOT EXISTS streak_history (
+          id SERIAL PRIMARY KEY,
+          user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+          streak_days INT NOT NULL,
+          start_date DATE,
+          end_date DATE NOT NULL,
+          created_at TIMESTAMP DEFAULT NOW()
+        );
+      `;
+      await mainClient.query(streakHistoryTableQuery);
+      console.log('✓ Streak history table created or already exists');
 
       // Create session table for express-session
       const sessionTableQuery = `

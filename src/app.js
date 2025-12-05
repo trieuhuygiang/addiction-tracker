@@ -3,9 +3,11 @@ const express = require('express');
 const path = require('path');
 const session = require('express-session');
 const pgSession = require('connect-pg-simple')(session);
+const cookieParser = require('cookie-parser');
 const { pool } = require('./config/db');
 const { requireLogin, setUserData } = require('./middleware/auth');
 const Entry = require('./models/Entry');
+const StreakHistory = require('./models/StreakHistory');
 const authRoutes = require('./routes/auth');
 const entriesRoutes = require('./routes/entries');
 const calendarRoutes = require('./routes/calendar');
@@ -13,6 +15,7 @@ const summaryRoutes = require('./routes/summary');
 const usersRoutes = require('./routes/users');
 const adminRoutes = require('./routes/admin');
 const { getStreakSummary } = require('./utils/streakCalculator');
+const { getTodayString, DEFAULT_TIMEZONE } = require('./utils/dateUtils');
 
 const app = express();
 
@@ -24,6 +27,14 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(cookieParser());
+
+// Timezone middleware - read timezone from cookie on every request
+app.use((req, res, next) => {
+  req.timezone = req.cookies.timezone || DEFAULT_TIMEZONE;
+  res.locals.timezone = req.timezone;
+  next();
+});
 
 // Session configuration with PostgreSQL store
 app.use(session({
@@ -81,20 +92,55 @@ app.get('/test-session', (req, res) => {
   });
 });
 
+// Set timezone from client
+app.post('/api/timezone', (req, res) => {
+  const { timezone } = req.body;
+  if (timezone) {
+    req.session.timezone = timezone;
+    req.session.save();
+    res.json({ success: true, timezone });
+  } else {
+    res.status(400).json({ success: false, error: 'Timezone required' });
+  }
+});
+
+// History page (protected)
+app.get('/history', requireLogin, async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    console.log('History page - userId:', userId);
+    const streakHistory = await StreakHistory.findByUser(userId);
+    console.log('History page - streakHistory:', streakHistory);
+    
+    res.render('history', {
+      title: 'Record History',
+      streakHistory
+    });
+  } catch (error) {
+    console.error('History page error:', error);
+    res.render('history', {
+      title: 'Record History',
+      streakHistory: []
+    });
+  }
+});
+
 // Dashboard (protected)
 app.get('/dashboard', requireLogin, async (req, res) => {
   try {
-    console.log('Dashboard route session:', req.session);
+    console.log('Dashboard route - timezone:', req.timezone);
     const userId = req.session.userId;
     const userName = req.session.userName;
+    const userTimezone = req.timezone;
+    
     if (!userId) {
       console.log('No userId in session, redirecting to login');
       return res.redirect('/login');
     }
-    const streakSummary = await getStreakSummary(userId);
+    const streakSummary = await getStreakSummary(userId, userTimezone);
 
-    // Get today's date
-    const today = new Date().toISOString().split('T')[0];
+    // Get today's date in user's timezone
+    const today = getTodayString(userTimezone);
     
     // Check if today has been logged
     const todayEntry = await Entry.findByUserAndDate(userId, today);
@@ -109,13 +155,24 @@ app.get('/dashboard', requireLogin, async (req, res) => {
       date: new Date(e.date)
     }));
 
+    // Get streak history
+    const streakHistory = await StreakHistory.findByUser(userId);
+
+    // Check for deleted entry feedback message
+    let deleteMessage = null;
+    if (req.query.deleted && req.query.date) {
+      deleteMessage = `Deleted ${req.query.deleted} entry for ${req.query.date}. Day count updated.`;
+    }
+
     res.render('dashboard', {
       title: 'Dashboard',
       streakSummary,
       userName,
       progressEntries,
+      streakHistory,
       todayEntry,
-      today
+      today,
+      deleteMessage
     });
   } catch (error) {
     console.error('Dashboard error:', error);
@@ -123,7 +180,6 @@ app.get('/dashboard', requireLogin, async (req, res) => {
       title: 'Dashboard',
       streakSummary: {
         currentStreak: 0,
-        longestStreak: 0,
         totalDays: 0,
         cleanDays: 0,
         slipDays: 0,
@@ -131,8 +187,9 @@ app.get('/dashboard', requireLogin, async (req, res) => {
       },
       userName: req.session.userName,
       progressEntries: [],
+      streakHistory: [],
       todayEntry: null,
-      today: new Date().toISOString().split('T')[0]
+      today: getTodayString(req.timezone)
     });
   }
 });

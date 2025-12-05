@@ -9,34 +9,43 @@
         </div>
         <% } %>
 
-            <form method="POST" action="/<%= title.toLowerCase().replace(' ', '') %>">
-                <div class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" name="username" required>
+            <% if (typeof success !=='undefined' && success) { %>
+                <div class="success"
+                    style="background-color: #d4edda; color: #155724; padding: 0.75rem; border-radius: 5px; margin-bottom: 1.5rem; border: 1px solid #c3e6cb;">
+                    <%= success %>
                 </div>
+                <% } %>
 
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required>
-                </div>
+                    <form method="POST" action="/<%= title.toLowerCase().replace(' ', '') %>">
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" id="username" name="username" required>
+                        </div>
 
-                <% if (title==='Sign Up' ) { %>
-                    <div class="form-group">
-                        <label for="confirmPassword">Confirm Password</label>
-                        <input type="password" id="confirmPassword" name="confirmPassword" required>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" name="password" required>
+                        </div>
+
+                        <% if (title==='Sign Up' ) { %>
+                            <div class="form-group">
+                                <label for="confirmPassword">Confirm Password</label>
+                                <input type="password" id="confirmPassword" name="confirmPassword" required>
+                            </div>
+                            <% } %>
+
+                                <button type="submit" class="submit-btn">
+                                    <%= title %>
+                                </button>
+                    </form>
+
+                    <div class="auth-link">
+                        <% if (title==='Sign Up' ) { %>
+                            Already have an account? <a href="/login">Login here</a>
+                            <% } else { %>
+                                Don't have an account? <a href="/signup">Sign up here</a>
+                                <br><br>
+                                <a href="/forgot-password">Forgot your password?</a>
+                                <% } %>
                     </div>
-                    <% } %>
-
-                        <button type="submit" class="submit-btn">
-                            <%= title %>
-                        </button>
-            </form>
-
-            <div class="auth-link">
-                <% if (title==='Sign Up' ) { %>
-                    Already have an account? <a href="/login">Login here</a>
-                    <% } else { %>
-                        Don't have an account? <a href="/signup">Sign up here</a>
-                        <% } %>
-            </div>
 </div>

@@ -2,11 +2,19 @@ const express = require('express');
 const router = express.Router();
 const { requireLogin } = require('../middleware/auth');
 const Entry = require('../models/Entry');
+const { getLocalDateString, getTodayString } = require('../utils/dateUtils');
 
 const monthNames = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December'
 ];
+
+// Helper function to format date as YYYY-MM-DD without timezone conversion
+function formatDateString(year, month, day) {
+  const m = String(month).padStart(2, '0');
+  const d = String(day).padStart(2, '0');
+  return `${year}-${m}-${d}`;
+}
 
 // Helper function to build a month calendar grid
 function buildMonthCalendar(year, month, entriesWithDateStr) {
@@ -21,7 +29,8 @@ function buildMonthCalendar(year, month, entriesWithDateStr) {
 
   // Fill first week
   for (let i = firstDay; i < 7 && dayCounter <= daysInMonth; i++) {
-    const dateStr = new Date(year, month - 1, dayCounter).toISOString().split('T')[0];
+    // Use simple string formatting to avoid timezone issues
+    const dateStr = formatDateString(year, month, dayCounter);
     const entry = entriesWithDateStr.find(e => e.dateStr === dateStr);
     
     week[i] = {
@@ -38,7 +47,8 @@ function buildMonthCalendar(year, month, entriesWithDateStr) {
   while (dayCounter <= daysInMonth) {
     week = new Array(7).fill(null);
     for (let i = 0; i < 7 && dayCounter <= daysInMonth; i++) {
-      const dateStr = new Date(year, month - 1, dayCounter).toISOString().split('T')[0];
+      // Use simple string formatting to avoid timezone issues
+      const dateStr = formatDateString(year, month, dayCounter);
       const entry = entriesWithDateStr.find(e => e.dateStr === dateStr);
       
       week[i] = {
@@ -59,8 +69,10 @@ function buildMonthCalendar(year, month, entriesWithDateStr) {
 router.get('/calendar/year/:year?', requireLogin, async (req, res) => {
   try {
     const userId = req.session.userId;
-    const today = new Date();
-    let year = parseInt(req.params.year) || today.getFullYear();
+    const userTimezone = req.timezone;
+    const todayStr = getTodayString(userTimezone);
+    const todayDate = new Date(todayStr);
+    let year = parseInt(req.params.year) || todayDate.getFullYear();
 
     // Get all entries for the year
     const startDateStr = `${year}-01-01`;
@@ -68,9 +80,10 @@ router.get('/calendar/year/:year?', requireLogin, async (req, res) => {
     const entries = await Entry.findByUserInRange(userId, startDateStr, endDateStr);
     
     // Convert entry dates to strings for comparison
+    // Use the date string directly from database to avoid timezone issues
     const entriesWithDateStr = entries.map(e => ({
       ...e,
-      dateStr: new Date(e.date).toISOString().split('T')[0]
+      dateStr: typeof e.date === 'string' ? e.date.slice(0, 10) : new Date(e.date).toISOString().split('T')[0]
     }));
 
     // Build calendar for each month
@@ -93,17 +106,18 @@ router.get('/calendar/year/:year?', requireLogin, async (req, res) => {
       error: null,
       yearCalendar,
       year,
-      currentYear: today.getFullYear(),
+      currentYear: todayDate.getFullYear(),
       stats: { cleanDays, slipDays, totalDays }
     });
   } catch (error) {
     console.error('Yearly calendar error:', error);
+    const currentYear = new Date(getTodayString(req.timezone)).getFullYear();
     res.status(500).render('calendar-year', {
       title: 'Calendar',
       error: 'Failed to load calendar',
       yearCalendar: [],
-      year: new Date().getFullYear(),
-      currentYear: new Date().getFullYear(),
+      year: currentYear,
+      currentYear: currentYear,
       stats: { cleanDays: 0, slipDays: 0, totalDays: 0 }
     });
   }
@@ -113,11 +127,13 @@ router.get('/calendar/year/:year?', requireLogin, async (req, res) => {
 router.get('/calendar/:year?/:month?', requireLogin, async (req, res) => {
   try {
     const userId = req.session.userId;
+    const userTimezone = req.timezone;
     let year = parseInt(req.params.year);
     let month = parseInt(req.params.month);
 
-    // If no date provided, use current month
-    const today = new Date();
+    // If no date provided, use current month (user's timezone)
+    const todayStr = getTodayString(userTimezone);
+    const today = new Date(todayStr);
     if (!year) year = today.getFullYear();
     if (!month) month = today.getMonth() + 1; // 1-12
 
@@ -138,16 +154,17 @@ router.get('/calendar/:year?/:month?', requireLogin, async (req, res) => {
     const startDate = new Date(year, month - 1, 1);
     const endDate = new Date(year, month, 0);
 
-    const startDateStr = startDate.toISOString().split('T')[0];
-    const endDateStr = endDate.toISOString().split('T')[0];
+    const startDateStr = formatDateString(year, month, 1);
+    const endDateStr = formatDateString(year, month, endDate.getDate());
 
     // Get all entries for the month
     const entries = await Entry.findByUserInRange(userId, startDateStr, endDateStr);
     
     // Convert entry dates to strings for comparison
+    // Use the date string directly from database to avoid timezone issues
     const entriesWithDateStr = entries.map(e => ({
       ...e,
-      dateStr: new Date(e.date).toISOString().split('T')[0]
+      dateStr: typeof e.date === 'string' ? e.date.slice(0, 10) : new Date(e.date).toISOString().split('T')[0]
     }));
 
     // Build calendar grid using helper function
@@ -165,14 +182,16 @@ router.get('/calendar/:year?/:month?', requireLogin, async (req, res) => {
     });
   } catch (error) {
     console.error('Calendar error:', error);
+    const nowStr = getTodayString(req.timezone);
+    const now = new Date(nowStr);
     res.status(500).render('calendar', {
       title: 'Calendar',
       error: 'Failed to load calendar',
       calendar: null,
-      year: new Date().getFullYear(),
-      month: new Date().getMonth() + 1,
-      currentYear: new Date().getFullYear(),
-      currentMonth: new Date().getMonth() + 1
+      year: now.getFullYear(),
+      month: now.getMonth() + 1,
+      currentYear: now.getFullYear(),
+      currentMonth: now.getMonth() + 1
     });
   }
 });

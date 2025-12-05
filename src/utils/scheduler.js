@@ -1,4 +1,5 @@
 const { query } = require('../config/db');
+const { getTodayString } = require('./dateUtils');
 
 /**
  * Auto-track clean entries for users who haven't logged today
@@ -7,8 +8,8 @@ const { query } = require('../config/db');
  */
 async function autoTrackClean(date = null) {
   try {
-    // Use provided date or today's date
-    const trackDate = date || new Date().toISOString().split('T')[0];
+    // Use provided date or today's date (local timezone)
+    const trackDate = date || getTodayString();
     
     // Find all users who don't have an entry for this date
     const usersWithoutEntry = await query(`

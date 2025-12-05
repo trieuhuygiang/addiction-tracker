@@ -97,6 +97,45 @@ class User {
       throw error;
     }
   }
+
+  // Update reset token for password reset
+  static async updateResetToken(id, token, expiry) {
+    try {
+      const result = await query(
+        'UPDATE users SET reset_token = $1, reset_token_expiry = $2 WHERE id = $3 RETURNING *',
+        [token, expiry, id]
+      );
+      return result.rows[0];
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Find user by reset token
+  static async findByResetToken(token) {
+    try {
+      const result = await query(
+        'SELECT * FROM users WHERE reset_token = $1 AND reset_token_expiry > NOW()',
+        [token]
+      );
+      return result.rows[0];
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Update password and clear reset token
+  static async updatePassword(id, passwordHash) {
+    try {
+      const result = await query(
+        'UPDATE users SET password_hash = $1, reset_token = NULL, reset_token_expiry = NULL WHERE id = $2 RETURNING *',
+        [passwordHash, id]
+      );
+      return result.rows[0];
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 module.exports = User;

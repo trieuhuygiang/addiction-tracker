@@ -8,9 +8,10 @@ const { getStreakSummary } = require('../utils/streakCalculator');
 router.get('/summary', requireLogin, async (req, res) => {
   try {
     const userId = req.session.userId;
+    const userTimezone = req.timezone || 'America/Los_Angeles';
 
-    // Get streak summary
-    const streakSummary = await getStreakSummary(userId);
+    // Get streak summary with timezone
+    const streakSummary = await getStreakSummary(userId, userTimezone);
 
     // Get all entries for detailed statistics
     const allEntries = await Entry.findByUser(userId);

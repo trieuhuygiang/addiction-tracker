@@ -1,8 +1,9 @@
 const Entry = require('../models/Entry');
+const { getLocalDateString, getTodayString } = require('./dateUtils');
 
 // Calculate current streak (counting consecutive tracked days backwards from today)
 // Slip does NOT reset the streak - it's just a separate indicator
-const getCurrentStreak = async (userId) => {
+const getCurrentStreak = async (userId, timezone = 'UTC') => {
   try {
     const entries = await Entry.findByUser(userId);
     
@@ -10,28 +11,33 @@ const getCurrentStreak = async (userId) => {
       return 0;
     }
 
-    // Sort entries by date descending
-    entries.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-    // Convert entry dates to strings for comparison
+    // Convert entry dates to strings for comparison (using timezone)
     const entryDates = entries.map(e => {
+      // Database stores dates, so we need to handle them properly
       const d = new Date(e.date);
-      return d.toISOString().split('T')[0];
+      return getLocalDateString(d, timezone);
     });
 
-    let streak = 0;
-    const today = new Date();
-    let currentDate = new Date(today);
-    currentDate.setHours(0, 0, 0, 0);
+    // Remove duplicates and sort
+    const uniqueDates = [...new Set(entryDates)].sort().reverse();
 
+    let streak = 0;
+    
+    // Start from today in user's timezone
+    const todayStr = getTodayString(timezone);
+    
+    // Create a date iterator starting from today
+    let checkDate = new Date(todayStr + 'T12:00:00Z'); // Use noon to avoid timezone edge cases
+    
     // Check each day going backwards from today
     for (let i = 0; i < 365; i++) {
-      const dateStr = currentDate.toISOString().split('T')[0];
+      const dateStr = getLocalDateString(checkDate, timezone);
       
       // If entry exists for this day (regardless of slip status), count it
       if (entryDates.includes(dateStr)) {
         streak++;
-        currentDate.setDate(currentDate.getDate() - 1);
+        // Move to previous day
+        checkDate.setDate(checkDate.getDate() - 1);
       } else {
         // No entry for this day, break the streak
         break;
@@ -85,9 +91,9 @@ const getLongestStreak = async (userId) => {
 };
 
 // Get streak summary
-const getStreakSummary = async (userId) => {
+const getStreakSummary = async (userId, timezone = 'UTC') => {
   try {
-    const currentStreak = await getCurrentStreak(userId);
+    const currentStreak = await getCurrentStreak(userId, timezone);
     const longestStreak = await getLongestStreak(userId);
     const totalDays = await Entry.getTotalCount(userId);
     const cleanDays = await Entry.getCleanCount(userId);

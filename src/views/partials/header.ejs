@@ -34,3 +34,20 @@
         </nav>
     </div>
 </header>
+
+<script>
+    // Auto-detect timezone and set cookie
+    (function () {
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const cookieTimezone = document.cookie.split('; ').find(row => row.startsWith('timezone='));
+        const currentTz = cookieTimezone ? decodeURIComponent(cookieTimezone.split('=')[1]) : null;
+
+        // Set cookie if timezone not set or changed
+        if (timezone && timezone !== currentTz) {
+            // Set cookie for 1 year
+            document.cookie = `timezone=${encodeURIComponent(timezone)}; path=/; max-age=31536000; SameSite=Lax`;
+            // Reload to apply new timezone
+            window.location.reload();
+        }
+    })();
+</script>

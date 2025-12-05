@@ -39,6 +39,8 @@ const setUserData = (req, res, next) => {
     res.locals.isAuthenticated = false;
     res.locals.isAdmin = false;
   }
+  // Make timezone available to views
+  res.locals.timezone = req.session.timezone || 'UTC';
   next();
 };
 

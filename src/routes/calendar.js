@@ -16,6 +16,14 @@ function formatDateString(year, month, day) {
   return `${year}-${m}-${d}`;
 }
 
+// Helper function to determine entry status
+function getEntryStatus(entry) {
+  if (!entry) return 'no-data';
+  if (entry.failure_level === 2) return 'failed';
+  if (entry.failure_level === 1 || entry.had_leakage) return 'slip';
+  return 'clean';
+}
+
 // Helper function to build a month calendar grid
 function buildMonthCalendar(year, month, entriesWithDateStr) {
   const startDate = new Date(year, month - 1, 1);
@@ -37,7 +45,7 @@ function buildMonthCalendar(year, month, entriesWithDateStr) {
       day: dayCounter,
       date: dateStr,
       entry: entry,
-      status: entry ? (entry.had_leakage ? 'slip' : 'clean') : 'no-data'
+      status: getEntryStatus(entry)
     };
     dayCounter++;
   }
@@ -55,7 +63,7 @@ function buildMonthCalendar(year, month, entriesWithDateStr) {
         day: dayCounter,
         date: dateStr,
         entry: entry,
-        status: entry ? (entry.had_leakage ? 'slip' : 'clean') : 'no-data'
+        status: getEntryStatus(entry)
       };
       dayCounter++;
     }
@@ -97,8 +105,9 @@ router.get('/calendar/year/:year?', requireLogin, async (req, res) => {
     }
 
     // Calculate yearly stats
-    const cleanDays = entries.filter(e => !e.had_leakage).length;
-    const slipDays = entries.filter(e => e.had_leakage).length;
+    const cleanDays = entries.filter(e => !e.had_leakage && (!e.failure_level || e.failure_level === 0)).length;
+    const slipDays = entries.filter(e => e.failure_level === 1 || (e.had_leakage && e.failure_level !== 2)).length;
+    const failedDays = entries.filter(e => e.failure_level === 2).length;
     const totalDays = entries.length;
 
     res.render('calendar-year', {
@@ -107,7 +116,7 @@ router.get('/calendar/year/:year?', requireLogin, async (req, res) => {
       yearCalendar,
       year,
       currentYear: todayDate.getFullYear(),
-      stats: { cleanDays, slipDays, totalDays }
+      stats: { cleanDays, slipDays, failedDays, totalDays }
     });
   } catch (error) {
     console.error('Yearly calendar error:', error);
@@ -118,7 +127,7 @@ router.get('/calendar/year/:year?', requireLogin, async (req, res) => {
       yearCalendar: [],
       year: currentYear,
       currentYear: currentYear,
-      stats: { cleanDays: 0, slipDays: 0, totalDays: 0 }
+      stats: { cleanDays: 0, slipDays: 0, failedDays: 0, totalDays: 0 }
     });
   }
 });

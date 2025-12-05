@@ -98,6 +98,7 @@ const getStreakSummary = async (userId, timezone = 'UTC') => {
     const totalDays = await Entry.getTotalCount(userId);
     const cleanDays = await Entry.getCleanCount(userId);
     const slipDays = await Entry.getSlipCount(userId);
+    const totallyFailedDays = await Entry.getTotallyFailedCount(userId);
 
     return {
       currentStreak,
@@ -105,6 +106,7 @@ const getStreakSummary = async (userId, timezone = 'UTC') => {
       totalDays,
       cleanDays,
       slipDays,
+      totallyFailedDays,
       successRate: totalDays > 0 ? Math.round((cleanDays / totalDays) * 100) : 0
     };
   } catch (error) {

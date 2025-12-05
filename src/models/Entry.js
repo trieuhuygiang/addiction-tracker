@@ -2,11 +2,14 @@ const { query } = require('../config/db');
 
 class Entry {
   // Create a new entry
-  static async create(userId, date, hadSlip, note = null) {
+  // failureLevel: 0 = clean, 1 = a little bit, 2 = totally failed
+  static async create(userId, date, hadSlip, note = null, failureLevel = null) {
     try {
+      // If failureLevel not provided, derive from hadSlip for backwards compatibility
+      const level = failureLevel !== null ? failureLevel : (hadSlip ? 1 : 0);
       const result = await query(
-        'INSERT INTO entries (user_id, date, had_leakage, note) VALUES ($1, $2, $3, $4) RETURNING *',
-        [userId, date, hadSlip, note]
+        'INSERT INTO entries (user_id, date, had_leakage, failure_level, note) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+        [userId, date, hadSlip, level, note]
       );
       return result.rows[0];
     } catch (error) {
@@ -66,6 +69,19 @@ class Entry {
     }
   }
 
+  // Update an entry with failure level
+  static async updateWithLevel(entryId, hadSlip, note = null, failureLevel = 0) {
+    try {
+      const result = await query(
+        'UPDATE entries SET had_leakage = $1, note = $2, failure_level = $3, updated_at = NOW() WHERE id = $4 RETURNING *',
+        [hadSlip, note, failureLevel, entryId]
+      );
+      return result.rows[0];
+    } catch (error) {
+      throw error;
+    }
+  }
+
   // Delete an entry
   static async delete(entryId) {
     try {
@@ -92,11 +108,11 @@ class Entry {
     }
   }
 
-  // Get count of slip entries for a user
+  // Get count of "a little bit" entries for a user (failure_level = 1)
   static async getSlipCount(userId) {
     try {
       const result = await query(
-        'SELECT COUNT(*) FROM entries WHERE user_id = $1 AND had_leakage = true',
+        'SELECT COUNT(*) FROM entries WHERE user_id = $1 AND (failure_level = 1 OR (had_leakage = true AND (failure_level IS NULL OR failure_level = 0)))',
         [userId]
       );
       return parseInt(result.rows[0].count, 10);
@@ -105,11 +121,24 @@ class Entry {
     }
   }
 
-  // Get count of clean entries for a user
+  // Get count of "totally failed" entries for a user (failure_level = 2)
+  static async getTotallyFailedCount(userId) {
+    try {
+      const result = await query(
+        'SELECT COUNT(*) FROM entries WHERE user_id = $1 AND failure_level = 2',
+        [userId]
+      );
+      return parseInt(result.rows[0].count, 10);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Get count of clean entries for a user (failure_level = 0 or no slip)
   static async getCleanCount(userId) {
     try {
       const result = await query(
-        'SELECT COUNT(*) FROM entries WHERE user_id = $1 AND had_leakage = false',
+        'SELECT COUNT(*) FROM entries WHERE user_id = $1 AND had_leakage = false AND (failure_level IS NULL OR failure_level = 0)',
         [userId]
       );
       return parseInt(result.rows[0].count, 10);

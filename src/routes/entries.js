@@ -9,17 +9,27 @@ const { getTodayString, getLocalDateString } = require('../utils/dateUtils');
 router.post('/entries/quick', requireLogin, async (req, res) => {
   try {
     const userId = req.session.userId;
-    const { date, hadSlip } = req.body;
+    const { date, hadSlip, failureLevel } = req.body;
+    
+    // Determine failure level: 0 = clean, 1 = a little bit, 2 = totally failed
+    let level = 0;
+    if (failureLevel !== undefined) {
+      level = parseInt(failureLevel);
+    } else if (hadSlip === 'true') {
+      level = 1;
+    }
+    
+    const slipped = level > 0;
 
     // Check if entry already exists
     const existingEntry = await Entry.findByUserAndDate(userId, date);
 
     if (existingEntry) {
-      // Update existing entry
-      await Entry.update(existingEntry.id, hadSlip === 'true', existingEntry.note);
+      // Update existing entry with failure level
+      await Entry.updateWithLevel(existingEntry.id, slipped, existingEntry.note, level);
     } else {
-      // Create new entry
-      await Entry.create(userId, date, hadSlip === 'true', null);
+      // Create new entry with failure level
+      await Entry.create(userId, date, slipped, null, level);
     }
 
     res.redirect('/dashboard');
@@ -109,7 +119,7 @@ router.get('/entries/:date?', requireLogin, async (req, res) => {
 router.post('/entries', requireLogin, async (req, res) => {
   try {
     const userId = req.session.userId;
-    const { date, hadSlip, note } = req.body;
+    const { date, hadSlip, failureLevel, note } = req.body;
 
     // Validation
     if (!date) {
@@ -121,10 +131,11 @@ router.post('/entries', requireLogin, async (req, res) => {
       });
     }
 
-    if (hadSlip === undefined) {
+    // Check for failureLevel first (new format), fallback to hadSlip (old format)
+    if (failureLevel === undefined && hadSlip === undefined) {
       return res.status(400).render('entries', {
         title: 'Log Entry',
-        error: 'Please select Clean or Just a Little Bit',
+        error: 'Please select a status',
         entry: null,
         date
       });
@@ -140,18 +151,25 @@ router.post('/entries', requireLogin, async (req, res) => {
       });
     }
 
+    // Determine failure level: 0 = clean, 1 = a little bit, 2 = totally failed
+    let level = 0;
+    if (failureLevel !== undefined) {
+      level = parseInt(failureLevel);
+    } else if (hadSlip === 'true' || hadSlip === true) {
+      level = 1;
+    }
+    const slipValue = level > 0;
+
     // Check if entry already exists
     const existingEntry = await Entry.findByUserAndDate(userId, date);
 
     let savedEntry;
     if (existingEntry) {
-      // Update existing entry
-      const slipValue = hadSlip === 'true' || hadSlip === true;
-      savedEntry = await Entry.update(existingEntry.id, slipValue, note || null);
+      // Update existing entry with failure level
+      savedEntry = await Entry.updateWithLevel(existingEntry.id, slipValue, note || null, level);
     } else {
-      // Create new entry
-      const slipValue = hadSlip === 'true' || hadSlip === true;
-      savedEntry = await Entry.create(userId, date, slipValue, note || null);
+      // Create new entry with failure level
+      savedEntry = await Entry.create(userId, date, slipValue, note || null, level);
     }
 
     res.render('entries', {

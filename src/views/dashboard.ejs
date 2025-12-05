@@ -236,16 +236,20 @@
                         <% if (todayEntry) { %>
                             <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
                                 <div style="font-size: 2rem;">
-                                    <% if (todayEntry.had_leakage) { %>
-                                        ⚠️
-                                        <% } else { %>
-                                            ✅
-                                            <% } %>
+                                    <% if (todayEntry.failure_level===2) { %>
+                                        💀
+                                        <% } else if (todayEntry.failure_level===1 || todayEntry.had_leakage) { %>
+                                            ⚠️
+                                            <% } else { %>
+                                                ✅
+                                                <% } %>
                                 </div>
                                 <div style="flex: 1; min-width: 150px;">
                                     <p
-                                        style="font-weight: bold; color: <%= todayEntry.had_leakage ? '#e74c3c' : '#28a745' %>;">
-                                        Today: <%= todayEntry.had_leakage ? 'Just a Little Bit' : 'Clean' %>
+                                        style="font-weight: bold; color: <%= todayEntry.failure_level === 2 ? '#e74c3c' : (todayEntry.failure_level === 1 || todayEntry.had_leakage) ? '#ffc107' : '#28a745' %>;">
+                                        Today: <%= todayEntry.failure_level===2 ? 'Totally Failed' :
+                                            (todayEntry.failure_level===1 || todayEntry.had_leakage) ? 'A Little Bit'
+                                            : 'Clean' %>
                                     </p>
                                     <% if (todayEntry.note) { %>
                                         <p style="color: #666; font-size: 0.9rem;">Note: <%= todayEntry.note %>
@@ -262,24 +266,32 @@
                                     day?</p>
                                 <div class="quick-checkin-buttons"
                                     style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem;">
-                                    <form method="POST" action="/entries/quick" style="flex: 1; min-width: 120px;">
+                                    <form method="POST" action="/entries/quick" style="flex: 1; min-width: 100px;">
                                         <input type="hidden" name="date" value="<%= today %>">
-                                        <input type="hidden" name="hadSlip" value="false">
+                                        <input type="hidden" name="failureLevel" value="0">
                                         <button type="submit"
-                                            style="width: 100%; padding: 1rem; background: #28a745; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold;">
+                                            style="width: 100%; padding: 1rem; background: #28a745; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: bold;">
                                             ✅ Clean Day
                                         </button>
                                     </form>
-                                    <form method="POST" action="/entries/quick" style="flex: 1; min-width: 120px;">
+                                    <form method="POST" action="/entries/quick" style="flex: 1; min-width: 100px;">
                                         <input type="hidden" name="date" value="<%= today %>">
-                                        <input type="hidden" name="hadSlip" value="true">
+                                        <input type="hidden" name="failureLevel" value="1">
                                         <button type="submit"
-                                            style="width: 100%; padding: 1rem; background: #e74c3c; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold;">
-                                            ⚠️ Just a Little Bit
+                                            style="width: 100%; padding: 1rem; background: #ffc107; color: #333; border: none; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: bold;">
+                                            ⚠️ A Little Bit
+                                        </button>
+                                    </form>
+                                    <form method="POST" action="/entries/quick" style="flex: 1; min-width: 100px;">
+                                        <input type="hidden" name="date" value="<%= today %>">
+                                        <input type="hidden" name="failureLevel" value="2">
+                                        <button type="submit"
+                                            style="width: 100%; padding: 1rem; background: #e74c3c; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: bold;">
+                                            💀 Totally Failed
                                         </button>
                                     </form>
                                     <a href="/entries/<%= today %>"
-                                        style="flex: 1; min-width: 120px; padding: 1rem; background: #667eea; color: white; border: none; border-radius: 8px; text-decoration: none; font-size: 1rem; font-weight: bold; text-align: center; display: flex; align-items: center; justify-content: center;">
+                                        style="flex: 1; min-width: 100px; padding: 1rem; background: #667eea; color: white; border: none; border-radius: 8px; text-decoration: none; font-size: 0.9rem; font-weight: bold; text-align: center; display: flex; align-items: center; justify-content: center;">
                                         📝 Add Note
                                     </a>
                                 </div>
@@ -734,11 +746,17 @@
 
                     <div class="dashboard-grid">
                         <div class="stats-card">
-                            <h2>🔥 Days</h2>
-                            <div class="stats-value">
-                                <%= streakSummary.totalDays %>
+                            <h2>🔥 Rewiring Days</h2>
+                            <div class="stats-value" id="stats-rewiring-days">
+                                <% if (clockStartTime) { %>
+                                    <script>
+                                        document.write(Math.floor((new Date() - new Date('<%= clockStartTime.toISOString() %>')) / 86400000));
+                                    </script>
+                                    <% } else { %>
+                                        0
+                                        <% } %>
                             </div>
-                            <p style="color: #999; margin-top: 0.5rem;">tracking days</p>
+                            <p style="color: #999; margin-top: 0.5rem;">since last reset</p>
                         </div>
 
                         <div class="stats-card">
@@ -750,19 +768,19 @@
                         </div>
 
                         <div class="stats-card">
-                            <h2>⚠️ A Little Bit Days</h2>
-                            <div class="stats-value">
+                            <h2>⚠️ A Little Bit</h2>
+                            <div class="stats-value" style="color: #ffc107;">
                                 <%= streakSummary.slipDays %>
                             </div>
                             <p style="color: #999; margin-top: 0.5rem;">days</p>
                         </div>
 
                         <div class="stats-card">
-                            <h2>📈 Success Rate</h2>
-                            <div class="stats-value">
-                                <%= streakSummary.successRate %>%
+                            <h2>💀 Totally Failed</h2>
+                            <div class="stats-value" style="color: #e74c3c;">
+                                <%= streakSummary.totallyFailedDays %>
                             </div>
-                            <p style="color: #999; margin-top: 0.5rem;">clean days</p>
+                            <p style="color: #999; margin-top: 0.5rem;">days</p>
                         </div>
                     </div>
 

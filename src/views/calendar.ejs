@@ -118,11 +118,20 @@
         }
 
         .calendar-day.slip {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .calendar-day.slip:hover {
+            background-color: #ffe69c;
+        }
+
+        .calendar-day.failed {
             background-color: #f8d7da;
             color: #721c24;
         }
 
-        .calendar-day.slip:hover {
+        .calendar-day.failed:hover {
             background-color: #f5c6cb;
         }
 
@@ -338,11 +347,15 @@
                     <div class="legend">
                         <div class="legend-item">
                             <div class="legend-color" style="background-color: #d4edda;"></div>
-                            <span>🟢 Clean</span>
+                            <span>✅ Clean</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #fff3cd;"></div>
+                            <span>⚠️ A Little Bit</span>
                         </div>
                         <div class="legend-item">
                             <div class="legend-color" style="background-color: #f8d7da;"></div>
-                            <span>🔴 Just a Little Bit</span>
+                            <span>💀 Totally Failed</span>
                         </div>
                         <div class="legend-item">
                             <div class="legend-color" style="background-color: #f9f9f9;"></div>
@@ -368,18 +381,20 @@
                                         <% if (dayObj) { %>
                                             <a href="/entries/<%= dayObj.date %>"
                                                 class="calendar-day <%= dayObj.status %>"
-                                                title="<%= dayObj.entry ? (dayObj.entry.had_leakage ? 'Just a Little Bit' : 'Clean') : 'No entry' %>">
+                                                title="<%= dayObj.status === 'clean' ? 'Clean' : dayObj.status === 'slip' ? 'A Little Bit' : dayObj.status === 'failed' ? 'Totally Failed' : 'No entry' %>">
                                                 <div class="day-number">
                                                     <%= dayObj.day %>
                                                 </div>
                                                 <div class="day-indicator">
                                                     <% if (dayObj.status==='clean' ) { %>
-                                                        🟢
+                                                        ✅
                                                         <% } else if (dayObj.status==='slip' ) { %>
-                                                            🔴
-                                                            <% } else { %>
-                                                                ⚪
-                                                                <% } %>
+                                                            ⚠️
+                                                            <% } else if (dayObj.status==='failed' ) { %>
+                                                                💀
+                                                                <% } else { %>
+                                                                    ⚪
+                                                                    <% } %>
                                                 </div>
                                             </a>
                                             <% } else { %>

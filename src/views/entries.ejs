@@ -91,11 +91,21 @@
         }
 
         .radio-option.slip {
-            background-color: #fff5f5;
+            background-color: #fffbeb;
         }
 
         .radio-option.slip:hover,
         .radio-option.slip.selected {
+            border-color: #ffc107;
+            background-color: #fff3cd;
+        }
+
+        .radio-option.failed {
+            background-color: #fff5f5;
+        }
+
+        .radio-option.failed:hover,
+        .radio-option.failed.selected {
             border-color: #dc3545;
             background-color: #f8d7da;
         }
@@ -342,8 +352,9 @@
                                         <div class="radio-group">
                                             <div class="radio-option clean"
                                                 onclick="this.querySelector('input').checked = true; updateSelection()">
-                                                <input type="radio" id="clean" name="hadSlip" value="false" <% if
-                                                    (!entry || !entry.had_leakage) { %>checked<% } %> required>
+                                                <input type="radio" id="clean" name="failureLevel" value="0" <% if
+                                                    (!entry || (!entry.had_leakage && (!entry.failure_level ||
+                                                    entry.failure_level===0))) { %>checked<% } %> required>
                                                     <label for="clean">
                                                         ✅ Clean Day
                                                         <div class="description">Completely clean today</div>
@@ -351,11 +362,21 @@
                                             </div>
                                             <div class="radio-option slip"
                                                 onclick="this.querySelector('input').checked = true; updateSelection()">
-                                                <input type="radio" id="slip" name="hadSlip" value="true" <% if (entry
-                                                    && entry.had_leakage) { %>checked<% } %> required>
+                                                <input type="radio" id="slip" name="failureLevel" value="1" <% if (entry
+                                                    && (entry.failure_level===1 || (entry.had_leakage &&
+                                                    entry.failure_level !==2))) { %>checked<% } %> required>
                                                     <label for="slip">
-                                                        💧 Just a Little Bit
+                                                        ⚠️ A Little Bit
                                                         <div class="description">Had just a little bit today</div>
+                                                    </label>
+                                            </div>
+                                            <div class="radio-option failed"
+                                                onclick="this.querySelector('input').checked = true; updateSelection()">
+                                                <input type="radio" id="failed" name="failureLevel" value="2" <% if
+                                                    (entry && entry.failure_level===2) { %>checked<% } %> required>
+                                                    <label for="failed">
+                                                        💀 Totally Failed
+                                                        <div class="description">Complete failure today</div>
                                                     </label>
                                             </div>
                                         </div>
@@ -400,16 +421,21 @@
                 function updateSelection() {
                     const cleanOption = document.querySelector('.radio-option.clean');
                     const slipOption = document.querySelector('.radio-option.slip');
+                    const failedOption = document.querySelector('.radio-option.failed');
                     const cleanRadio = document.getElementById('clean');
                     const slipRadio = document.getElementById('slip');
+                    const failedRadio = document.getElementById('failed');
 
                     cleanOption.classList.remove('selected');
                     slipOption.classList.remove('selected');
+                    failedOption.classList.remove('selected');
 
                     if (cleanRadio.checked) {
                         cleanOption.classList.add('selected');
                     } else if (slipRadio.checked) {
                         slipOption.classList.add('selected');
+                    } else if (failedRadio.checked) {
+                        failedOption.classList.add('selected');
                     }
                 }
 

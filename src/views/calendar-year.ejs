@@ -113,7 +113,11 @@
         }
 
         .year-stat.slip .year-stat-value {
-            color: #e74c3c;
+            color: #856404;
+        }
+
+        .year-stat.failed .year-stat-value {
+            color: #dc3545;
         }
 
         .year-stat.total .year-stat-value {
@@ -185,6 +189,11 @@
         }
 
         .mini-day.slip {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .mini-day.failed {
             background-color: #f8d7da;
             color: #721c24;
         }
@@ -313,9 +322,14 @@
                             <div class="year-stat-label">Clean Days</div>
                         </div>
                         <div class="year-stat slip">
-                            <div class="year-stat-value">🔴 <%= stats.slipDays %>
+                            <div class="year-stat-value">🟡 <%= stats.slipDays %>
                             </div>
                             <div class="year-stat-label">Just a Little Bit Days</div>
+                        </div>
+                        <div class="year-stat failed">
+                            <div class="year-stat-value">🔴 <%= stats.failedDays %>
+                            </div>
+                            <div class="year-stat-label">Totally Failed Days</div>
                         </div>
                         <div class="year-stat total">
                             <div class="year-stat-value">📊 <%= stats.totalDays %>
@@ -348,7 +362,7 @@
                                                 <% if (dayObj) { %>
                                                     <a href="/entries/<%= dayObj.date %>"
                                                         class="mini-day <%= dayObj.status %>"
-                                                        title="<%= dayObj.date %>: <%= dayObj.status === 'clean' ? 'Clean' : (dayObj.status === 'slip' ? 'Just a Little Bit' : 'No entry') %>">
+                                                        title="<%= dayObj.date %>: <%= dayObj.status === 'clean' ? 'Clean' : (dayObj.status === 'slip' ? 'Just a Little Bit' : (dayObj.status === 'failed' ? 'Totally Failed' : 'No entry')) %>">
                                                         <%= dayObj.day %>
                                                     </a>
                                                     <% } else { %>
@@ -368,8 +382,12 @@
                             <span>🟢 Clean</span>
                         </div>
                         <div class="legend-item">
+                            <div class="legend-color" style="background-color: #fff3cd;"></div>
+                            <span>🟡 Just a Little Bit</span>
+                        </div>
+                        <div class="legend-item">
                             <div class="legend-color" style="background-color: #f8d7da;"></div>
-                            <span>🔴 Just a Little Bit</span>
+                            <span>🔴 Totally Failed</span>
                         </div>
                         <div class="legend-item">
                             <div class="legend-color" style="background-color: #f9f9f9;"></div>

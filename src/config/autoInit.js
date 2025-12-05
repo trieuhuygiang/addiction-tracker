@@ -43,12 +43,16 @@ const autoInitialize = async () => {
         user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         date DATE NOT NULL,
         had_leakage BOOLEAN NOT NULL,
+        failure_level INT DEFAULT 0,
         note TEXT,
         created_at TIMESTAMP DEFAULT NOW(),
         updated_at TIMESTAMP DEFAULT NOW(),
         UNIQUE (user_id, date)
       );
     `);
+
+    // Add failure_level column if it doesn't exist (migration)
+    await client.query(`ALTER TABLE entries ADD COLUMN IF NOT EXISTS failure_level INT DEFAULT 0;`);
 
     // Create index for faster queries
     await client.query(`

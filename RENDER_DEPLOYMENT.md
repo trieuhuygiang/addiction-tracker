@@ -103,20 +103,33 @@ Add these variables:
 |-----|-------|
 | `NODE_ENV` | `production` |
 | `DATABASE_URL` | (paste the Internal Database URL from Step 2.4) |
-| `SESSION_SECRET` | (see below how to generate) |
+| `SESSION_SECRET` | (any random text - see examples below) |
 | `USE_HTTPS` | `true` |
 
-#### Generate SESSION_SECRET
+#### What is SESSION_SECRET?
 
-Run this command in your terminal to generate a secure secret:
+It's just a random password that keeps user sessions secure. It can be **any random text** - the longer and more random, the better.
 
-```bash
-openssl rand -hex 32
+**Easy examples you can use:**
+
+```
+MySecretKey2025TrackerApp!@#$%
 ```
 
-Or use an online generator: [randomkeygen.com](https://randomkeygen.com/)
+```
+abc123xyz789!SuperSecretPassword456
+```
 
-Copy the result and use it as your `SESSION_SECRET` value.
+```
+JustTypeAnythingRandomHere12345!@#
+```
+
+**Or generate one online:**
+- Go to [randomkeygen.com](https://randomkeygen.com)
+- Scroll to "CodeIgniter Encryption Keys"
+- Copy any key
+
+Just pick something random and paste it as the value!
 
 ### 3.5 Deploy
 

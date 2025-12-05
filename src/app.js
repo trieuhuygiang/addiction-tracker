@@ -7,13 +7,16 @@ const cookieParser = require('cookie-parser');
 const { pool } = require('./config/db');
 const { requireLogin, setUserData } = require('./middleware/auth');
 const Entry = require('./models/Entry');
+const User = require('./models/User');
 const StreakHistory = require('./models/StreakHistory');
+const ClockHistory = require('./models/ClockHistory');
 const authRoutes = require('./routes/auth');
 const entriesRoutes = require('./routes/entries');
 const calendarRoutes = require('./routes/calendar');
 const summaryRoutes = require('./routes/summary');
 const usersRoutes = require('./routes/users');
 const adminRoutes = require('./routes/admin');
+const clockRoutes = require('./routes/clock');
 const { getStreakSummary } = require('./utils/streakCalculator');
 const { getTodayString, DEFAULT_TIMEZONE } = require('./utils/dateUtils');
 
@@ -80,6 +83,9 @@ app.use('/', summaryRoutes);
 
 // Admin routes (protected)
 app.use('/', adminRoutes);
+
+// Clock routes (protected)
+app.use('/', clockRoutes);
 
 // Test session route
 app.get('/test-session', (req, res) => {
@@ -164,6 +170,9 @@ app.get('/dashboard', requireLogin, async (req, res) => {
       deleteMessage = `Deleted ${req.query.deleted} entry for ${req.query.date}. Day count updated.`;
     }
 
+    // Get clock start time for NoFap counter
+    const clockStartTime = await User.getClockStart(userId);
+
     res.render('dashboard', {
       title: 'Dashboard',
       streakSummary,
@@ -172,7 +181,8 @@ app.get('/dashboard', requireLogin, async (req, res) => {
       streakHistory,
       todayEntry,
       today,
-      deleteMessage
+      deleteMessage,
+      clockStartTime
     });
   } catch (error) {
     console.error('Dashboard error:', error);
@@ -189,7 +199,8 @@ app.get('/dashboard', requireLogin, async (req, res) => {
       progressEntries: [],
       streakHistory: [],
       todayEntry: null,
-      today: getTodayString(req.timezone)
+      today: getTodayString(req.timezone),
+      clockStartTime: null
     });
   }
 });

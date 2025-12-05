@@ -136,6 +136,45 @@ class User {
       throw error;
     }
   }
+
+  // Get clock start time
+  static async getClockStart(id) {
+    try {
+      const result = await query(
+        'SELECT clock_start FROM users WHERE id = $1',
+        [id]
+      );
+      return result.rows[0]?.clock_start;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Set clock start time
+  static async setClockStart(id, startTime) {
+    try {
+      const result = await query(
+        'UPDATE users SET clock_start = $1 WHERE id = $2 RETURNING clock_start',
+        [startTime, id]
+      );
+      return result.rows[0]?.clock_start;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Clear clock start time (reset)
+  static async clearClockStart(id) {
+    try {
+      const result = await query(
+        'UPDATE users SET clock_start = NULL WHERE id = $1 RETURNING id',
+        [id]
+      );
+      return result.rows[0];
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 module.exports = User;

@@ -1,0 +1,102 @@
+const express = require('express');
+const router = express.Router();
+const { requireLogin } = require('../middleware/auth');
+const User = require('../models/User');
+const ClockHistory = require('../models/ClockHistory');
+
+// Start the clock
+router.post('/clock/start', requireLogin, async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    
+    // Check if clock is already running
+    const existingStart = await User.getClockStart(userId);
+    if (existingStart) {
+      return res.redirect('/dashboard?clockError=Clock is already running');
+    }
+    
+    // Set clock start time to now
+    await User.setClockStart(userId, new Date());
+    
+    res.redirect('/dashboard');
+  } catch (error) {
+    console.error('Clock start error:', error);
+    res.redirect('/dashboard?clockError=Failed to start clock');
+  }
+});
+
+// Reset the clock and save to history
+router.post('/clock/reset', requireLogin, async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    
+    // Get current clock start time
+    const clockStart = await User.getClockStart(userId);
+    
+    if (clockStart) {
+      const now = new Date();
+      const durationSeconds = Math.floor((now - new Date(clockStart)) / 1000);
+      
+      // Save to history if duration is at least 1 second
+      if (durationSeconds >= 1) {
+        await ClockHistory.create(userId, durationSeconds, clockStart, now);
+        console.log(`Clock reset: ${durationSeconds} seconds saved for user ${userId}`);
+      }
+    }
+    
+    // Clear the clock start time
+    await User.clearClockStart(userId);
+    
+    res.redirect('/dashboard?clockReset=true');
+  } catch (error) {
+    console.error('Clock reset error:', error);
+    res.redirect('/dashboard?clockError=Failed to reset clock');
+  }
+});
+
+// Delete a clock history record
+router.post('/clock-history/:id/delete', requireLogin, async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    const historyId = req.params.id;
+    
+    await ClockHistory.delete(historyId, userId);
+    res.redirect('/clock-history');
+  } catch (error) {
+    console.error('Delete clock history error:', error);
+    res.redirect('/clock-history');
+  }
+});
+
+// Delete all clock history
+router.post('/clock-history/delete-all', requireLogin, async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    await ClockHistory.deleteAllByUser(userId);
+    res.redirect('/clock-history');
+  } catch (error) {
+    console.error('Delete all clock history error:', error);
+    res.redirect('/clock-history');
+  }
+});
+
+// View clock history page
+router.get('/clock-history', requireLogin, async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    const clockHistory = await ClockHistory.findByUser(userId);
+    
+    res.render('clock-history', {
+      title: 'NoFap Clock History',
+      clockHistory
+    });
+  } catch (error) {
+    console.error('Clock history page error:', error);
+    res.render('clock-history', {
+      title: 'NoFap Clock History',
+      clockHistory: []
+    });
+  }
+});
+
+module.exports = router;

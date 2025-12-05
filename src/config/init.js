@@ -105,6 +105,27 @@ const initializeDatabase = async () => {
       await mainClient.query(streakHistoryTableQuery);
       console.log('✓ Streak history table created or already exists');
 
+      // Create clock_history table for NoFap counter resets
+      const clockHistoryTableQuery = `
+        CREATE TABLE IF NOT EXISTS clock_history (
+          id SERIAL PRIMARY KEY,
+          user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+          duration_seconds BIGINT NOT NULL,
+          start_time TIMESTAMP NOT NULL,
+          end_time TIMESTAMP NOT NULL,
+          created_at TIMESTAMP DEFAULT NOW()
+        );
+      `;
+      await mainClient.query(clockHistoryTableQuery);
+      console.log('✓ Clock history table created or already exists');
+
+      // Add clock_start column to users table
+      const addClockStartColumn = `
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS clock_start TIMESTAMP;
+      `;
+      await mainClient.query(addClockStartColumn);
+      console.log('✓ Clock start column added or already exists');
+
       // Create session table for express-session
       const sessionTableQuery = `
         CREATE TABLE IF NOT EXISTS session (

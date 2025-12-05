@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title %>
+    </title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .history-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 20px;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .history-header h1 {
+            color: #e94560;
+            font-size: 2rem;
+            margin: 0;
+        }
+
+        .back-btn {
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: transform 0.3s;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .history-card {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .history-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .streak-duration {
+            font-size: 1.75rem;
+            font-weight: bold;
+            color: #e94560;
+        }
+
+        .streak-dates {
+            color: #888;
+            font-size: 0.85rem;
+        }
+
+        .history-card-body {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .date-info {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .date-item {
+            text-align: center;
+        }
+
+        .date-item label {
+            display: block;
+            color: #888;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+        }
+
+        .date-item span {
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .delete-btn {
+            padding: 0.5rem 1rem;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: background 0.3s;
+        }
+
+        .delete-btn:hover {
+            background: #c0392b;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #888;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 12px;
+        }
+
+        .empty-state p {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .delete-all-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #333;
+            text-align: center;
+        }
+
+        .delete-all-btn {
+            padding: 0.75rem 1.5rem;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .delete-all-btn:hover {
+            background: #c0392b;
+        }
+
+        .summary-box {
+            background: linear-gradient(135deg, #0f3460 0%, #1a1a2e 100%);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .summary-item {
+            text-align: center;
+        }
+
+        .summary-item .value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #e94560;
+        }
+
+        .summary-item .label {
+            color: #888;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        @media (max-width: 600px) {
+            .history-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .history-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .streak-duration {
+                font-size: 1.25rem;
+            }
+
+            .date-info {
+                gap: 1rem;
+            }
+
+            .summary-box {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('partials/header') %>
+
+        <div class="history-container">
+            <div class="history-header">
+                <h1>🧠 Rewiring Day Counter History</h1>
+                <a href="/dashboard" class="back-btn">← Back to Dashboard</a>
+            </div>
+
+            <% if (clockHistory && clockHistory.length> 0) { %>
+                <!-- Summary -->
+                <div class="summary-box">
+                    <div class="summary-item">
+                        <div class="value">
+                            <%= clockHistory.length %>
+                        </div>
+                        <div class="label">Total Resets</div>
+                    </div>
+                    <div class="summary-item">
+                        <% const longestStreak=Math.max(...clockHistory.map(h=> h.duration_seconds));
+                            const longestDays = Math.floor(longestStreak / 86400);
+                            const longestHours = Math.floor((longestStreak % 86400) / 3600);
+                            %>
+                            <div class="value">
+                                <%= longestDays %>d <%= longestHours %>h
+                            </div>
+                            <div class="label">Longest Streak</div>
+                    </div>
+                    <div class="summary-item">
+                        <% const avgSeconds=Math.floor(clockHistory.reduce((sum, h)=> sum + h.duration_seconds, 0) /
+                            clockHistory.length);
+                            const avgDays = Math.floor(avgSeconds / 86400);
+                            const avgHours = Math.floor((avgSeconds % 86400) / 3600);
+                            %>
+                            <div class="value">
+                                <%= avgDays %>d <%= avgHours %>h
+                            </div>
+                            <div class="label">Average Streak</div>
+                    </div>
+                </div>
+
+                <!-- History List -->
+                <% clockHistory.forEach((record, index)=> {
+                    const days = Math.floor(record.duration_seconds / 86400);
+                    const hours = Math.floor((record.duration_seconds % 86400) / 3600);
+                    const minutes = Math.floor((record.duration_seconds % 3600) / 60);
+                    const seconds = record.duration_seconds % 60;
+
+                    const startDate = new Date(record.start_time);
+                    const endDate = new Date(record.end_time);
+                    const formatDate = (d) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year:
+                    'numeric' });
+                    const formatTime = (d) => d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                    %>
+                    <div class="history-card">
+                        <div class="history-card-header">
+                            <div>
+                                <div class="streak-duration">
+                                    🔥 <%= days %> days, <%= hours %>h <%= minutes %>m <%= seconds %>s
+                                </div>
+                                <div class="streak-dates">
+                                    <%= formatDate(startDate) %> → <%= formatDate(endDate) %>
+                                </div>
+                            </div>
+                            <span style="color: #667eea; font-size: 0.9rem;">#<%= clockHistory.length - index %></span>
+                        </div>
+                        <div class="history-card-body">
+                            <div class="date-info">
+                                <div class="date-item">
+                                    <label>Started</label>
+                                    <span>
+                                        <%= formatDate(startDate) %>
+                                            <%= formatTime(startDate) %>
+                                    </span>
+                                </div>
+                                <div class="date-item">
+                                    <label>Reset</label>
+                                    <span>
+                                        <%= formatDate(endDate) %>
+                                            <%= formatTime(endDate) %>
+                                    </span>
+                                </div>
+                            </div>
+                            <form method="POST" action="/clock-history/<%= record.id %>/delete" style="margin: 0;">
+                                <button type="submit" class="delete-btn"
+                                    onclick="return confirm('Delete this clock history record?');">
+                                    🗑️ Delete
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    <% }); %>
+
+                        <div class="delete-all-section">
+                            <form method="POST" action="/clock-history/delete-all">
+                                <button type="submit" class="delete-all-btn"
+                                    onclick="return confirm('Are you sure you want to delete ALL rewiring history? This cannot be undone.');">
+                                    🗑️ Delete All Rewiring History
+                                </button>
+                            </form>
+                        </div>
+                        <% } else { %>
+                            <div class="empty-state">
+                                <p>📭 No rewiring history yet</p>
+                                <p style="font-size: 0.9rem;">Start your rewiring day counter and reset it to see your
+                                    history here.</p>
+                                <a href="/dashboard" class="back-btn" style="display: inline-block; margin-top: 1rem;">←
+                                    Go to Dashboard</a>
+                            </div>
+                            <% } %>
+        </div>
+
+        <%- include('partials/footer') %>
+</body>
+
+</html>

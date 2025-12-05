@@ -32,6 +32,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cookieParser());
 
+// Trust proxy for Render/Heroku (required for secure cookies behind proxy)
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+}
+
 // Timezone middleware - read timezone from cookie on every request
 app.use((req, res, next) => {
   req.timezone = req.cookies.timezone || DEFAULT_TIMEZONE;
@@ -49,9 +54,9 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: { 
-    // Only set secure to true if explicitly using HTTPS
     secure: process.env.NODE_ENV === 'production' && process.env.USE_HTTPS === 'true',
     httpOnly: true,
+    sameSite: process.env.NODE_ENV === 'production' ? 'lax' : 'lax',
     maxAge: 24 * 60 * 60 * 1000 // 24 hours
   }
 }));

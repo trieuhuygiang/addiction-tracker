@@ -124,27 +124,18 @@ const pool = new Pool({
 3. Wait for deployment to complete (3-5 minutes)
 4. Your app will be live at `https://addiction-tracker.onrender.com`
 
-#### Step 7: Automatic Database Setup
+#### Step 7: Initialize Database
 
-**The app now automatically initializes the database on startup!**
+After first deployment, you need to initialize the database:
 
-When the server starts, it will:
-- Create all required tables (`users`, `entries`, `streak_history`, `session`)
-- Create the admin user automatically
+**Option A: Using Render Shell**
 
-You'll see these logs in Render:
-```
-Checking database tables...
-✓ Admin user created (username: admin, password: 49914991)
-✓ Database tables ready
-Server running on http://localhost:3000
-```
+1. Go to your web service dashboard
+2. Click **Shell** tab
+3. Run: `npm run setup`
 
-**Default Admin Login:**
-- **Username:** `admin`
-- **Password:** `49914991`
-
-> **Note:** No manual `npm run setup` is needed for Render deployments. If you need to reset or manually initialize, you can still use Render Shell and run `npm run setup`.
+**Option B: Auto-initialize on Start**
+The app already runs database initialization on startup, so tables should be created automatically.
 
 #### Render Free Tier Notes
 
@@ -229,12 +220,7 @@ Server running on http://localhost:3000
    sudo -u postgres createuser nofap_user
    sudo -u postgres psql -c "ALTER USER nofap_user WITH PASSWORD 'your_secure_password';"
    sudo -u postgres psql -c "ALTER ROLE nofap_user CREATEDB;"
-
-   # For PostgreSQL 15+: Grant schema permissions (required for table creation)
-   sudo -u postgres psql -d nofap_tracker -c "GRANT ALL ON SCHEMA public TO nofap_user;"
    ```
-
-   > **Note:** PostgreSQL 15+ changed default permissions for the `public` schema. Without the schema grant, you'll get "permission denied for schema public" error.
 
 4. **Clone and setup:**
 
@@ -375,16 +361,6 @@ sudo tail -f /var/log/nginx/access.log
 ## Support & Troubleshooting
 
 ### Common Issues:
-
-**"Permission denied for schema public" error (PostgreSQL 15+):**
-
-This error occurs when running `npm run setup` because PostgreSQL 15+ changed default permissions for the `public` schema.
-
-**Fix:** Grant schema permissions to your database user:
-
-```bash
-sudo -u postgres psql -d your_database_name -c "GRANT ALL ON SCHEMA public TO your_user;"
-```
 
 **Database connection refused:**
 

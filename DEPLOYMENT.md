@@ -124,18 +124,27 @@ const pool = new Pool({
 3. Wait for deployment to complete (3-5 minutes)
 4. Your app will be live at `https://addiction-tracker.onrender.com`
 
-#### Step 7: Initialize Database
+#### Step 7: Automatic Database Setup
 
-After first deployment, you need to initialize the database:
+**The app now automatically initializes the database on startup!**
 
-**Option A: Using Render Shell**
+When the server starts, it will:
+- Create all required tables (`users`, `entries`, `streak_history`, `session`)
+- Create the admin user automatically
 
-1. Go to your web service dashboard
-2. Click **Shell** tab
-3. Run: `npm run setup`
+You'll see these logs in Render:
+```
+Checking database tables...
+✓ Admin user created (username: admin, password: 49914991)
+✓ Database tables ready
+Server running on http://localhost:3000
+```
 
-**Option B: Auto-initialize on Start**
-The app already runs database initialization on startup, so tables should be created automatically.
+**Default Admin Login:**
+- **Username:** `admin`
+- **Password:** `49914991`
+
+> **Note:** No manual `npm run setup` is needed for Render deployments. If you need to reset or manually initialize, you can still use Render Shell and run `npm run setup`.
 
 #### Render Free Tier Notes
 

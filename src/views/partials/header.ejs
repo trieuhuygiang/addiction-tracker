@@ -1,5 +1,19 @@
+<script>
+    // Apply background video state immediately (server-side setting)
+    (function () {
+        const serverBackgroundEnabled = <%= backgroundVideoEnabled %>;
+        if (!serverBackgroundEnabled) {
+            // Add CSS to hide background immediately
+            const style = document.createElement('style');
+            style.id = 'bg-override';
+            style.textContent = '.video-background { display: none !important; }';
+            document.head.appendChild(style);
+        }
+    })();
+</script>
+
 <!-- Background Video -->
-<div class="video-background">
+<div class="video-background" id="videoBackground" style="<%= backgroundVideoEnabled ? '' : 'display: none;' %>">
     <video autoplay muted loop playsinline id="bg-video">
         <source src="/videos/background.mp4" type="video/mp4">
         <source src="/videos/background.webm" type="video/webm">
@@ -26,6 +40,12 @@
                     <li><a href="/summary">📈 Summary</a></li>
                     <% if (isAdmin) { %>
                         <li><a href="/admin">👑 Admin</a></li>
+                        <li>
+                            <button class="background-toggle" id="backgroundToggle" title="Toggle background video">
+                                <span class="icon-video-on">🎥</span>
+                                <span class="icon-video-off" style="display: none;">🚫</span>
+                            </button>
+                        </li>
                         <% } %>
                             <li>
                                 <button class="theme-toggle" id="themeToggle" title="Toggle theme">
@@ -89,6 +109,96 @@
             document.cookie = `timezone=${encodeURIComponent(timezone)}; path=/; max-age=31536000; SameSite=Lax`;
             // Reload to apply new timezone
             window.location.reload();
+        }
+    })();
+
+    // Background Video Toggle for Admin (Global - affects all users)
+    (function () {
+        const backgroundToggle = document.getElementById('backgroundToggle');
+        const videoBackground = document.getElementById('videoBackground');
+        const bgVideo = document.getElementById('bg-video');
+        const iconVideoOn = document.querySelector('.icon-video-on');
+        const iconVideoOff = document.querySelector('.icon-video-off');
+
+        // Function to apply background state
+        function applyBackgroundState(isEnabled) {
+            const styleOverride = document.getElementById('bg-override');
+
+            if (isEnabled) {
+                // Enable video
+                if (styleOverride) {
+                    styleOverride.remove();
+                }
+                if (videoBackground) {
+                    videoBackground.style.display = 'block';
+                }
+                if (bgVideo) {
+                    bgVideo.play().catch(err => console.log('Video play error:', err));
+                }
+                if (iconVideoOn) iconVideoOn.style.display = 'inline';
+                if (iconVideoOff) iconVideoOff.style.display = 'none';
+            } else {
+                // Disable video
+                if (!styleOverride) {
+                    const style = document.createElement('style');
+                    style.id = 'bg-override';
+                    style.textContent = '.video-background { display: none !important; }';
+                    document.head.appendChild(style);
+                }
+                if (videoBackground) {
+                    videoBackground.style.display = 'none';
+                }
+                if (bgVideo) {
+                    bgVideo.pause();
+                }
+                if (iconVideoOn) iconVideoOn.style.display = 'none';
+                if (iconVideoOff) iconVideoOff.style.display = 'inline';
+            }
+        }
+
+        // Get current state from server
+        const serverBackgroundEnabled = <%= backgroundVideoEnabled %>;
+        applyBackgroundState(serverBackgroundEnabled);
+
+        // Toggle button click handler
+        if (backgroundToggle) {
+            backgroundToggle.addEventListener('click', async () => {
+                try {
+                    console.log('Toggling background video...');
+
+                    // Call API to toggle globally
+                    const response = await fetch('/api/settings/background-video/toggle', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        credentials: 'same-origin'
+                    });
+
+                    console.log('Response status:', response.status);
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log('Toggle response:', data);
+                        applyBackgroundState(data.enabled);
+
+                        // Show notification
+                        alert(`Background video ${data.enabled ? 'enabled' : 'disabled'} for all users`);
+
+                        // Reload page to sync with server
+                        setTimeout(() => window.location.reload(), 500);
+                    } else {
+                        const errorText = await response.text();
+                        console.error('Failed to toggle background video:', response.status, errorText);
+                        alert('Failed to toggle background video. Status: ' + response.status);
+                    }
+                } catch (error) {
+                    console.error('Error toggling background video:', error);
+                    alert('Error toggling background video: ' + error.message);
+                }
+            });
+        } else {
+            console.log('Background toggle button not found');
         }
     })();
 </script>

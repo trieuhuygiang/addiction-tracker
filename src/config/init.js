@@ -1,14 +1,28 @@
 require('dotenv').config();
 const { Pool } = require('pg');
 
+// Connection configuration - support both DATABASE_URL and individual vars
+const getConnectionConfig = () => {
+  if (process.env.DATABASE_URL) {
+    // Railway/Heroku/Render style - use DATABASE_URL
+    return {
+      connectionString: process.env.DATABASE_URL,
+      ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+    };
+  } else {
+    // Local development - use individual environment variables
+    return {
+      host: process.env.DB_HOST,
+      port: process.env.DB_PORT,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: 'postgres',
+    };
+  }
+};
+
 // Connection to default postgres database for initial setup
-const setupPool = new Pool({
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: 'postgres',
-});
+const setupPool = new Pool(getConnectionConfig());
 
 const initializeDatabase = async () => {
   const client = await setupPool.connect();
@@ -16,27 +30,38 @@ const initializeDatabase = async () => {
   try {
     console.log('Starting database initialization...');
 
-    // Create database if it doesn't exist
-    const dbName = process.env.DB_NAME;
-    const dbCheckQuery = `SELECT datname FROM pg_database WHERE datname = '${dbName}'`;
-    const dbCheckResult = await client.query(dbCheckQuery);
+    // Skip database creation on Railway (database already exists)
+    if (!process.env.DATABASE_URL) {
+      // Create database if it doesn't exist (local development only)
+      const dbName = process.env.DB_NAME;
+      const dbCheckQuery = `SELECT datname FROM pg_database WHERE datname = '${dbName}'`;
+      const dbCheckResult = await client.query(dbCheckQuery);
 
-    if (dbCheckResult.rows.length === 0) {
-      console.log(`Creating database: ${dbName}`);
-      await client.query(`CREATE DATABASE ${dbName}`);
-      console.log(`✓ Database ${dbName} created`);
+      if (dbCheckResult.rows.length === 0) {
+        console.log(`Creating database: ${dbName}`);
+        await client.query(`CREATE DATABASE ${dbName}`);
+        console.log(`✓ Database ${dbName} created`);
+      } else {
+        console.log(`✓ Database ${dbName} already exists`);
+      }
     } else {
-      console.log(`✓ Database ${dbName} already exists`);
+      console.log('✓ Using Railway PostgreSQL database');
     }
 
     // Now connect to the actual database
-    const mainPool = new Pool({
-      host: process.env.DB_HOST,
-      port: process.env.DB_PORT,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
-    });
+    const mainPool = new Pool(process.env.DATABASE_URL 
+      ? {
+          connectionString: process.env.DATABASE_URL,
+          ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+        }
+      : {
+          host: process.env.DB_HOST,
+          port: process.env.DB_PORT,
+          user: process.env.DB_USER,
+          password: process.env.DB_PASSWORD,
+          database: process.env.DB_NAME,
+        }
+    );
 
     const mainClient = await mainPool.connect();
 

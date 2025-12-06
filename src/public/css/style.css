@@ -152,6 +152,31 @@ main {
     display: inline;
 }
 
+/* ===== BACKGROUND VIDEO TOGGLE (Admin Only) ===== */
+.background-toggle {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    padding: 0.5rem 0.75rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: background-color 0.3s, transform 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.background-toggle:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+.background-toggle .icon-video-on,
+.background-toggle .icon-video-off {
+    display: inline;
+}
+
 /* ===== NAVBAR ===== */
 .navbar {
     background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);

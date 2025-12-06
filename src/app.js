@@ -17,8 +17,10 @@ const summaryRoutes = require('./routes/summary');
 const usersRoutes = require('./routes/users');
 const adminRoutes = require('./routes/admin');
 const clockRoutes = require('./routes/clock');
+const settingsRoutes = require('./routes/settings');
 const { getStreakSummary } = require('./utils/streakCalculator');
 const { getTodayString, DEFAULT_TIMEZONE } = require('./utils/dateUtils');
+const GlobalSettings = require('./models/GlobalSettings');
 
 const app = express();
 
@@ -64,6 +66,18 @@ app.use(session({
 // User data middleware
 app.use(setUserData);
 
+// Global settings middleware - make background video setting available to all views
+app.use(async (req, res, next) => {
+  try {
+    const backgroundVideoEnabled = await GlobalSettings.getSetting('background_video_enabled');
+    res.locals.backgroundVideoEnabled = backgroundVideoEnabled === 'true';
+  } catch (error) {
+    console.error('Error getting background video setting:', error);
+    res.locals.backgroundVideoEnabled = true; // Default to enabled on error
+  }
+  next();
+});
+
 // Routes
 app.get('/', (req, res) => {
   res.render('index', { 
@@ -91,6 +105,9 @@ app.use('/', adminRoutes);
 
 // Clock routes (protected)
 app.use('/', clockRoutes);
+
+// Settings API routes (protected)
+app.use('/api/settings', settingsRoutes);
 
 // Test session route
 app.get('/test-session', (req, res) => {

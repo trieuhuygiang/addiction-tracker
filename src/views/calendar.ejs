@@ -28,6 +28,11 @@
             margin-bottom: 0.5rem;
         }
 
+        .calendar-header p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
         .month-navigation {
             display: flex;
             justify-content: center;
@@ -55,16 +60,16 @@
         .month-display {
             font-size: 1.5rem;
             font-weight: bold;
-            color: #333;
+            color: var(--text-primary);
             min-width: 200px;
             text-align: center;
         }
 
         .calendar-table {
-            background: white;
+            background: var(--card-bg);
             border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 10px var(--shadow-color);
             margin-bottom: 2rem;
         }
 
@@ -97,11 +102,13 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            border: 1px solid #e0e0e0;
+            border: 1px solid var(--border-color);
             cursor: pointer;
             transition: all 0.3s;
             position: relative;
             font-weight: 600;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
         }
 
         .calendar-day:hover {
@@ -109,50 +116,51 @@
         }
 
         .calendar-day.clean {
-            background-color: #d4edda;
-            color: #155724;
+            background-color: rgba(40, 167, 69, 0.2);
+            color: var(--success-color);
         }
 
         .calendar-day.clean:hover {
-            background-color: #c3e6cb;
+            background-color: rgba(40, 167, 69, 0.3);
         }
 
         .calendar-day.slip {
-            background-color: #fff3cd;
-            color: #856404;
+            background-color: rgba(255, 193, 7, 0.2);
+            color: var(--warning-color);
         }
 
         .calendar-day.slip:hover {
-            background-color: #ffe69c;
+            background-color: rgba(255, 193, 7, 0.3);
         }
 
         .calendar-day.failed {
-            background-color: #f8d7da;
-            color: #721c24;
+            background-color: rgba(220, 53, 69, 0.2);
+            color: var(--danger-color);
         }
 
         .calendar-day.failed:hover {
-            background-color: #f5c6cb;
+            background-color: rgba(220, 53, 69, 0.3);
         }
 
         .calendar-day.no-data {
-            background-color: #f9f9f9;
-            color: #999;
+            background-color: var(--bg-tertiary);
+            color: var(--text-muted);
         }
 
         .calendar-day.no-data:hover {
-            background-color: #f0f0f0;
+            background-color: var(--bg-secondary);
         }
 
         .calendar-day.other-month {
-            background-color: #fafafa;
-            color: #ccc;
+            background-color: var(--bg-primary);
+            color: var(--text-muted);
+            opacity: 0.5;
             cursor: default;
         }
 
         .calendar-day.other-month:hover {
             transform: none;
-            background-color: #fafafa;
+            background-color: var(--bg-primary);
         }
 
         .day-number {
@@ -182,12 +190,12 @@
             width: 30px;
             height: 30px;
             border-radius: 5px;
-            border: 1px solid #ddd;
+            border: 1px solid var(--border-color);
         }
 
         .back-link {
             display: inline-block;
-            color: #667eea;
+            color: var(--info-color);
             text-decoration: none;
             font-weight: 600;
             margin-bottom: 1rem;
@@ -309,18 +317,17 @@
             <a href="/dashboard" class="back-link">← Back to Dashboard</a>
 
             <div class="calendar-header">
-                <h1>📅 Calendar</h1>
+                <h1>📅 Month Calendar</h1>
                 <p>View your progress by month</p>
             </div>
 
-            <div class="view-toggle"
-                style="display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 1.5rem;">
+            <div class="view-toggle" style="display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 2rem;">
                 <a href="/calendar/<%= year %>/<%= month %>"
-                    style="padding: 0.5rem 1rem; background: #667eea; color: white; border-radius: 5px; text-decoration: none; font-weight: 600;">Monthly
-                    View</a>
+                    style="padding: 0.5rem 1rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 5px; text-decoration: none; font-weight: 600;">Month
+                    Calendar</a>
                 <a href="/calendar/year/<%= year %>"
-                    style="padding: 0.5rem 1rem; background: #f0f0f0; color: #333; border-radius: 5px; text-decoration: none; font-weight: 600;">Yearly
-                    View</a>
+                    style="padding: 0.5rem 1rem; background: var(--bg-tertiary); color: var(--text-primary); border-radius: 5px; text-decoration: none; font-weight: 600; transition: all 0.3s;">Year
+                    Calendar</a>
             </div>
 
             <% if (error) { %>

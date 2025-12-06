@@ -28,15 +28,15 @@
         }
 
         .entries-header p {
-            color: #666;
+            color: var(--text-secondary);
             font-size: 1rem;
         }
 
         .entry-form {
-            background: white;
+            background: var(--card-bg);
             padding: 2rem;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 10px var(--shadow-color);
         }
 
         .form-group {
@@ -46,16 +46,18 @@
         .form-group label {
             display: block;
             margin-bottom: 0.5rem;
-            color: #333;
+            color: var(--text-primary);
             font-weight: 600;
         }
 
         .form-group input[type="date"] {
             width: 100%;
             padding: 0.75rem;
-            border: 1px solid #ddd;
+            border: 1px solid var(--input-border);
             border-radius: 5px;
             font-size: 1rem;
+            background: var(--input-bg);
+            color: var(--text-primary);
         }
 
         .radio-group {
@@ -70,44 +72,45 @@
             align-items: center;
             gap: 0.75rem;
             padding: 1rem;
-            border: 2px solid #ddd;
+            border: 2px solid var(--border-color);
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s;
+            background: var(--bg-secondary);
         }
 
         .radio-option:hover {
-            border-color: #667eea;
+            border-color: var(--info-color);
         }
 
         .radio-option.clean {
-            background-color: #f0fff4;
+            background-color: rgba(40, 167, 69, 0.1);
         }
 
         .radio-option.clean:hover,
         .radio-option.clean.selected {
-            border-color: #28a745;
-            background-color: #d4edda;
+            border-color: var(--success-color);
+            background-color: rgba(40, 167, 69, 0.2);
         }
 
         .radio-option.slip {
-            background-color: #fffbeb;
+            background-color: rgba(255, 193, 7, 0.1);
         }
 
         .radio-option.slip:hover,
         .radio-option.slip.selected {
-            border-color: #ffc107;
-            background-color: #fff3cd;
+            border-color: var(--warning-color);
+            background-color: rgba(255, 193, 7, 0.2);
         }
 
         .radio-option.failed {
-            background-color: #fff5f5;
+            background-color: rgba(220, 53, 69, 0.1);
         }
 
         .radio-option.failed:hover,
         .radio-option.failed.selected {
-            border-color: #dc3545;
-            background-color: #f8d7da;
+            border-color: var(--danger-color);
+            background-color: rgba(220, 53, 69, 0.2);
         }
 
         .radio-option input[type="radio"] {
@@ -125,19 +128,21 @@
 
         .radio-option .description {
             font-size: 0.85rem;
-            color: #666;
+            color: var(--text-secondary);
             font-weight: normal;
         }
 
         .form-group textarea {
             width: 100%;
             padding: 0.75rem;
-            border: 1px solid #ddd;
+            border: 1px solid var(--input-border);
             border-radius: 5px;
             font-size: 1rem;
             font-family: inherit;
             min-height: 120px;
             resize: vertical;
+            background: var(--input-bg);
+            color: var(--text-primary);
         }
 
         .form-group textarea:focus {
@@ -224,9 +229,9 @@
 
         .date-nav-btn {
             padding: 0.5rem 1rem;
-            background-color: #f0f0f0;
-            color: #333;
-            border: 1px solid #ddd;
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
             border-radius: 5px;
             cursor: pointer;
             text-decoration: none;
@@ -235,7 +240,8 @@
         }
 
         .date-nav-btn:hover {
-            background-color: #e0e0e0;
+            background-color: var(--bg-secondary);
+            border-color: var(--info-color);
         }
 
         /* Mobile Responsive Styles */

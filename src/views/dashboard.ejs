@@ -11,7 +11,9 @@
     <script src="/js/theme-init.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Orbitron:wght@700;900&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="/css/style.css">
     <style>
         .dashboard-container {
@@ -316,12 +318,13 @@
                         <p class="rewiring-clock-subtitle">Time since last relapse</p>
 
                         <% if (clockStartTime) { %>
-                            <div id="clock-display" data-start-time="<%= clockStartTime.toISOString() %>" class="watch-container">
+                            <div id="clock-display" data-start-time="<%= clockStartTime.toISOString() %>"
+                                class="watch-container">
                                 <!-- Circular Watch Face -->
                                 <div class="watch-face">
                                     <!-- Watch Ring -->
                                     <div class="watch-ring"></div>
-                                    
+
                                     <!-- Main Display -->
                                     <div class="watch-center">
                                         <!-- Days Display (Top & Largest) -->
@@ -329,7 +332,7 @@
                                             <div id="clock-days" class="days-display">0</div>
                                             <div class="days-label">DAYS</div>
                                         </div>
-                                        
+
                                         <!-- Time Display (HH:MM:SS format with labels) -->
                                         <div class="time-display">
                                             <span class="time-group">
@@ -348,7 +351,7 @@
                                             </span>
                                         </div>
                                     </div>
-                                    
+
                                     <!-- Decorative Elements (G-Shock style) -->
                                     <div class="watch-marker watch-marker-12"></div>
                                     <div class="watch-marker watch-marker-3"></div>
@@ -400,7 +403,7 @@
                                     <div class="watch-face">
                                         <!-- Watch Ring -->
                                         <div class="watch-ring"></div>
-                                        
+
                                         <!-- Main Display -->
                                         <div class="watch-center">
                                             <!-- Days Display (Top & Largest) -->
@@ -408,7 +411,7 @@
                                                 <div class="days-display">--</div>
                                                 <div class="days-label">DAYS</div>
                                             </div>
-                                            
+
                                             <!-- Time Display (HH:MM:SS format with labels) -->
                                             <div class="time-display">
                                                 <span class="time-group">
@@ -427,14 +430,15 @@
                                                 </span>
                                             </div>
                                         </div>
-                                        
+
                                         <!-- Decorative Elements (G-Shock style) -->
                                         <div class="watch-marker watch-marker-12"></div>
                                         <div class="watch-marker watch-marker-3"></div>
                                         <div class="watch-marker watch-marker-6"></div>
                                         <div class="watch-marker watch-marker-9"></div>
                                     </div>
-                                    <p style="color: var(--text-muted); margin-top: 1.5rem; text-align: center;">Counter not started yet</p>
+                                    <p style="color: var(--text-muted); margin-top: 1.5rem; text-align: center;">Counter
+                                        not started yet</p>
                                 </div>
 
                                 <form method="POST" action="/clock/start" style="display: inline;">
@@ -773,7 +777,7 @@
                             const currentStart = new Date(startTime);
                             const now = new Date();
                             const diff = Math.floor((now - currentStart) / 1000);
-                            
+
                             const currentDays = Math.floor(diff / 86400);
                             const currentHours = Math.floor((diff % 86400) / 3600);
                             const currentMinutes = Math.floor((diff % 3600) / 60);

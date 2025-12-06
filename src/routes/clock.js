@@ -99,4 +99,42 @@ router.get('/clock-history', requireLogin, async (req, res) => {
   }
 });
 
+// Edit the clock counter
+router.post('/clock/edit', requireLogin, async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    const { days, hours, minutes } = req.body;
+    
+    // Validate inputs
+    const daysNum = parseInt(days) || 0;
+    const hoursNum = parseInt(hours) || 0;
+    const minutesNum = parseInt(minutes) || 0;
+    
+    if (daysNum < 0 || hoursNum < 0 || hoursNum > 23 || minutesNum < 0 || minutesNum > 59) {
+      return res.redirect('/dashboard?clockError=Invalid time values');
+    }
+    
+    // Check if clock is running
+    const existingStart = await User.getClockStart(userId);
+    if (!existingStart) {
+      return res.redirect('/dashboard?clockError=Clock is not running');
+    }
+    
+    // Calculate total seconds from the input
+    const totalSeconds = (daysNum * 86400) + (hoursNum * 3600) + (minutesNum * 60);
+    
+    // Calculate new start time: now - totalSeconds
+    const now = new Date();
+    const newStartTime = new Date(now.getTime() - (totalSeconds * 1000));
+    
+    // Update clock start time
+    await User.setClockStart(userId, newStartTime);
+    
+    res.redirect('/dashboard?clockEdited=true');
+  } catch (error) {
+    console.error('Clock edit error:', error);
+    res.redirect('/dashboard?clockError=Failed to edit clock');
+  }
+});
+
 module.exports = router;

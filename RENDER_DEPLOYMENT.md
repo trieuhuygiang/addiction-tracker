@@ -46,70 +46,7 @@ You'll create:
 3. Click **Create new project**
 4. Wait 1-2 minutes for the project to be ready
 
-### 1.3 Create Database Tables
-
-Once your project is ready, you need to create the required tables:
-
-1. In your Supabase project, click **SQL Editor** in the left sidebar
-2. Click **New query**
-3. Copy and paste the following SQL:
-
-```sql
--- Users table
-CREATE TABLE IF NOT EXISTS users (
-    id SERIAL PRIMARY KEY,
-    email VARCHAR(255) UNIQUE,
-    username VARCHAR(50) UNIQUE NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
-    reset_token VARCHAR(255),
-    reset_token_expiry TIMESTAMP,
-    is_admin BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Entries table
-CREATE TABLE IF NOT EXISTS entries (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    date DATE NOT NULL,
-    status VARCHAR(20) NOT NULL CHECK (status IN ('success', 'relapse')),
-    note TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(user_id, date)
-);
-
--- Streak history table
-CREATE TABLE IF NOT EXISTS streak_history (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    start_date DATE NOT NULL,
-    end_date DATE,
-    streak_length INTEGER DEFAULT 0,
-    is_current BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Clock history table
-CREATE TABLE IF NOT EXISTS clock_history (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    reset_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    previous_duration INTEGER DEFAULT 0,
-    note TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Create indexes for better performance
-CREATE INDEX IF NOT EXISTS idx_entries_user_id ON entries(user_id);
-CREATE INDEX IF NOT EXISTS idx_entries_date ON entries(date);
-CREATE INDEX IF NOT EXISTS idx_streak_history_user_id ON streak_history(user_id);
-CREATE INDEX IF NOT EXISTS idx_clock_history_user_id ON clock_history(user_id);
-```
-
-4. Click **Run** (or press Ctrl+Enter / Cmd+Enter)
-5. You should see "Success. No rows returned" - this means the tables were created
-
-### 1.4 Get Database Connection String (Pooler)
+### 1.3 Get Database Connection String (Pooler)
 
 > ⚠️ **Important:** You must use the **Pooler connection string** (not Direct) to avoid IPv6 connection issues with Render.
 

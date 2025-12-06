@@ -1,38 +1,39 @@
 require('dotenv').config();
 const { Pool } = require('pg');
 
-// Connection configuration - support both DATABASE_URL and individual vars
-const getConnectionConfig = () => {
-  if (process.env.DATABASE_URL) {
-    // Railway/Heroku/Render style - use DATABASE_URL
-    return {
+const initializeDatabase = async () => {
+  // For Railway/cloud: DATABASE_URL connects directly to the target database
+  // For local: use individual vars to connect to postgres db first, then target db
+  const usesDatabaseUrl = !!process.env.DATABASE_URL;
+  
+  let setupPool;
+  
+  if (usesDatabaseUrl) {
+    // Railway/Heroku - DATABASE_URL already points to the correct database
+    setupPool = new Pool({
       connectionString: process.env.DATABASE_URL,
       ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
-    };
+    });
+    console.log('Using DATABASE_URL for connection');
   } else {
-    // Local development - use individual environment variables
-    return {
+    // Local development - connect to postgres database first
+    setupPool = new Pool({
       host: process.env.DB_HOST,
       port: process.env.DB_PORT,
       user: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: 'postgres',
-    };
+    });
+    console.log('Using local PostgreSQL connection');
   }
-};
 
-// Connection to default postgres database for initial setup
-const setupPool = new Pool(getConnectionConfig());
-
-const initializeDatabase = async () => {
   const client = await setupPool.connect();
 
   try {
     console.log('Starting database initialization...');
 
-    // Skip database creation on Railway (database already exists)
-    if (!process.env.DATABASE_URL) {
-      // Create database if it doesn't exist (local development only)
+    // Only create database on local development (Railway database already exists)
+    if (!usesDatabaseUrl) {
       const dbName = process.env.DB_NAME;
       const dbCheckQuery = `SELECT datname FROM pg_database WHERE datname = '${dbName}'`;
       const dbCheckResult = await client.query(dbCheckQuery);
@@ -44,24 +45,25 @@ const initializeDatabase = async () => {
       } else {
         console.log(`✓ Database ${dbName} already exists`);
       }
-    } else {
-      console.log('✓ Using Railway PostgreSQL database');
+      
+      // Release this connection and create new one to target database
+      client.release();
+      await setupPool.end();
     }
 
-    // Now connect to the actual database
-    const mainPool = new Pool(process.env.DATABASE_URL 
-      ? {
+    // Now connect to the actual application database
+    const mainPool = usesDatabaseUrl
+      ? new Pool({
           connectionString: process.env.DATABASE_URL,
           ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
-        }
-      : {
+        })
+      : new Pool({
           host: process.env.DB_HOST,
           port: process.env.DB_PORT,
           user: process.env.DB_USER,
           password: process.env.DB_PASSWORD,
           database: process.env.DB_NAME,
-        }
-    );
+        });
 
     const mainClient = await mainPool.connect();
 
@@ -171,8 +173,15 @@ const initializeDatabase = async () => {
     console.error('Error initializing database:', error);
     throw error;
   } finally {
-    client.release();
-    await setupPool.end();
+    // Clean up connections - only if local development
+    if (!usesDatabaseUrl) {
+      try {
+        if (client) client.release();
+        if (setupPool) await setupPool.end();
+      } catch (e) {
+        // Connection already closed
+      }
+    }
   }
 };
 

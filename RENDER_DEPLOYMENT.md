@@ -1,6 +1,6 @@
 # Deploy Addiction Tracker to Render
 
-This guide walks you through deploying the Addiction Tracker app to [Render](https://render.com) - a modern cloud platform with a free tier.
+This guide walks you through deploying the Addiction Tracker app to [Render](https://render.com) with [Supabase](https://supabase.com) as the database.
 
 ---
 
@@ -8,10 +8,10 @@ This guide walks you through deploying the Addiction Tracker app to [Render](htt
 
 You'll create:
 
-1. A **PostgreSQL database** (free tier: 1GB, 90 days)
-2. A **Web Service** (free tier: spins down after inactivity)
+1. A **PostgreSQL database** on Supabase (free tier: 500MB, no expiration)
+2. A **Web Service** on Render (free tier: spins down after inactivity)
 
-**Time required:** ~10 minutes
+**Time required:** ~15 minutes
 
 ---
 
@@ -22,7 +22,110 @@ You'll create:
 
 ---
 
-## Step 1: Create a Render Account
+## Step 1: Create a Supabase Database
+
+### 1.1 Create Supabase Account
+
+1. Go to [supabase.com](https://supabase.com)
+2. Click **Start your project**
+3. Sign up with your **GitHub account** (recommended)
+
+### 1.2 Create New Project
+
+1. Click **New Project**
+2. Fill in the following:
+
+| Field            | Value                                          |
+| ---------------- | ---------------------------------------------- |
+| **Organization** | Select or create one                           |
+| **Name**         | `addiction-tracker`                            |
+| **Password**     | Create a strong database password (save this!) |
+| **Region**       | Choose closest to your users                   |
+| **Plan**         | `Free`                                         |
+
+3. Click **Create new project**
+4. Wait 1-2 minutes for the project to be ready
+
+### 1.3 Create Database Tables
+
+Once your project is ready, you need to create the required tables:
+
+1. In your Supabase project, click **SQL Editor** in the left sidebar
+2. Click **New query**
+3. Copy and paste the following SQL:
+
+```sql
+-- Users table
+CREATE TABLE IF NOT EXISTS users (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) UNIQUE,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    reset_token VARCHAR(255),
+    reset_token_expiry TIMESTAMP,
+    is_admin BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Entries table
+CREATE TABLE IF NOT EXISTS entries (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    date DATE NOT NULL,
+    status VARCHAR(20) NOT NULL CHECK (status IN ('success', 'relapse')),
+    note TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_id, date)
+);
+
+-- Streak history table
+CREATE TABLE IF NOT EXISTS streak_history (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    start_date DATE NOT NULL,
+    end_date DATE,
+    streak_length INTEGER DEFAULT 0,
+    is_current BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Clock history table
+CREATE TABLE IF NOT EXISTS clock_history (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    reset_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    previous_duration INTEGER DEFAULT 0,
+    note TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create indexes for better performance
+CREATE INDEX IF NOT EXISTS idx_entries_user_id ON entries(user_id);
+CREATE INDEX IF NOT EXISTS idx_entries_date ON entries(date);
+CREATE INDEX IF NOT EXISTS idx_streak_history_user_id ON streak_history(user_id);
+CREATE INDEX IF NOT EXISTS idx_clock_history_user_id ON clock_history(user_id);
+```
+
+4. Click **Run** (or press Ctrl+Enter / Cmd+Enter)
+5. You should see "Success. No rows returned" - this means the tables were created
+
+### 1.4 Get Database Connection String (Pooler)
+
+> ⚠️ **Important:** You must use the **Pooler connection string** (not Direct) to avoid IPv6 connection issues with Render.
+
+1. In your Supabase project, go to **Settings** (gear icon) → **Database**
+2. Scroll down to **Connection string**
+3. Click the **Mode** dropdown and select **Session** (not Direct!)
+4. Copy the connection string - it looks like:
+   ```
+   postgresql://postgres.[project-ref]:[YOUR-PASSWORD]@aws-0-[region].pooler.supabase.com:6543/postgres
+   ```
+5. Replace `[YOUR-PASSWORD]` with the database password you created
+6. **Save this URL** - you'll need it in Step 3
+
+---
+
+## Step 2: Create a Render Account
 
 1. Go to [render.com](https://render.com)
 2. Click **Get Started for Free**
@@ -30,46 +133,11 @@ You'll create:
 
 ---
 
-## Step 2: Create PostgreSQL Database
-
-### 2.1 Create New Database
-
-1. From your Render Dashboard, click **New +**
-2. Select **PostgreSQL**
-
-### 2.2 Configure Database
-
-Fill in the following:
-
-| Field                  | Value                                                   |
-| ---------------------- | ------------------------------------------------------- |
-| **Name**               | `addiction-tracker-db`                                  |
-| **Database**           | `addiction_tracker`                                     |
-| **User**               | `tracker_user` (or leave default)                       |
-| **Region**             | Choose closest to your users (e.g., `Oregon (US West)`) |
-| **PostgreSQL Version** | `16` (or latest)                                        |
-| **Plan**               | `Free`                                                  |
-
-### 2.3 Create Database
-
-1. Click **Create Database**
-2. Wait 1-2 minutes for the database to be ready
-3. Once ready, you'll see a green "Available" status
-
-### 2.4 Copy Database URL
-
-1. Scroll down to **Connections**
-2. Copy the **Internal Database URL**
-   - It looks like: `postgres://tracker_user:abc123xyz@dpg-xxx-a.oregon-postgres.render.com/addiction_tracker`
-3. **Save this URL** - you'll need it in Step 3
-
----
-
-## Step 3: Create Web Service
+## Step 3: Create Web Service on Render
 
 ### 3.1 Create New Web Service
 
-1. From Dashboard, click **New +**
+1. From Render Dashboard, click **New +**
 2. Select **Web Service**
 
 ### 3.2 Connect Repository
@@ -100,12 +168,14 @@ Scroll down to **Environment Variables** and click **Add Environment Variable**.
 
 Add these variables:
 
-| Key              | Value                                           |
-| ---------------- | ----------------------------------------------- |
-| `NODE_ENV`       | `production`                                    |
-| `DATABASE_URL`   | (paste the Internal Database URL from Step 2.4) |
-| `SESSION_SECRET` | (any random text - see examples below)          |
-| `USE_HTTPS`      | `true`                                          |
+| Key              | Value                                                       |
+| ---------------- | ----------------------------------------------------------- |
+| `NODE_ENV`       | `production`                                                |
+| `DATABASE_URL`   | (paste the Supabase Pooler connection string from Step 1.3) |
+| `SESSION_SECRET` | (any random text - see examples below)                      |
+| `USE_HTTPS`      | `true`                                                      |
+
+> ⚠️ **Important:** Make sure you're using the Supabase **Pooler** URL (with `pooler.supabase.com` and port `6543`), NOT the direct URL. Using the direct URL will cause `ENETUNREACH` connection errors.
 
 #### What is SESSION_SECRET?
 
@@ -173,13 +243,24 @@ Database pool connected
 
 ### Database Connection Error
 
-**Error:** `Connection refused` or `Database not found`
+**Error:** `ENETUNREACH` or `Connection refused`
 
 **Solution:**
 
-1. Make sure you used the **Internal Database URL** (not External)
-2. Verify the DATABASE_URL is correct in environment variables
-3. Check that the database is in the same region as the web service
+1. Make sure you're using the **Supabase Pooler URL** (not Direct URL)
+   - ✅ Correct: `postgresql://postgres.[ref]:[password]@aws-0-[region].pooler.supabase.com:6543/postgres`
+   - ❌ Wrong: `postgresql://postgres:[password]@db.[ref].supabase.co:5432/postgres`
+2. Go to Supabase → Settings → Database → Connection string → Select **Session** mode
+3. Copy the pooler URL and update it in Render environment variables
+4. Redeploy
+
+**Error:** `password authentication failed`
+
+**Solution:**
+
+1. Check that you replaced `[YOUR-PASSWORD]` with your actual database password
+2. Make sure there are no extra spaces in the connection string
+3. If you forgot your password, reset it in Supabase → Settings → Database
 
 ### App Shows Error Page
 
@@ -204,17 +285,19 @@ This is normal on the free tier. The app "spins down" after 15 minutes of inacti
 - Upgrade to a paid plan ($7/month) for always-on service
 - Use a service like [UptimeRobot](https://uptimerobot.com) to ping your app every 14 minutes (keeps it awake)
 
-### Database Expired (90 days)
+---
 
-Free databases expire after 90 days.
+## Why Supabase Instead of Render PostgreSQL?
 
-**Solution:**
+| Feature              | Supabase (Free)    | Render PostgreSQL (Free) |
+| -------------------- | ------------------ | ------------------------ |
+| **Storage**          | 500MB              | 1GB                      |
+| **Expiration**       | ❌ No expiration   | ⚠️ 90 days               |
+| **Always Available** | ✅ Yes             | ✅ Yes                   |
+| **Dashboard**        | ✅ Full SQL editor | ⚠️ Basic                 |
+| **Backups**          | ✅ Daily (paid)    | ❌ No                    |
 
-1. Create a new database
-2. Update the DATABASE_URL in your web service
-3. Redeploy
-
-Or upgrade to a paid database plan.
+Supabase is recommended because the free tier doesn't expire after 90 days.
 
 ---
 
@@ -300,8 +383,9 @@ Now every push to `main` branch will trigger a new deployment.
 ## Useful Links
 
 - [Render Dashboard](https://dashboard.render.com)
+- [Supabase Dashboard](https://supabase.com/dashboard)
 - [Render Documentation](https://render.com/docs)
-- [Render Status Page](https://status.render.com)
+- [Supabase Documentation](https://supabase.com/docs)
 
 ---
 
@@ -321,7 +405,7 @@ Go to your web service → **Manual Deploy** → **Clear build cache & deploy**
 
 ### Connect to database (advanced)
 
-Use the **External Database URL** with a PostgreSQL client like pgAdmin or DBeaver.
+Use the **Direct Database URL** from Supabase with a PostgreSQL client like pgAdmin, DBeaver, or the Supabase SQL Editor.
 
 ---
 

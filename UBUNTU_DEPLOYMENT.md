@@ -1,6 +1,6 @@
-# Addiction Tracker - Complete Ubuntu Deployment Guide
+# Purity Revive Center - Complete Ubuntu Deployment Guide
 
-This is a step-by-step guide to deploy the Addiction Tracker on a fresh Ubuntu server (20.04/22.04/24.04). Follow each step carefully.
+This is a step-by-step guide to deploy Purity Revive Center on a fresh Ubuntu server (20.04/22.04/24.04). Follow each step carefully.
 
 ---
 
@@ -347,7 +347,7 @@ Open your browser and go to:
 http://YOUR_SERVER_IP:3000
 ```
 
-You should see the Addiction Tracker homepage!
+You should see the Purity Revive Center homepage!
 
 ---
 

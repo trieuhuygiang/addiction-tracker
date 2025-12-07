@@ -1,4 +1,4 @@
-# Addiction Tracker
+# Purity Revive Center
 
 A web application to track your addiction recovery progress with daily logs, streaks, and calendar views.
 
@@ -62,14 +62,25 @@ A web application to track your addiction recovery progress with daily logs, str
 4. **Create a `.env` file** in the root directory:
 
    ```env
+   # Application Configuration
    PORT=3000
+   NODE_ENV=development
+
+   # Database Configuration
+   # Option 1: Use individual connection parameters (for local development)
    DB_HOST=localhost
    DB_PORT=5432
    DB_USER=tracker_user
    DB_PASSWORD=your_secure_password
    DB_NAME=addiction_tracker
+
+   # Option 2: Use DATABASE_URL (for cloud deployments - Render, Railway, etc)
+   # Uncomment and set this to use cloud database connections
+   # DATABASE_URL=postgresql://user:password@host:port/database_name
+
+   # Session Configuration
+   # Generate a secure random key: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
    SESSION_SECRET=your_random_secret_key_here
-   NODE_ENV=development
    ```
 
 5. **Initialize the database tables:**
@@ -134,17 +145,20 @@ NODE_ENV=production npm start
 
 ## Environment Variables
 
-| Variable         | Description                                           |
-| ---------------- | ----------------------------------------------------- |
-| `PORT`           | Server port (default: 3000)                           |
-| `DB_HOST`        | PostgreSQL host                                       |
-| `DB_PORT`        | PostgreSQL port (default: 5432)                       |
-| `DB_USER`        | Database username                                     |
-| `DB_PASSWORD`    | Database password                                     |
-| `DB_NAME`        | Database name                                         |
-| `SESSION_SECRET` | Secret for session encryption                         |
-| `NODE_ENV`       | Environment (development/production)                  |
-| `DATABASE_URL`   | Full database URL (alternative to individual DB vars) |
+| Variable         | Required | Default | Description                                                                      |
+| ---------------- | -------- | ------- | -------------------------------------------------------------------------------- |
+| `PORT`           | No       | 3000    | Server port for the application                                                  |
+| `NODE_ENV`       | No       | development | Environment mode (development/production) - affects SSL & logging               |
+| `DB_HOST`        | Yes*     | -       | PostgreSQL hostname/IP (localhost for local development)                         |
+| `DB_PORT`        | No       | 5432    | PostgreSQL port                                                                  |
+| `DB_USER`        | Yes*     | -       | Database username                                                                |
+| `DB_PASSWORD`    | Yes*     | -       | Database password                                                                |
+| `DB_NAME`        | Yes*     | -       | Database name (create with: `CREATE DATABASE addiction_tracker;`)                |
+| `SESSION_SECRET` | Yes      | -       | Secret for session encryption (generate: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`) |
+| `DATABASE_URL`   | Yes**    | -       | Full PostgreSQL connection URL (use for Render, Railway, cloud platforms)        |
+
+\* Required when using individual DB parameters (local development)  
+\*\* Required when NOT using individual DB parameters (cloud deployments)
 
 ## Default Admin Account
 

@@ -55,7 +55,7 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-  cookie: { 
+  cookie: {
     secure: process.env.NODE_ENV === 'production' && process.env.USE_HTTPS === 'true',
     httpOnly: true,
     sameSite: process.env.NODE_ENV === 'production' ? 'lax' : 'lax',
@@ -80,8 +80,8 @@ app.use(async (req, res, next) => {
 
 // Routes
 app.get('/', (req, res) => {
-  res.render('index', { 
-    title: 'Addiction Tracker'
+  res.render('index', {
+    title: 'Purity Revive Center'
   });
 });
 
@@ -139,7 +139,7 @@ app.get('/history', requireLogin, async (req, res) => {
     console.log('History page - userId:', userId);
     const streakHistory = await StreakHistory.findByUser(userId);
     console.log('History page - streakHistory:', streakHistory);
-    
+
     res.render('history', {
       title: 'Record History',
       streakHistory
@@ -160,7 +160,7 @@ app.get('/dashboard', requireLogin, async (req, res) => {
     const userId = req.session.userId;
     const userName = req.session.userName;
     const userTimezone = req.timezone;
-    
+
     if (!userId) {
       console.log('No userId in session, redirecting to login');
       return res.redirect('/login');
@@ -169,7 +169,7 @@ app.get('/dashboard', requireLogin, async (req, res) => {
 
     // Get today's date in user's timezone
     const today = getTodayString(userTimezone);
-    
+
     // Check if today has been logged
     const todayEntry = await Entry.findByUserAndDate(userId, today);
 
@@ -235,9 +235,9 @@ app.use((req, res) => {
 // Error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).render('error', { 
+  res.status(500).render('error', {
     title: 'Error',
-    error: process.env.NODE_ENV === 'production' ? {} : err 
+    error: process.env.NODE_ENV === 'production' ? {} : err
   });
 });
 

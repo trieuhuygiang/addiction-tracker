@@ -49,18 +49,18 @@ const initializeDatabase = async () => {
     }
 
     // Now connect to the actual database
-    const mainPool = new Pool(process.env.DATABASE_URL 
+    const mainPool = new Pool(process.env.DATABASE_URL
       ? {
-          connectionString: process.env.DATABASE_URL,
-          ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
-        }
+        connectionString: process.env.DATABASE_URL,
+        ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+      }
       : {
-          host: process.env.DB_HOST,
-          port: process.env.DB_PORT,
-          user: process.env.DB_USER,
-          password: process.env.DB_PASSWORD,
-          database: process.env.DB_NAME,
-        }
+        host: process.env.DB_HOST,
+        port: process.env.DB_PORT,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_NAME,
+      }
     );
 
     const mainClient = await mainPool.connect();
@@ -150,6 +150,13 @@ const initializeDatabase = async () => {
       `;
       await mainClient.query(addClockStartColumn);
       console.log('✓ Clock start column added or already exists');
+
+      // Add counter_theme column to users table
+      const addCounterThemeColumn = `
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS counter_theme VARCHAR(50) DEFAULT 'ancient';
+      `;
+      await mainClient.query(addCounterThemeColumn);
+      console.log('✓ Counter theme column added or already exists');
 
       // Create session table for express-session
       const sessionTableQuery = `

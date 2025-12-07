@@ -68,7 +68,7 @@ class User {
 
       values.push(id);
       const query_str = `UPDATE users SET ${fields.join(', ')} WHERE id = $${paramCount} RETURNING *`;
-      
+
       const result = await query(query_str, values);
       return result.rows[0];
     } catch (error) {
@@ -171,6 +171,32 @@ class User {
         [id]
       );
       return result.rows[0];
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Get counter theme preference
+  static async getCounterTheme(id) {
+    try {
+      const result = await query(
+        'SELECT counter_theme FROM users WHERE id = $1',
+        [id]
+      );
+      return result.rows[0]?.counter_theme || 'ancient';
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Set counter theme preference
+  static async setCounterTheme(id, theme) {
+    try {
+      const result = await query(
+        'UPDATE users SET counter_theme = $1 WHERE id = $2 RETURNING counter_theme',
+        [theme, id]
+      );
+      return result.rows[0]?.counter_theme;
     } catch (error) {
       throw error;
     }

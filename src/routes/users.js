@@ -18,8 +18,8 @@ router.get('/users', requireAdmin, async (req, res) => {
       'SELECT id, email, username, created_at FROM users ORDER BY created_at DESC'
     );
     const users = result.rows;
-    
-    res.render('users', { 
+
+    res.render('users', {
       title: 'User Management',
       users,
       success: req.query.success ? decodeURIComponent(req.query.success) : null,
@@ -101,7 +101,7 @@ router.post('/users/update', requireAdmin, async (req, res) => {
 router.post('/users/:id/delete', requireAdmin, async (req, res) => {
   try {
     const userId = req.params.id;
-    
+
     // Prevent deleting own account
     if (userId == req.session.userId) {
       return res.redirect('/users?error=' + encodeURIComponent('Cannot delete your own account'));
@@ -113,6 +113,42 @@ router.post('/users/:id/delete', requireAdmin, async (req, res) => {
   } catch (error) {
     console.error('Error deleting user:', error);
     res.redirect('/users?error=' + encodeURIComponent('Error deleting user'));
+  }
+});
+
+// API: Get counter theme preference
+router.get('/api/counter-theme', async (req, res) => {
+  try {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: 'Not authenticated' });
+    }
+
+    const theme = await User.getCounterTheme(req.session.userId);
+    res.json({ success: true, counterTheme: theme });
+  } catch (error) {
+    console.error('Error fetching counter theme:', error);
+    res.status(500).json({ error: 'Error fetching counter theme' });
+  }
+});
+
+// API: Update counter theme preference
+router.post('/api/counter-theme', async (req, res) => {
+  try {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: 'Not authenticated' });
+    }
+
+    const { theme } = req.body;
+    const validThemes = ['ancient', 'modern', 'neon', 'minimal', 'ocean', 'forest', 'fire'];
+    if (!theme || !validThemes.includes(theme)) {
+      return res.status(400).json({ error: 'Invalid theme' });
+    }
+
+    const savedTheme = await User.setCounterTheme(req.session.userId, theme);
+    res.json({ success: true, counterTheme: savedTheme });
+  } catch (error) {
+    console.error('Error updating counter theme:', error);
+    res.status(500).json({ error: 'Error updating counter theme' });
   }
 });
 

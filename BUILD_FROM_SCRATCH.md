@@ -1,4 +1,4 @@
-# 🛠️ Build Addiction Tracker from Scratch
+# 🛠️ Build Purity Revive Center from Scratch
 
 A complete step-by-step guide to building this addiction recovery tracking web application from zero to deployment.
 
@@ -916,7 +916,7 @@ app.use(setUserData);
 
 // Routes
 app.get("/", (req, res) => {
-  res.render("index", { title: "Addiction Tracker" });
+  res.render("index", { title: "Purity Revive Center" });
 });
 
 // Auth routes
@@ -956,13 +956,13 @@ module.exports = app;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><%= title %> | Addiction Tracker</title>
+    <title><%= title %> | Purity Revive Center</title>
     <link rel="stylesheet" href="/css/style.css" />
   </head>
   <body>
     <nav class="navbar">
       <div class="nav-brand">
-        <a href="/">🎯 Addiction Tracker</a>
+        <a href="/">✨ Purity Revive Center</a>
       </div>
       <div class="nav-links">
         <% if (isAuthenticated) { %>

@@ -32,9 +32,10 @@ const autoInitialize = async () => {
     await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token_expiry TIMESTAMP;`);
     await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS is_admin BOOLEAN DEFAULT FALSE;`);
     await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS clock_start TIMESTAMP;`);
-    
+    await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS counter_theme VARCHAR(50) DEFAULT 'ancient';`);
+
     // Make email nullable if it's not already
-    await client.query(`ALTER TABLE users ALTER COLUMN email DROP NOT NULL;`).catch(() => {});
+    await client.query(`ALTER TABLE users ALTER COLUMN email DROP NOT NULL;`).catch(() => { });
 
     // Create entries table
     await client.query(`

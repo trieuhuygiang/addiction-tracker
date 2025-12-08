@@ -4,15 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-        <%= title %>
-    </title>
+    <title><%= title %></title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <script src="/js/theme-init.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Orbitron:wght@700;900&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=EB+Garamond:wght@400;500;600;700&family=Crimson+Text:wght@400;600;700&family=Rajdhani:wght@600;700&family=Orbitron:wght@700;900&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="/css/style.css">
     <style>
@@ -42,6 +40,7 @@
             border-radius: 5px;
             cursor: pointer;
             font-weight: 600;
+            font-family: 'Rajdhani', sans-serif;
             transition: background-color 0.3s;
         }
 
@@ -213,834 +212,834 @@
 <body>
     <%- include('partials/header') %>
 
-        <div class="dashboard-container">
+    <div class="dashboard-container">
 
-            <div class="dashboard-header">
-                <h1>Welcome Back! 🎉</h1>
-                <div style="font-size:1.1rem;color:#667eea;">Logged in as: <%= userName %>
-                </div>
-                <form method="POST" action="/logout" style="margin: 0;">
-                    <button type="submit" class="logout-btn">Logout</button>
-                </form>
+        <div class="dashboard-header">
+            <h1>Welcome Back! 🎉</h1>
+            <div style="font-size:1.1rem;color:#667eea;">Logged in as: <%= userName %>
             </div>
-
-            <% if (typeof deleteMessage !=='undefined' && deleteMessage) { %>
-                <div
-                    style="background: #fff3cd; border: 1px solid #ffc107; color: #856404; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
-                    <span style="font-size: 1.2rem;">🗑️</span>
-                    <span>
-                        <%= deleteMessage %>
-                    </span>
-                </div>
-                <% } %>
-
-                    <!-- Quick Check-in for Today -->
-                    <div class="quick-checkin"
-                        style="background: var(--card-bg); padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px var(--shadow-color); margin-bottom: 2rem;">
-                        <h2 style="color: var(--info-color); margin-bottom: 1rem;">📋 Today's Check-in (<%= today %>)
-                        </h2>
-                        <% if (todayEntry) { %>
-                            <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
-                                <div style="font-size: 2rem;">
-                                    <% if (todayEntry.failure_level===2) { %>
-                                        💀
-                                        <% } else if (todayEntry.failure_level===1 || todayEntry.had_leakage) { %>
-                                            ⚠️
-                                            <% } else { %>
-                                                ✅
-                                                <% } %>
-                                </div>
-                                <div style="flex: 1; min-width: 150px;">
-                                    <p
-                                        style="font-weight: bold; color: <%= todayEntry.failure_level === 2 ? '#e74c3c' : (todayEntry.failure_level === 1 || todayEntry.had_leakage) ? '#ffc107' : '#28a745' %>;">
-                                        Today: <%= todayEntry.failure_level===2 ? 'Totally Failed' :
-                                            (todayEntry.failure_level===1 || todayEntry.had_leakage) ? 'A Little Bit'
-                                            : 'Clean' %>
-                                    </p>
-                                    <% if (todayEntry.note) { %>
-                                        <p style="color: var(--text-secondary); font-size: 0.9rem;">Note: <%=
-                                                todayEntry.note %>
-                                        </p>
-                                        <% } %>
-                                </div>
-                                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                                    <a href="/entries/<%= today %>"
-                                        style="padding: 0.75rem 1.25rem; background: var(--info-color); color: white; border-radius: 8px; text-decoration: none; font-size: 0.9rem; font-weight: 600;">Edit</a>
-                                </div>
-                            </div>
-                            <% } else { %>
-                                <p style="color: var(--text-secondary); margin-bottom: 1rem;">You haven't logged today
-                                    yet. How was your
-                                    day?</p>
-                                <div class="quick-checkin-buttons"
-                                    style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem;">
-                                    <form method="POST" action="/entries/quick" style="flex: 1; min-width: 100px;">
-                                        <input type="hidden" name="date" value="<%= today %>">
-                                        <input type="hidden" name="failureLevel" value="0">
-                                        <button type="submit"
-                                            style="width: 100%; padding: 1rem; background: var(--success-color); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: bold;">
-                                            ✅ Clean Day
-                                        </button>
-                                    </form>
-                                    <form method="POST" action="/entries/quick" style="flex: 1; min-width: 100px;">
-                                        <input type="hidden" name="date" value="<%= today %>">
-                                        <input type="hidden" name="failureLevel" value="1">
-                                        <button type="submit"
-                                            style="width: 100%; padding: 1rem; background: var(--warning-color); color: #333; border: none; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: bold;">
-                                            ⚠️ A Little Bit
-                                        </button>
-                                    </form>
-                                    <form method="POST" action="/entries/quick" style="flex: 1; min-width: 100px;">
-                                        <input type="hidden" name="date" value="<%= today %>">
-                                        <input type="hidden" name="failureLevel" value="2">
-                                        <button type="submit"
-                                            style="width: 100%; padding: 1rem; background: var(--danger-color); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: bold;">
-                                            💀 Totally Failed
-                                        </button>
-                                    </form>
-                                    <a href="/entries/<%= today %>"
-                                        style="flex: 1; min-width: 100px; padding: 1rem; background: var(--info-color); color: white; border: none; border-radius: 8px; text-decoration: none; font-size: 0.9rem; font-weight: bold; text-align: center; display: flex; align-items: center; justify-content: center;">
-                                        📝 Add Note
-                                    </a>
-                                </div>
-                                <div style="border-top: 1px solid var(--border-color); padding-top: 1rem;">
-                                    <form method="POST" action="/entries/relapse" style="width: 100%;"
-                                        onsubmit="return confirm('⚠️ RELAPSE - This will reset ALL your progress! Are you sure?') && confirm('This action cannot be undone. Are you absolutely sure?');">
-                                        <button type="submit"
-                                            style="width: 100%; padding: 0.75rem 1.5rem; background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: bold;">
-                                            💔 Relapse (Reset All Progress)
-                                        </button>
-                                    </form>
-                                </div>
-                                <% } %>
-                    </div>
-
-                    <!-- Rewiring Day Counter -->
-                    <div class="rewiring-clock" id="rewiring-clock">
-                        <h2 class="rewiring-clock-title">🧠 Rewiring Day Counter</h2>
-                        <p class="rewiring-clock-subtitle">Time since last relapse</p>
-
-                        <% if (clockStartTime) { %>
-                            <div id="clock-display" data-start-time="<%= clockStartTime.toISOString() %>"
-                                class="watch-container">
-                                <!-- Circular Watch Face -->
-                                <div class="watch-face">
-                                    <!-- Watch Ring -->
-                                    <div class="watch-ring"></div>
-
-                                    <!-- Main Display -->
-                                    <div class="watch-center">
-                                        <!-- Days Display (Top & Largest) -->
-                                        <div class="days-section">
-                                            <div id="clock-days" class="days-display">0</div>
-                                            <div class="days-label">DAYS</div>
-                                        </div>
-
-                                        <!-- Time Display (HH:MM:SS format with labels) -->
-                                        <div class="time-display">
-                                            <span class="time-group">
-                                                <span id="clock-hours" class="time-value">00</span>
-                                                <span class="time-unit">hours</span>
-                                            </span>
-                                            <span class="time-separator">:</span>
-                                            <span class="time-group">
-                                                <span id="clock-minutes" class="time-value">00</span>
-                                                <span class="time-unit">min</span>
-                                            </span>
-                                            <span class="time-separator">:</span>
-                                            <span class="time-group">
-                                                <span id="clock-seconds" class="time-value">00</span>
-                                                <span class="time-unit">sec</span>
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    <!-- Decorative Elements (G-Shock style) -->
-                                    <div class="watch-marker watch-marker-12"></div>
-                                    <div class="watch-marker watch-marker-3"></div>
-                                    <div class="watch-marker watch-marker-6"></div>
-                                    <div class="watch-marker watch-marker-9"></div>
-                                </div>
-                            </div>
-
-                            <!-- Counter Theme Toggle -->
-                            <div style="margin: 1.5rem 0; text-align: center;">
-                                <button class="counter-theme-toggle" id="counterThemeToggle"
-                                    title="Toggle counter theme" onclick="toggleCounterTheme()"
-                                    style="padding: 0.5rem; background: rgba(102, 126, 234, 0.2); border: 1px solid rgba(102, 126, 234, 0.4); color: #667eea; border-radius: 6px; cursor: pointer; font-size: 1.5rem; transition: all 0.3s; min-width: 50px; min-height: 50px; display: inline-flex; align-items: center; justify-content: center;">
-                                    🎨
-                                </button>
-                            </div>
-
-                            <!-- Rank Display -->
-                            <div id="rank-display"
-                                style="margin-bottom: 1.5rem; padding: 1rem; background: rgba(102, 126, 234, 0.1); border-radius: 12px; border: 2px solid rgba(102, 126, 234, 0.3);">
-                                <div
-                                    style="display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap;">
-                                    <div id="rank-icon" style="font-size: 3rem;">🌱</div>
-                                    <div style="text-align: left;">
-                                        <div id="rank-title"
-                                            style="font-size: 1.4rem; font-weight: bold; color: #667eea;">Seedling</div>
-                                        <div id="rank-subtitle" style="color: #888; font-size: 0.85rem;">Beginning your
-                                            journey</div>
-                                    </div>
-                                </div>
-                                <div style="margin-top: 1rem;">
-                                    <div id="rank-progress-container"
-                                        style="background: rgba(0,0,0,0.3); border-radius: 10px; height: 12px; overflow: hidden;">
-                                        <div id="rank-progress-bar"
-                                            style="height: 100%; background: linear-gradient(90deg, #667eea, #e94560); border-radius: 10px; transition: width 0.5s ease; width: 0%;">
-                                        </div>
-                                    </div>
-                                    <div id="rank-progress-text"
-                                        style="color: #888; font-size: 0.8rem; margin-top: 0.5rem;">0 days to next rank
-                                    </div>
-                                </div>
-                            </div>
-
-                            <form method="POST" action="/clock/reset" id="clock-reset-form" style="display: inline;">
-                                <button type="submit"
-                                    onclick="return confirm('⚠️ Are you sure you want to reset your NoFap counter? This will save your current streak to history.');"
-                                    style="padding: 0.75rem 2rem; background: #e94560; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.3s;">
-                                    🔄 Reset Counter
-                                </button>
-                            </form>
-                            <button type="button" onclick="showEmergencyQuote()"
-                                style="padding: 0.75rem 2rem; background: #28a745; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.3s; margin-left: 0.5rem;">
-                                🙏 Emergency
-                            </button>
-                            <% } else { %>
-                                <div id="clock-display-inactive" class="watch-container watch-inactive">
-                                    <!-- Circular Watch Face -->
-                                    <div class="watch-face">
-                                        <!-- Watch Ring -->
-                                        <div class="watch-ring"></div>
-
-                                        <!-- Main Display -->
-                                        <div class="watch-center">
-                                            <!-- Days Display (Top & Largest) -->
-                                            <div class="days-section">
-                                                <div class="days-display">0</div>
-                                                <div class="days-label">DAYS</div>
-                                            </div>
-
-                                            <!-- Time Display (HH:MM:SS format with labels) -->
-                                            <div class="time-display">
-                                                <span class="time-group">
-                                                    <span class="time-value">00</span>
-                                                    <span class="time-unit">hours</span>
-                                                </span>
-                                                <span class="time-separator">:</span>
-                                                <span class="time-group">
-                                                    <span class="time-value">00</span>
-                                                    <span class="time-unit">min</span>
-                                                </span>
-                                                <span class="time-separator">:</span>
-                                                <span class="time-group">
-                                                    <span class="time-value">00</span>
-                                                    <span class="time-unit">sec</span>
-                                                </span>
-                                            </div>
-                                        </div>
-
-                                        <!-- Decorative Elements (G-Shock style) -->
-                                        <div class="watch-marker watch-marker-12"></div>
-                                        <div class="watch-marker watch-marker-3"></div>
-                                        <div class="watch-marker watch-marker-6"></div>
-                                        <div class="watch-marker watch-marker-9"></div>
-                                    </div>
-                                </div>
-                                <p
-                                    style="color: var(--text-muted); margin-top: 1rem; margin-bottom: 1.5rem; text-align: center; font-size: 0.95rem;">
-                                    ⏸️ Counter not started yet</p>
-
-                                <form method="POST" action="/clock/start" style="display: inline;">
-                                    <button type="submit"
-                                        style="padding: 0.75rem 2rem; background: #28a745; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.3s;">
-                                        ▶️ Start Counter
-                                    </button>
-                                </form>
-                                <button type="button" onclick="showEmergencyQuote()"
-                                    style="padding: 0.75rem 2rem; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.3s; margin-left: 0.5rem;">
-                                    🙏 Emergency
-                                </button>
-                                <% } %>
-
-                                    <div
-                                        style="margin-top: 1rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-                                        <a href="/clock-history"
-                                            style="color: #667eea; text-decoration: none; font-size: 0.9rem;">
-                                            📜 View Rewiring History
-                                        </a>
-                                        <span style="color: #444;">|</span>
-                                        <a href="#" onclick="showRankingSystem(); return false;"
-                                            style="color: #e94560; text-decoration: none; font-size: 0.9rem;">
-                                            🏆 View All Ranks
-                                        </a>
-                                        <span style="color: #444;">|</span>
-                                        <a href="#" onclick="showEditCounter(); return false;"
-                                            style="color: #667eea; text-decoration: none; font-size: 0.9rem;">
-                                            ✏️ Edit Counter
-                                        </a>
-                                    </div>
-                    </div>
-
-                    <script>
-                        // Ranking System - Legendary Names (Global scope for access by showRankingSystem)
-                        const ranks = [
-                            { days: 0, icon: '🌑', title: 'The Fallen', subtitle: 'Rise from the ashes', color: '#666666' },
-                            { days: 7, icon: '🌒', title: 'The Awakened', subtitle: 'First week - The fog begins to lift', color: '#8BC34A' },
-                            { days: 14, icon: '🌓', title: 'The Initiate', subtitle: 'Two weeks - Your will grows stronger', color: '#4CAF50' },
-                            { days: 30, icon: '⚔️', title: 'Spartan Warrior', subtitle: '30 days - Forged in discipline', color: '#FF9800' },
-                            { days: 60, icon: '🔥', title: 'Phoenix Rising', subtitle: '60 days - Reborn from flames', color: '#FF5722' },
-                            { days: 90, icon: '🦁', title: 'The Conqueror', subtitle: '90 days - Brain reboot complete!', color: '#E91E63' },
-                            { days: 120, icon: '🐉', title: 'Dragon Slayer', subtitle: '120 days - Master of inner demons', color: '#9C27B0' },
-                            { days: 150, icon: '👑', title: 'The Sovereign', subtitle: '150 days - Ruler of your domain', color: '#673AB7' },
-                            { days: 180, icon: '🏛️', title: 'Titan of Will', subtitle: '180 days - Half year of iron resolve', color: '#3F51B5' },
-                            { days: 270, icon: '💎', title: 'Diamond Mind', subtitle: '270 days - Unshatterable spirit', color: '#00BCD4' },
-                            { days: 365, icon: '⭐', title: 'The Transcendent', subtitle: '1 Year - Beyond mortal desires', color: '#FFD700' },
-                            { days: 500, icon: '☀️', title: 'Solar Emperor', subtitle: '500 days - Radiating divine energy', color: '#FFA000' },
-                            { days: 730, icon: '🔱', title: 'The Immortal', subtitle: '2 Years - Legend walks among men', color: '#E040FB' },
-                            { days: 1000, icon: '👼', title: 'The Anointed One', subtitle: '1000+ days - Walking in divine grace', color: '#FFFFFF' }
-                        ];
-
-                        // NoFap Clock Timer
-                        (function () {
-                            const clockDisplay = document.getElementById('clock-display');
-                            if (!clockDisplay) return;
-
-                            const startTime = clockDisplay.dataset.startTime;
-                            if (!startTime) return;
-
-                            const startDate = new Date(startTime);
-
-                            function updateClock() {
-                                const now = new Date();
-                                const diff = Math.floor((now - startDate) / 1000);
-
-                                const days = Math.floor(diff / 86400);
-                                const hours = Math.floor((diff % 86400) / 3600);
-                                const minutes = Math.floor((diff % 3600) / 60);
-                                const seconds = diff % 60;
-
-                                document.getElementById('clock-days').textContent = days;
-                                document.getElementById('clock-hours').textContent = hours.toString().padStart(2, '0');
-                                document.getElementById('clock-minutes').textContent = minutes.toString().padStart(2, '0');
-                                document.getElementById('clock-seconds').textContent = seconds.toString().padStart(2, '0');
-
-                                // Update rank based on days
-                                updateRank(days);
-                            }
-
-                            function updateRank(days) {
-                                let currentRank = ranks[0];
-                                let nextRank = ranks[1];
-
-                                for (let i = ranks.length - 1; i >= 0; i--) {
-                                    if (days >= ranks[i].days) {
-                                        currentRank = ranks[i];
-                                        nextRank = ranks[i + 1] || null;
-                                        break;
-                                    }
-                                }
-
-                                // Update display
-                                document.getElementById('rank-icon').textContent = currentRank.icon;
-                                document.getElementById('rank-title').textContent = currentRank.title;
-                                document.getElementById('rank-title').style.color = currentRank.color;
-                                document.getElementById('rank-subtitle').textContent = currentRank.subtitle;
-
-                                // Update progress bar
-                                if (nextRank) {
-                                    const progressDays = days - currentRank.days;
-                                    const totalDays = nextRank.days - currentRank.days;
-                                    const progressPercent = Math.min((progressDays / totalDays) * 100, 100);
-                                    const daysToNext = nextRank.days - days;
-
-                                    document.getElementById('rank-progress-bar').style.width = progressPercent + '%';
-                                    document.getElementById('rank-progress-bar').style.background = `linear-gradient(90deg, ${currentRank.color}, ${nextRank.color})`;
-                                    document.getElementById('rank-progress-text').innerHTML = `<span style="color: ${nextRank.color}">${nextRank.icon} ${nextRank.title}</span> in ${daysToNext} days`;
-                                } else {
-                                    // Max rank reached
-                                    document.getElementById('rank-progress-bar').style.width = '100%';
-                                    document.getElementById('rank-progress-bar').style.background = `linear-gradient(90deg, ${currentRank.color}, gold)`;
-                                    document.getElementById('rank-progress-text').innerHTML = '🎊 Maximum rank achieved! You are a master!';
-                                }
-                            }
-
-                            updateClock();
-                            setInterval(updateClock, 1000);
-                        })();
-
-                        // Emergency Quotes - Bible Verses and Saints
-                        const emergencyQuotes = [
-                            // Bible Verses - Chastity & Purity
-                            { text: "No temptation has overtaken you except what is common to mankind. And God is faithful; he will not let you be tempted beyond what you can bear.", source: "1 Corinthians 10:13", type: "bible" },
-                            { text: "Watch and pray so that you will not fall into temptation. The spirit is willing, but the flesh is weak.", source: "Matthew 26:41", type: "bible" },
-                            { text: "Submit yourselves, then, to God. Resist the devil, and he will flee from you.", source: "James 4:7", type: "bible" },
-                            { text: "I can do all things through Christ who strengthens me.", source: "Philippians 4:13", type: "bible" },
-                            { text: "The Lord is my strength and my shield; my heart trusts in him, and he helps me.", source: "Psalm 28:7", type: "bible" },
-                            { text: "Be strong and courageous. Do not be afraid; do not be discouraged, for the Lord your God will be with you wherever you go.", source: "Joshua 1:9", type: "bible" },
-                            { text: "Create in me a pure heart, O God, and renew a steadfast spirit within me.", source: "Psalm 51:10", type: "bible" },
-                            { text: "Flee from sexual immorality. Every other sin a person commits is outside the body, but the sexually immoral person sins against his own body.", source: "1 Corinthians 6:18", type: "bible" },
-                            { text: "But the fruit of the Spirit is love, joy, peace, forbearance, kindness, goodness, faithfulness, gentleness and self-control.", source: "Galatians 5:22-23", type: "bible" },
-                            { text: "For God gave us a spirit not of fear but of power and love and self-control.", source: "2 Timothy 1:7", type: "bible" },
-                            { text: "Blessed is the man who remains steadfast under trial, for when he has stood the test he will receive the crown of life.", source: "James 1:12", type: "bible" },
-                            { text: "Set your minds on things that are above, not on things that are on earth.", source: "Colossians 3:2", type: "bible" },
-                            { text: "Do not be overcome by evil, but overcome evil with good.", source: "Romans 12:21", type: "bible" },
-                            { text: "Finally, brothers, whatever is true, whatever is honorable, whatever is just, whatever is pure, whatever is lovely, whatever is commendable, if there is any excellence, if there is anything worthy of praise, think about these things.", source: "Philippians 4:8", type: "bible" },
-                            { text: "Blessed are the pure in heart, for they shall see God.", source: "Matthew 5:8", type: "bible" },
-                            { text: "Do you not know that your bodies are temples of the Holy Spirit, who is in you, whom you have received from God? You are not your own; you were bought at a price. Therefore honor God with your bodies.", source: "1 Corinthians 6:19-20", type: "bible" },
-                            { text: "Put to death, therefore, whatever belongs to your earthly nature: sexual immorality, impurity, lust, evil desires and greed, which is idolatry.", source: "Colossians 3:5", type: "bible" },
-                            { text: "How can a young person stay on the path of purity? By living according to your word.", source: "Psalm 119:9", type: "bible" },
-                            { text: "But among you there must not be even a hint of sexual immorality, or of any kind of impurity.", source: "Ephesians 5:3", type: "bible" },
-                            { text: "For this is the will of God, your sanctification: that you abstain from sexual immorality; that each one of you know how to control his own body in holiness and honor.", source: "1 Thessalonians 4:3-4", type: "bible" },
-
-                            // Saints on Chastity & Purity
-                            { text: "Pray, hope, and don't worry. Worry is useless. God is merciful and will hear your prayer.", source: "St. Padre Pio", type: "saint" },
-                            { text: "You cannot be half a saint; you must be a whole saint or no saint at all.", source: "St. Thérèse of Lisieux", type: "saint" },
-                            { text: "To fall in love with God is the greatest romance; to seek him the greatest adventure; to find him, the greatest human achievement.", source: "St. Augustine", type: "saint" },
-                            { text: "The devil is afraid of us when we pray and make sacrifices. He is also afraid when we are humble and good. He is especially afraid when we love Jesus very much.", source: "St. Anthony of Padua", type: "saint" },
-                            { text: "Never be afraid of loving the Blessed Virgin too much. You can never love her more than Jesus did.", source: "St. Maximilian Kolbe", type: "saint" },
-                            { text: "Do not lose heart. Prayer is our most powerful weapon.", source: "St. Faustina", type: "saint" },
-                            { text: "Without God, we cannot. Without us, God will not.", source: "St. Augustine", type: "saint" },
-                            { text: "Lord, make me an instrument of your peace.", source: "St. Francis of Assisi", type: "saint" },
-                            { text: "Have patience with all things, but chiefly have patience with yourself.", source: "St. Francis de Sales", type: "saint" },
-                            { text: "You must ask God to give you power to fight against the sin of pride which is your greatest enemy.", source: "St. Teresa of Avila", type: "saint" },
-                            { text: "Start by doing what's necessary; then do what's possible; and suddenly you are doing the impossible.", source: "St. Francis of Assisi", type: "saint" },
-                            { text: "The soul that walks in love neither tires others nor grows tired.", source: "St. John of the Cross", type: "saint" },
-                            { text: "Prayer is the best weapon we possess. It is the key that opens the heart of God.", source: "St. Padre Pio", type: "saint" },
-                            { text: "God does not require that we be successful, only that we be faithful.", source: "St. Mother Teresa", type: "saint" },
-                            { text: "In difficulties, I always look to Mary. She is my strength.", source: "St. Pope John Paul II", type: "saint" },
-                            { text: "Chastity is the lily of virtues, and makes men almost equal to Angels. Nothing is beautiful but what is pure, and the purity of men is chastity.", source: "St. Francis de Sales", type: "saint" },
-                            { text: "The state of virginity or celibacy, through which one gives oneself totally to God, is objectively more perfect than marriage.", source: "St. Thomas Aquinas", type: "saint" },
-                            { text: "Purity prepares the soul for love, and love confirms the soul in purity.", source: "Bl. John Henry Newman", type: "saint" },
-                            { text: "Holy Purity, the queen of virtues, the angelic virtue, is a jewel so precious that those who possess it become like the angels of God in heaven.", source: "St. John Bosco", type: "saint" },
-                            { text: "The virtue of chastity does not mean that we are insensitive to the urge of concupiscence, but that we sacrifice it to a higher good.", source: "St. Pope John Paul II", type: "saint" },
-                            { text: "More souls go to Hell because of sins of the flesh than for any other reason.", source: "Our Lady of Fatima", type: "mary" },
-                            { text: "Chastity is a difficult, long-term matter; one must wait patiently for it to bear fruit, for the happiness of loving kindness which it must bring.", source: "St. Pope John Paul II", type: "saint" },
-                            { text: "Lord, grant me chastity and continence, but not yet. [Before his conversion - showing the struggle is real]", source: "St. Augustine (before conversion)", type: "saint" },
-                            { text: "Grant me chastity and continence, only not yet... O Lord, help me to be pure, but not yet. [Later:] Too late have I loved You!", source: "St. Augustine", type: "saint" },
-
-                            // Power of the Rosary
-                            { text: "The Rosary is the most excellent form of prayer and the most efficacious means of attaining eternal life.", source: "Pope Leo XIII", type: "rosary" },
-                            { text: "The Rosary is the weapon for these times.", source: "St. Padre Pio", type: "rosary" },
-                            { text: "Give me an army saying the Rosary and I will conquer the world.", source: "Bl. Pope Pius IX", type: "rosary" },
-                            { text: "The Rosary is a powerful weapon to put the demons to flight and to keep oneself from sin.", source: "Pope Pius XI", type: "rosary" },
-                            { text: "Never will anyone who says his Rosary every day be led astray. This is a statement that I would gladly sign with my blood.", source: "St. Louis de Montfort", type: "rosary" },
-                            { text: "The Rosary is the most powerful weapon to touch the Heart of Jesus, Our Redeemer, who loves His Mother.", source: "St. Louis de Montfort", type: "rosary" },
-                            { text: "When you say the Rosary, the angels rejoice, the Most Holy Trinity is glorified, my Son finds joy in it, and I myself am more pleased than with any other prayer.", source: "Our Lady to St. Dominic", type: "rosary" },
-                            { text: "If you persevere in reciting the Rosary, this will be a most probable sign of your eternal salvation.", source: "Bl. Alan de la Roche", type: "rosary" },
-                            { text: "The Holy Rosary is a powerful weapon. Use it with confidence and you'll be amazed at the results.", source: "St. Josemaría Escrivá", type: "rosary" },
-                            { text: "Say the Rosary every day to obtain peace in the world.", source: "Our Lady of Fatima", type: "rosary" },
-                            { text: "Continue to pray the Rosary every day.", source: "Our Lady of Fatima", type: "rosary" },
-                            { text: "The Rosary is my favorite prayer. A marvelous prayer! Marvelous in its simplicity and its depth.", source: "St. Pope John Paul II", type: "rosary" },
-                            { text: "One day, through the Rosary and the Scapular, Our Lady will save the world.", source: "St. Dominic", type: "rosary" },
-                            { text: "You shall obtain all you ask of me by the recitation of the Rosary.", source: "Our Lady to Bl. Alan de la Roche", type: "rosary" },
-                            { text: "When the Holy Rosary is said well, it gives Jesus and Mary more glory and is more meritorious than any other prayer.", source: "St. Louis de Montfort", type: "rosary" },
-                            { text: "The Rosary is the scourge of the devil.", source: "Pope Adrian VI", type: "rosary" },
-                            { text: "If you wish peace to reign in your homes, recite the family Rosary.", source: "Pope Pius X", type: "rosary" },
-                            { text: "Among all the devotions approved by the Church, none has been so favored by so many miracles as the devotion of the Most Holy Rosary.", source: "Pope Pius IX", type: "rosary" },
-
-                            // Our Lady & Protection
-                            { text: "Never be afraid of loving the Blessed Virgin too much. You can never love her more than Jesus did.", source: "St. Maximilian Kolbe", type: "mary" },
-                            { text: "If you are in danger, she will hasten to free you. If you are troubled, she will console you. If you are sick, she will bring you relief. If you are in need, she will help you.", source: "St. Bernard of Clairvaux", type: "mary" },
-                            { text: "Mary is the safest, easiest, shortest, and most perfect way of approaching Jesus.", source: "St. Louis de Montfort", type: "mary" },
-                            { text: "He who is devout to the Virgin Mother will certainly never be lost.", source: "St. Ignatius of Antioch", type: "mary" },
-                            { text: "Run to Mary, for she is always ready to help us.", source: "St. John Bosco", type: "mary" },
-                            { text: "Those who are bound to Mary by the sweet chains of love are led by her to Jesus.", source: "St. Bonaventure", type: "mary" },
-                            { text: "Fly to the protection of the Blessed Virgin Mary and no temptation will overcome you.", source: "St. John Vianney", type: "mary" }
-                        ];
-
-                        function showEmergencyQuote() {
-                            const quote = emergencyQuotes[Math.floor(Math.random() * emergencyQuotes.length)];
-                            // Set icon and label based on quote type
-                            let icon, typeLabel;
-                            switch (quote.type) {
-                                case 'bible':
-                                    icon = '📖';
-                                    typeLabel = 'Bible Verse';
-                                    break;
-                                case 'rosary':
-                                    icon = '📿';
-                                    typeLabel = 'Power of the Rosary';
-                                    break;
-                                case 'mary':
-                                    icon = '🙏';
-                                    typeLabel = 'Our Lady\'s Protection';
-                                    break;
-                                default:
-                                    icon = '✝️';
-                                    typeLabel = 'Saint Quote';
-                            }
-
-                            // Create modal
-                            const modal = document.createElement('div');
-                            modal.id = 'emergency-modal';
-                            modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 10000; padding: 1rem;';
-
-                            modal.innerHTML = `
-                                <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 2rem; border-radius: 15px; max-width: 500px; width: 100%; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.5); animation: modalFadeIn 0.3s ease;">
-                                    <div style="font-size: 3rem; margin-bottom: 1rem;">${icon}</div>
-                                    <div style="color: #667eea; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 1rem;">${typeLabel}</div>
-                                    <p style="color: #e4e4e4; font-size: 1.2rem; line-height: 1.8; margin-bottom: 1.5rem; font-style: italic;">"${quote.text}"</p>
-                                    <p style="color: #e94560; font-weight: bold; font-size: 1rem; margin-bottom: 2rem;">— ${quote.source}</p>
-                                    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-                                        <button onclick="showEmergencyQuote(); this.closest('#emergency-modal').remove();" style="padding: 0.75rem 1.5rem; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold;">
-                                            🔄 Another Quote
-                                        </button>
-                                        <button onclick="this.closest('#emergency-modal').remove();" style="padding: 0.75rem 1.5rem; background: #28a745; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold;">
-                                            💪 I'm Stronger Now
-                                        </button>
-                                    </div>
-                                </div>
-                            `;
-
-                            // Remove existing modal if any
-                            const existing = document.getElementById('emergency-modal');
-                            if (existing) existing.remove();
-
-                            document.body.appendChild(modal);
-
-                            // Close on background click
-                            modal.addEventListener('click', (e) => {
-                                if (e.target === modal) modal.remove();
-                            });
-
-                            // Close on Escape key
-                            document.addEventListener('keydown', function escHandler(e) {
-                                if (e.key === 'Escape') {
-                                    modal.remove();
-                                    document.removeEventListener('keydown', escHandler);
-                                }
-                            });
-                        }
-
-                        // Show Ranking System Modal
-                        function showRankingSystem() {
-                            const rankList = ranks.map((rank, index) => {
-                                const nextRank = ranks[index + 1];
-                                const daysRange = nextRank ? `${rank.days} - ${nextRank.days - 1}` : `${rank.days}+`;
-                                return `
-                                    <div style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 8px; border-left: 4px solid ${rank.color};">
-                                        <div style="font-size: 2rem; min-width: 50px; text-align: center;">${rank.icon}</div>
-                                        <div style="flex: 1;">
-                                            <div style="font-weight: bold; color: ${rank.color}; font-size: 1.1rem;">${rank.title}</div>
-                                            <div style="color: #888; font-size: 0.85rem;">${rank.subtitle}</div>
-                                        </div>
-                                        <div style="color: #667eea; font-size: 0.9rem; font-weight: bold; min-width: 80px; text-align: right;">
-                                            ${daysRange} days
-                                        </div>
-                                    </div>
-                                `;
-                            }).join('');
-
-                            const modal = document.createElement('div');
-                            modal.id = 'ranking-modal';
-                            modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; z-index: 10000; padding: 1rem;';
-
-                            modal.innerHTML = `
-                                <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 2rem; border-radius: 15px; max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.5); animation: modalFadeIn 0.3s ease;">
-                                    <div style="text-align: center; margin-bottom: 1.5rem;">
-                                        <div style="font-size: 3rem; margin-bottom: 0.5rem;">🏆</div>
-                                        <h2 style="color: #e94560; margin: 0; font-size: 1.5rem;">Ranking System</h2>
-                                        <p style="color: #888; margin-top: 0.5rem; font-size: 0.9rem;">Your journey to mastery</p>
-                                    </div>
-                                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                                        ${rankList}
-                                    </div>
-                                    <div style="text-align: center; margin-top: 1.5rem;">
-                                        <button onclick="this.closest('#ranking-modal').remove();" style="padding: 0.75rem 2rem; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold;">
-                                            ✖️ Close
-                                        </button>
-                                    </div>
-                                </div>
-                            `;
-
-                            const existing = document.getElementById('ranking-modal');
-                            if (existing) existing.remove();
-
-                            document.body.appendChild(modal);
-
-                            modal.addEventListener('click', (e) => {
-                                if (e.target === modal) modal.remove();
-                            });
-
-                            document.addEventListener('keydown', function escHandler(e) {
-                                if (e.key === 'Escape') {
-                                    modal.remove();
-                                    document.removeEventListener('keydown', escHandler);
-                                }
-                            });
-                        }
-
-                        function showEditCounter() {
-                            const clockDisplay = document.getElementById('clock-display');
-                            if (!clockDisplay) {
-                                alert('⚠️ Counter not started yet. Please start the counter first.');
-                                return;
-                            }
-
-                            const startTime = clockDisplay.dataset.startTime;
-                            if (!startTime) {
-                                alert('⚠️ Counter not started yet. Please start the counter first.');
-                                return;
-                            }
-
-                            const currentStart = new Date(startTime);
-                            const now = new Date();
-                            const diff = Math.floor((now - currentStart) / 1000);
-
-                            const currentDays = Math.floor(diff / 86400);
-                            const currentHours = Math.floor((diff % 86400) / 3600);
-                            const currentMinutes = Math.floor((diff % 3600) / 60);
-
-                            const modal = document.createElement('div');
-                            modal.id = 'edit-counter-modal';
-                            modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; z-index: 10000; padding: 1rem;';
-
-                            modal.innerHTML = `
-                                <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 2rem; border-radius: 15px; max-width: 500px; width: 100%; box-shadow: 0 10px 40px rgba(0,0,0,0.5); animation: modalFadeIn 0.3s ease;">
-                                    <div style="text-align: center; margin-bottom: 1.5rem;">
-                                        <div style="font-size: 3rem; margin-bottom: 0.5rem;">✏️</div>
-                                        <h2 style="color: #667eea; margin: 0; font-size: 1.5rem;">Edit Counter</h2>
-                                        <p style="color: #888; margin-top: 0.5rem; font-size: 0.9rem;">Adjust your rewiring counter time</p>
-                                    </div>
-                                    <form id="edit-counter-form" method="POST" action="/clock/edit">
-                                        <div style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.5rem;">
-                                            <div>
-                                                <label style="color: #e4e4e4; font-size: 0.9rem; display: block; margin-bottom: 0.5rem;">Days</label>
-                                                <input type="number" name="days" min="0" value="${currentDays}" required
-                                                    style="width: 100%; padding: 0.75rem; background: #0f3460; border: 2px solid #333355; border-radius: 8px; color: #e4e4e4; font-size: 1rem; font-family: 'Courier New', monospace; font-weight: bold;">
-                                            </div>
-                                            <div>
-                                                <label style="color: #e4e4e4; font-size: 0.9rem; display: block; margin-bottom: 0.5rem;">Hours (0-23)</label>
-                                                <input type="number" name="hours" min="0" max="23" value="${currentHours}" required
-                                                    style="width: 100%; padding: 0.75rem; background: #0f3460; border: 2px solid #333355; border-radius: 8px; color: #e4e4e4; font-size: 1rem; font-family: 'Courier New', monospace; font-weight: bold;">
-                                            </div>
-                                            <div>
-                                                <label style="color: #e4e4e4; font-size: 0.9rem; display: block; margin-bottom: 0.5rem;">Minutes (0-59)</label>
-                                                <input type="number" name="minutes" min="0" max="59" value="${currentMinutes}" required
-                                                    style="width: 100%; padding: 0.75rem; background: #0f3460; border: 2px solid #333355; border-radius: 8px; color: #e4e4e4; font-size: 1rem; font-family: 'Courier New', monospace; font-weight: bold;">
-                                            </div>
-                                        </div>
-                                        <div style="display: flex; gap: 1rem; justify-content: center;">
-                                            <button type="submit" style="padding: 0.75rem 1.5rem; background: #28a745; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.3s;">
-                                                💾 Save Changes
-                                            </button>
-                                            <button type="button" onclick="this.closest('#edit-counter-modal').remove();" style="padding: 0.75rem 1.5rem; background: #e94560; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.3s;">
-                                                ✖️ Cancel
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                            `;
-
-                            const existing = document.getElementById('edit-counter-modal');
-                            if (existing) existing.remove();
-
-                            document.body.appendChild(modal);
-
-                            modal.addEventListener('click', (e) => {
-                                if (e.target === modal) modal.remove();
-                            });
-
-                            document.addEventListener('keydown', function escHandler(e) {
-                                if (e.key === 'Escape') {
-                                    modal.remove();
-                                    document.removeEventListener('keydown', escHandler);
-                                }
-                            });
-                        }
-                    </script>
-
-                    <style>
-                        @keyframes modalFadeIn {
-                            from {
-                                opacity: 0;
-                                transform: scale(0.9);
-                            }
-
-                            to {
-                                opacity: 1;
-                                transform: scale(1);
-                            }
-                        }
-                    </style>
-
-                    <div class="dashboard-grid">
-                        <div class="stats-card">
-                            <h2>🔥 Rewiring Days</h2>
-                            <div class="stats-value" id="stats-rewiring-days">
-                                <% if (clockStartTime) { %>
-                                    <script>
-                                        document.write(Math.floor((new Date() - new Date('<%= clockStartTime.toISOString() %>')) / 86400000));
-                                    </script>
-                                    <% } else { %>
-                                        0
-                                        <% } %>
-                            </div>
-                            <p style="color: #999; margin-top: 0.5rem;">since last reset</p>
-                        </div>
-
-                        <div class="stats-card">
-                            <h2>✅ Clean Days</h2>
-                            <div class="stats-value">
-                                <%= streakSummary.cleanDays %>
-                            </div>
-                            <p style="color: #999; margin-top: 0.5rem;">days</p>
-                        </div>
-
-                        <div class="stats-card">
-                            <h2>⚠️ A Little Bit</h2>
-                            <div class="stats-value" style="color: #ffc107;">
-                                <%= streakSummary.slipDays %>
-                            </div>
-                            <p style="color: #999; margin-top: 0.5rem;">days</p>
-                        </div>
-
-                        <div class="stats-card">
-                            <h2>💀 Totally Failed</h2>
-                            <div class="stats-value" style="color: #e74c3c;">
-                                <%= streakSummary.totallyFailedDays %>
-                            </div>
-                            <p style="color: #999; margin-top: 0.5rem;">days</p>
-                        </div>
-                    </div>
-
-                    <h2 style="color: #333; margin-bottom: 1rem;">Quick Actions</h2>
-                    <div class="action-buttons">
-                        <a href="/entries" class="action-btn">📝 Log Entry</a>
-                        <a href="/calendar" class="action-btn secondary">📅 Calendar</a>
-                        <a href="/summary" class="action-btn">📊 Summary</a>
-                    </div>
-
-                    <div style="margin-top: 2rem; text-align: center;">
-                        <button type="button" onclick="confirmReset()" class="reset-btn"
-                            style="background: #e74c3c; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; font-size: 0.9rem;">
-                            🗑️ Reset All Progress
-                        </button>
-                    </div>
-
-                    <form id="resetForm" method="POST" action="/entries/reset-all" style="display: none;"></form>
-
-                    <script>
-                        function confirmReset() {
-                            if (confirm('Are you sure you want to reset ALL your progress? This will delete all your tracking entries and cannot be undone!')) {
-                                if (confirm('This action is PERMANENT. Are you absolutely sure?')) {
-                                    document.getElementById('resetForm').submit();
-                                }
-                            }
-                        }
-                    </script>
-
-                    <hr style="margin:2rem 0; border: none; border-top: 1px solid var(--border-color);">
-
-                    <!-- Link to History Page -->
-                    <div
-                        style="background: var(--card-bg); padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px var(--shadow-color); margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-                        <div>
-                            <h2 style="color: var(--info-color); margin: 0 0 0.5rem 0;">📊 Record History</h2>
-                            <p style="color: var(--text-secondary); margin: 0; font-size: 0.9rem;">
-                                <% if (streakHistory && streakHistory.length> 0) { %>
-                                    <%= streakHistory.length %> record<%= streakHistory.length> 1 ? 's' : '' %> • Best:
-                                            🔥 <%= Math.max(...streakHistory.map(r=> r.streak_days)) %> days
-                                                <% } else { %>
-                                                    No records yet
-                                                    <% } %>
-                            </p>
-                        </div>
-                        <a href="/history"
-                            style="padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 8px; text-decoration: none; font-weight: 600;">
-                            View History →
-                        </a>
-                    </div>
-
-                    <hr style="margin:2rem 0; border: none; border-top: 1px solid var(--border-color);">
-                    <h2 style="color: var(--info-color); margin-bottom: 1rem;">Your Progress</h2>
-                    <% if (progressEntries && progressEntries.length> 0) { %>
-                        <div class="progress-section" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
-                            <table class="progress-table"
-                                style="width:100%;margin-bottom:2rem;border-collapse:collapse; min-width: 400px;">
-                                <thead style="background: var(--bg-tertiary);">
-                                    <tr>
-                                        <th
-                                            style="padding:0.75rem 0.5rem; text-align: left; color: var(--text-primary);">
-                                            Date</th>
-                                        <th
-                                            style="padding:0.75rem 0.5rem; text-align: center; color: var(--text-primary);">
-                                            Status</th>
-                                        <th style="padding:0.75rem 0.5rem; text-align: left; color: var(--text-primary);"
-                                            class="hide-on-small">
-                                            Note</th>
-                                        <th
-                                            style="padding:0.75rem 0.5rem; text-align: center; color: var(--text-primary);">
-                                            Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% const todayDate=new Date(today); progressEntries.forEach(entry=> {
-                                        const entryDateStr = entry.date.toISOString().slice(0,10);
-                                        const entryDate = new Date(entryDateStr);
-                                        const isFuture = entryDate > todayDate;
-                                        %>
-                                        <tr style="<%= isFuture ? 'background: rgba(102, 126, 234, 0.1);' : '' %>">
-                                            <td
-                                                style="padding:0.75rem 0.5rem;border-bottom:1px solid var(--border-color); white-space: nowrap; color: var(--text-primary);">
-                                                <%= entryDateStr %>
-                                                    <% if (isFuture) { %>
-                                                        <span
-                                                            style="color: var(--info-color); font-size: 0.75rem; margin-left: 0.25rem;">📅
-                                                            Future</span>
-                                                        <% } %>
-                                            </td>
-                                            <td
-                                                style="padding:0.75rem 0.5rem;border-bottom:1px solid var(--border-color); text-align: center;">
-                                                <% if (entry.had_leakage) { %>
-                                                    <span style="color: var(--danger-color);font-weight:bold;">⚠️</span>
-                                                    <% } else { %>
-                                                        <span
-                                                            style="color: var(--success-color);font-weight:bold;">✅</span>
-                                                        <% } %>
-                                            </td>
-                                            <td style="padding:0.75rem 0.5rem;border-bottom:1px solid var(--border-color); max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-primary);"
-                                                class="hide-on-small">
-                                                <%= entry.note || '-' %>
-                                            </td>
-                                            <td
-                                                style="padding:0.75rem 0.5rem;border-bottom:1px solid var(--border-color); text-align: center; white-space: nowrap;">
-                                                <a href="/entries/<%= entryDateStr %>"
-                                                    style="color: var(--info-color); padding: 0.25rem 0.5rem; font-size: 0.9rem;">✏️</a>
-                                                <form method="POST" action="/entries/<%= entry.id %>/delete"
-                                                    style="display:inline;"
-                                                    onsubmit="return confirm('Delete <%= entry.had_leakage ? 'A Little Bit' : 'Clean' %> entry for <%= entryDateStr %><%= isFuture ? ' (future date)' : '' %>?');">
-                                                    <button type="submit"
-                                                        style="background:none;border:none;color: var(--danger-color);cursor:pointer;padding:0.25rem 0.5rem; font-size: 0.9rem;">🗑️</button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                        <% }); %>
-                                </tbody>
-                            </table>
-                        </div>
-                        <% } else { %>
-                            <div
-                                style="color: var(--text-muted);text-align:center;padding:2rem; background: var(--card-bg); border-radius: 10px; box-shadow: 0 2px 10px var(--shadow-color);">
-                                No
-                                progress entries yet. Log your first
-                                entry!</div>
-                            <% } %>
+            <form method="POST" action="/logout" style="margin: 0;">
+                <button type="submit" class="logout-btn">Logout</button>
+            </form>
         </div>
 
+        <% if (typeof deleteMessage !=='undefined' && deleteMessage) { %>
+        <div
+            style="background: #fff3cd; border: 1px solid #ffc107; color: #856404; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+            <span style="font-size: 1.2rem;">🗑️</span>
+            <span>
+                <%= deleteMessage %>
+            </span>
+        </div>
+        <% } %>
+
+        <!-- Rewiring Day Counter -->
+        <div class="rewiring-clock" id="rewiring-clock">
+            <h2 class="rewiring-clock-title">🧠 Rewiring Day Counter</h2>
+            <p class="rewiring-clock-subtitle">Time since last relapse</p>
+
+            <% if (clockStartTime) { %>
+            <div id="clock-display" data-start-time="<%= clockStartTime.toISOString() %>"
+                class="watch-container">
+                <!-- Circular Watch Face -->
+                <div class="watch-face">
+                    <!-- Watch Ring -->
+                    <div class="watch-ring"></div>
+
+                    <!-- Main Display -->
+                    <div class="watch-center">
+                        <!-- Days Display (Top & Largest) -->
+                        <div class="days-section">
+                            <div id="clock-days" class="days-display">0</div>
+                            <div class="days-label">DAYS</div>
+                        </div>
+
+                        <!-- Time Display (HH:MM:SS format with labels) -->
+                        <div class="time-display">
+                            <span class="time-group">
+                                <span id="clock-hours" class="time-value">00</span>
+                                <span class="time-unit">hours</span>
+                            </span>
+                            <span class="time-separator">:</span>
+                            <span class="time-group">
+                                <span id="clock-minutes" class="time-value">00</span>
+                                <span class="time-unit">min</span>
+                            </span>
+                            <span class="time-separator">:</span>
+                            <span class="time-group">
+                                <span id="clock-seconds" class="time-value">00</span>
+                                <span class="time-unit">sec</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Decorative Elements (G-Shock style) -->
+                    <div class="watch-marker watch-marker-12"></div>
+                    <div class="watch-marker watch-marker-3"></div>
+                    <div class="watch-marker watch-marker-6"></div>
+                    <div class="watch-marker watch-marker-9"></div>
+                </div>
+            </div>
+
+            <!-- Counter Theme Toggle -->
+            <div style="margin: 1.5rem 0; text-align: center;">
+                <button class="counter-theme-toggle" id="counterThemeToggle"
+                    title="Toggle counter theme" onclick="toggleCounterTheme()"
+                    style="padding: 0.5rem; background: rgba(102, 126, 234, 0.2); border: 1px solid rgba(102, 126, 234, 0.4); color: #667eea; border-radius: 6px; cursor: pointer; font-size: 1.5rem; transition: all 0.3s; min-width: 50px; min-height: 50px; display: inline-flex; align-items: center; justify-content: center;">
+                    🎨
+                </button>
+            </div>
+
+            <!-- Rank Display -->
+            <div id="rank-display"
+                style="margin-bottom: 1.5rem; padding: 1rem; background: rgba(102, 126, 234, 0.1); border-radius: 12px; border: 2px solid rgba(102, 126, 234, 0.3);">
+                <div
+                    style="display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+                    <div id="rank-icon" style="font-size: 3rem;">🌱</div>
+                    <div style="text-align: left;">
+                        <div id="rank-title"
+                            style="font-size: 1.4rem; font-weight: bold; color: #667eea;">Seedling</div>
+                        <div id="rank-subtitle" style="color: #888; font-size: 0.85rem;">Beginning your
+                            journey</div>
+                    </div>
+                </div>
+                <div style="margin-top: 1rem;">
+                    <div id="rank-progress-container"
+                        style="background: rgba(0,0,0,0.3); border-radius: 10px; height: 12px; overflow: hidden;">
+                        <div id="rank-progress-bar"
+                            style="height: 100%; background: linear-gradient(90deg, #667eea, #e94560); border-radius: 10px; transition: width 0.5s ease; width: 0%;">
+                        </div>
+                    </div>
+                    <div id="rank-progress-text"
+                        style="color: #888; font-size: 0.8rem; margin-top: 0.5rem;">0 days to next rank
+                    </div>
+                </div>
+            </div>
+
+            <form method="POST" action="/clock/reset" id="clock-reset-form" style="display: inline;">
+                <button type="submit"
+                    onclick="return confirm('⚠️ Are you sure you want to reset your NoFap counter? This will save your current streak to history.');"
+                    style="padding: 0.75rem 2rem; background: #e94560; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.3s;">
+                    🔄 Reset Counter
+                </button>
+            </form>
+            <button type="button" onclick="showEmergencyQuote()"
+                style="padding: 0.75rem 2rem; background: #28a745; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.3s; margin-left: 0.5rem;">
+                🙏 Emergency
+            </button>
+            <% } else { %>
+            <div id="clock-display-inactive" class="watch-container watch-inactive">
+                <!-- Circular Watch Face -->
+                <div class="watch-face">
+                    <!-- Watch Ring -->
+                    <div class="watch-ring"></div>
+
+                    <!-- Main Display -->
+                    <div class="watch-center">
+                        <!-- Days Display (Top & Largest) -->
+                        <div class="days-section">
+                            <div class="days-display">0</div>
+                            <div class="days-label">DAYS</div>
+                        </div>
+
+                        <!-- Time Display (HH:MM:SS format with labels) -->
+                        <div class="time-display">
+                            <span class="time-group">
+                                <span class="time-value">00</span>
+                                <span class="time-unit">hours</span>
+                            </span>
+                            <span class="time-separator">:</span>
+                            <span class="time-group">
+                                <span class="time-value">00</span>
+                                <span class="time-unit">min</span>
+                            </span>
+                            <span class="time-separator">:</span>
+                            <span class="time-group">
+                                <span class="time-value">00</span>
+                                <span class="time-unit">sec</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Decorative Elements (G-Shock style) -->
+                    <div class="watch-marker watch-marker-12"></div>
+                    <div class="watch-marker watch-marker-3"></div>
+                    <div class="watch-marker watch-marker-6"></div>
+                    <div class="watch-marker watch-marker-9"></div>
+                </div>
+            </div>
+            <p
+                style="color: var(--text-muted); margin-top: 1rem; margin-bottom: 1.5rem; text-align: center; font-size: 0.95rem;">
+                ⏸️ Counter not started yet</p>
+
+            <form method="POST" action="/clock/start" style="display: inline;">
+                <button type="submit"
+                    style="padding: 0.75rem 2rem; background: #28a745; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.3s;">
+                    ▶️ Start Counter
+                </button>
+            </form>
+            <button type="button" onclick="showEmergencyQuote()"
+                style="padding: 0.75rem 2rem; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.3s; margin-left: 0.5rem;">
+                🙏 Emergency
+            </button>
+            <% } %>
+
+            <div
+                style="margin-top: 1rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="/clock-history"
+                    style="color: #667eea; text-decoration: none; font-size: 0.9rem;">
+                    📜 View Rewiring History
+                </a>
+                <span style="color: #444;">|</span>
+                <a href="#" onclick="showRankingSystem(); return false;"
+                    style="color: #e94560; text-decoration: none; font-size: 0.9rem;">
+                    🏆 View All Ranks
+                </a>
+                <span style="color: #444;">|</span>
+                <a href="#" onclick="showEditCounter(); return false;"
+                    style="color: #667eea; text-decoration: none; font-size: 0.9rem;">
+                    ✏️ Edit Counter
+                </a>
+            </div>
+        </div>
+
+        <!-- Quick Check-in for Today -->
+        <div class="quick-checkin"
+            style="background: var(--card-bg); padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px var(--shadow-color); margin-bottom: 2rem;">
+            <h2 style="color: var(--info-color); margin-bottom: 1rem;">📋 Today's Check-in (<%= today %>)
+            </h2>
+            <% if (todayEntry) { %>
+            <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                <div style="font-size: 2rem;">
+                    <% if (todayEntry.failure_level===2) { %>
+                    💀
+                    <% } else if (todayEntry.failure_level===1 || todayEntry.had_leakage) { %>
+                    ⚠️
+                    <% } else { %>
+                    ✅
+                    <% } %>
+                </div>
+                <div style="flex: 1; min-width: 150px;">
+                    <p
+                        style="font-weight: bold; color: <%= todayEntry.failure_level === 2 ? '#e74c3c' : (todayEntry.failure_level === 1 || todayEntry.had_leakage) ? '#ffc107' : '#28a745' %>;">
+                        Today: <%= todayEntry.failure_level===2 ? 'Totally Failed' :
+                        (todayEntry.failure_level===1 || todayEntry.had_leakage) ? 'A Little Bit'
+                        : 'Clean' %>
+                    </p>
+                    <% if (todayEntry.note) { %>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;">Note: <%=
+                            todayEntry.note %>
+                    </p>
+                    <% } %>
+                </div>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <a href="/entries/<%= today %>"
+                        style="padding: 0.75rem 1.25rem; background: var(--info-color); color: white; border-radius: 8px; text-decoration: none; font-size: 0.9rem; font-weight: 600;">Edit</a>
+                </div>
+            </div>
+            <% } else { %>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem;">You haven't logged today
+                yet. How was your
+                day?</p>
+            <div class="quick-checkin-buttons"
+                style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem;">
+                <form method="POST" action="/entries/quick" style="flex: 1; min-width: 100px;">
+                    <input type="hidden" name="date" value="<%= today %>">
+                    <input type="hidden" name="failureLevel" value="0">
+                    <button type="submit"
+                        style="width: 100%; padding: 1rem; background: var(--success-color); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: bold;">
+                        ✅ Clean Day
+                    </button>
+                </form>
+                <form method="POST" action="/entries/quick" style="flex: 1; min-width: 100px;">
+                    <input type="hidden" name="date" value="<%= today %>">
+                    <input type="hidden" name="failureLevel" value="1">
+                    <button type="submit"
+                        style="width: 100%; padding: 1rem; background: var(--warning-color); color: #333; border: none; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: bold;">
+                        ⚠️ A Little Bit
+                    </button>
+                </form>
+                <form method="POST" action="/entries/quick" style="flex: 1; min-width: 100px;">
+                    <input type="hidden" name="date" value="<%= today %>">
+                    <input type="hidden" name="failureLevel" value="2">
+                    <button type="submit"
+                        style="width: 100%; padding: 1rem; background: var(--danger-color); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: bold;">
+                        💀 Totally Failed
+                    </button>
+                </form>
+                <a href="/entries/<%= today %>"
+                    style="flex: 1; min-width: 100px; padding: 1rem; background: var(--info-color); color: white; border: none; border-radius: 8px; text-decoration: none; font-size: 0.9rem; font-weight: bold; text-align: center; display: flex; align-items: center; justify-content: center;">
+                    📝 Add Note
+                </a>
+            </div>
+            <div style="border-top: 1px solid var(--border-color); padding-top: 1rem;">
+                <form method="POST" action="/entries/relapse" style="width: 100%;"
+                    onsubmit="return confirm('⚠️ RELAPSE - This will reset ALL your progress! Are you sure?') && confirm('This action cannot be undone. Are you absolutely sure?');">
+                    <button type="submit"
+                        style="width: 100%; padding: 0.75rem 1.5rem; background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: bold;">
+                        💔 Relapse (Reset All Progress)
+                    </button>
+                </form>
+            </div>
+            <% } %>
+        </div>
+
+        <script>
+            // Ranking System - Legendary Names (Global scope for access by showRankingSystem)
+            const ranks = [
+                { days: 0, icon: '🌑', title: 'The Fallen', subtitle: 'Rise from the ashes', color: '#666666' },
+                { days: 7, icon: '🌒', title: 'The Awakened', subtitle: 'First week - The fog begins to lift', color: '#8BC34A' },
+                { days: 14, icon: '🌓', title: 'The Initiate', subtitle: 'Two weeks - Your will grows stronger', color: '#4CAF50' },
+                { days: 30, icon: '⚔️', title: 'Spartan Warrior', subtitle: '30 days - Forged in discipline', color: '#FF9800' },
+                { days: 60, icon: '🔥', title: 'Phoenix Rising', subtitle: '60 days - Reborn from flames', color: '#FF5722' },
+                { days: 90, icon: '🦁', title: 'The Conqueror', subtitle: '90 days - Brain reboot complete!', color: '#E91E63' },
+                { days: 120, icon: '🐉', title: 'Dragon Slayer', subtitle: '120 days - Master of inner demons', color: '#9C27B0' },
+                { days: 150, icon: '👑', title: 'The Sovereign', subtitle: '150 days - Ruler of your domain', color: '#673AB7' },
+                { days: 180, icon: '🏛️', title: 'Titan of Will', subtitle: '180 days - Half year of iron resolve', color: '#3F51B5' },
+                { days: 270, icon: '💎', title: 'Diamond Mind', subtitle: '270 days - Unshatterable spirit', color: '#00BCD4' },
+                { days: 365, icon: '⭐', title: 'The Transcendent', subtitle: '1 Year - Beyond mortal desires', color: '#FFD700' },
+                { days: 500, icon: '☀️', title: 'Solar Emperor', subtitle: '500 days - Radiating divine energy', color: '#FFA000' },
+                { days: 730, icon: '🔱', title: 'The Immortal', subtitle: '2 Years - Legend walks among men', color: '#E040FB' },
+                { days: 1000, icon: '👼', title: 'The Anointed One', subtitle: '1000+ days - Walking in divine grace', color: '#FFFFFF' }
+            ];
+
+            // NoFap Clock Timer
+            (function () {
+                const clockDisplay = document.getElementById('clock-display');
+                if (!clockDisplay) return;
+
+                const startTime = clockDisplay.dataset.startTime;
+                if (!startTime) return;
+
+                const startDate = new Date(startTime);
+
+                function updateClock() {
+                    const now = new Date();
+                    const diff = Math.floor((now - startDate) / 1000);
+
+                    const days = Math.floor(diff / 86400);
+                    const hours = Math.floor((diff % 86400) / 3600);
+                    const minutes = Math.floor((diff % 3600) / 60);
+                    const seconds = diff % 60;
+
+                    document.getElementById('clock-days').textContent = days;
+                    document.getElementById('clock-hours').textContent = hours.toString().padStart(2, '0');
+                    document.getElementById('clock-minutes').textContent = minutes.toString().padStart(2, '0');
+                    document.getElementById('clock-seconds').textContent = seconds.toString().padStart(2, '0');
+
+                    // Update rank based on days
+                    updateRank(days);
+                }
+
+                function updateRank(days) {
+                    let currentRank = ranks[0];
+                    let nextRank = ranks[1];
+
+                    for (let i = ranks.length - 1; i >= 0; i--) {
+                        if (days >= ranks[i].days) {
+                            currentRank = ranks[i];
+                            nextRank = ranks[i + 1] || null;
+                            break;
+                        }
+                    }
+
+                    // Update display
+                    document.getElementById('rank-icon').textContent = currentRank.icon;
+                    document.getElementById('rank-title').textContent = currentRank.title;
+                    document.getElementById('rank-title').style.color = currentRank.color;
+                    document.getElementById('rank-subtitle').textContent = currentRank.subtitle;
+
+                    // Update progress bar
+                    if (nextRank) {
+                        const progressDays = days - currentRank.days;
+                        const totalDays = nextRank.days - currentRank.days;
+                        const progressPercent = Math.min((progressDays / totalDays) * 100, 100);
+                        const daysToNext = nextRank.days - days;
+
+                        document.getElementById('rank-progress-bar').style.width = progressPercent + '%';
+                        document.getElementById('rank-progress-bar').style.background = `linear-gradient(90deg, ${currentRank.color}, ${nextRank.color})`;
+                        document.getElementById('rank-progress-text').innerHTML = `<span style="color: ${nextRank.color}">${nextRank.icon} ${nextRank.title}</span> in ${daysToNext} days`;
+                    } else {
+                        // Max rank reached
+                        document.getElementById('rank-progress-bar').style.width = '100%';
+                        document.getElementById('rank-progress-bar').style.background = `linear-gradient(90deg, ${currentRank.color}, gold)`;
+                        document.getElementById('rank-progress-text').innerHTML = '🎊 Maximum rank achieved! You are a master!';
+                    }
+                }
+
+                updateClock();
+                setInterval(updateClock, 1000);
+            })();
+
+            // Emergency Quotes - Bible Verses and Saints
+            const emergencyQuotes = [
+                // Bible Verses - Chastity & Purity
+                { text: "No temptation has overtaken you except what is common to mankind. And God is faithful; he will not let you be tempted beyond what you can bear.", source: "1 Corinthians 10:13", type: "bible" },
+                { text: "Watch and pray so that you will not fall into temptation. The spirit is willing, but the flesh is weak.", source: "Matthew 26:41", type: "bible" },
+                { text: "Submit yourselves, then, to God. Resist the devil, and he will flee from you.", source: "James 4:7", type: "bible" },
+                { text: "I can do all things through Christ who strengthens me.", source: "Philippians 4:13", type: "bible" },
+                { text: "The Lord is my strength and my shield; my heart trusts in him, and he helps me.", source: "Psalm 28:7", type: "bible" },
+                { text: "Be strong and courageous. Do not be afraid; do not be discouraged, for the Lord your God will be with you wherever you go.", source: "Joshua 1:9", type: "bible" },
+                { text: "Create in me a pure heart, O God, and renew a steadfast spirit within me.", source: "Psalm 51:10", type: "bible" },
+                { text: "Flee from sexual immorality. Every other sin a person commits is outside the body, but the sexually immoral person sins against his own body.", source: "1 Corinthians 6:18", type: "bible" },
+                { text: "But the fruit of the Spirit is love, joy, peace, forbearance, kindness, goodness, faithfulness, gentleness and self-control.", source: "Galatians 5:22-23", type: "bible" },
+                { text: "For God gave us a spirit not of fear but of power and love and self-control.", source: "2 Timothy 1:7", type: "bible" },
+                { text: "Blessed is the man who remains steadfast under trial, for when he has stood the test he will receive the crown of life.", source: "James 1:12", type: "bible" },
+                { text: "Set your minds on things that are above, not on things that are on earth.", source: "Colossians 3:2", type: "bible" },
+                { text: "Do not be overcome by evil, but overcome evil with good.", source: "Romans 12:21", type: "bible" },
+                { text: "Finally, brothers, whatever is true, whatever is honorable, whatever is just, whatever is pure, whatever is lovely, whatever is commendable, if there is any excellence, if there is anything worthy of praise, think about these things.", source: "Philippians 4:8", type: "bible" },
+                { text: "Blessed are the pure in heart, for they shall see God.", source: "Matthew 5:8", type: "bible" },
+                { text: "Do you not know that your bodies are temples of the Holy Spirit, who is in you, whom you have received from God? You are not your own; you were bought at a price. Therefore honor God with your bodies.", source: "1 Corinthians 6:19-20", type: "bible" },
+                { text: "Put to death, therefore, whatever belongs to your earthly nature: sexual immorality, impurity, lust, evil desires and greed, which is idolatry.", source: "Colossians 3:5", type: "bible" },
+                { text: "How can a young person stay on the path of purity? By living according to your word.", source: "Psalm 119:9", type: "bible" },
+                { text: "But among you there must not be even a hint of sexual immorality, or of any kind of impurity.", source: "Ephesians 5:3", type: "bible" },
+                { text: "For this is the will of God, your sanctification: that you abstain from sexual immorality; that each one of you know how to control his own body in holiness and honor.", source: "1 Thessalonians 4:3-4", type: "bible" },
+
+                // Saints on Chastity & Purity
+                { text: "Pray, hope, and don't worry. Worry is useless. God is merciful and will hear your prayer.", source: "St. Padre Pio", type: "saint" },
+                { text: "You cannot be half a saint; you must be a whole saint or no saint at all.", source: "St. Thérèse of Lisieux", type: "saint" },
+                { text: "To fall in love with God is the greatest romance; to seek him the greatest adventure; to find him, the greatest human achievement.", source: "St. Augustine", type: "saint" },
+                { text: "The devil is afraid of us when we pray and make sacrifices. He is also afraid when we are humble and good. He is especially afraid when we love Jesus very much.", source: "St. Anthony of Padua", type: "saint" },
+                { text: "Never be afraid of loving the Blessed Virgin too much. You can never love her more than Jesus did.", source: "St. Maximilian Kolbe", type: "saint" },
+                { text: "Do not lose heart. Prayer is our most powerful weapon.", source: "St. Faustina", type: "saint" },
+                { text: "Without God, we cannot. Without us, God will not.", source: "St. Augustine", type: "saint" },
+                { text: "Lord, make me an instrument of your peace.", source: "St. Francis of Assisi", type: "saint" },
+                { text: "Have patience with all things, but chiefly have patience with yourself.", source: "St. Francis de Sales", type: "saint" },
+                { text: "You must ask God to give you power to fight against the sin of pride which is your greatest enemy.", source: "St. Teresa of Avila", type: "saint" },
+                { text: "Start by doing what's necessary; then do what's possible; and suddenly you are doing the impossible.", source: "St. Francis of Assisi", type: "saint" },
+                { text: "The soul that walks in love neither tires others nor grows tired.", source: "St. John of the Cross", type: "saint" },
+                { text: "Prayer is the best weapon we possess. It is the key that opens the heart of God.", source: "St. Padre Pio", type: "saint" },
+                { text: "God does not require that we be successful, only that we be faithful.", source: "St. Mother Teresa", type: "saint" },
+                { text: "In difficulties, I always look to Mary. She is my strength.", source: "St. Pope John Paul II", type: "saint" },
+                { text: "Chastity is the lily of virtues, and makes men almost equal to Angels. Nothing is beautiful but what is pure, and the purity of men is chastity.", source: "St. Francis de Sales", type: "saint" },
+                { text: "The state of virginity or celibacy, through which one gives oneself totally to God, is objectively more perfect than marriage.", source: "St. Thomas Aquinas", type: "saint" },
+                { text: "Purity prepares the soul for love, and love confirms the soul in purity.", source: "Bl. John Henry Newman", type: "saint" },
+                { text: "Holy Purity, the queen of virtues, the angelic virtue, is a jewel so precious that those who possess it become like the angels of God in heaven.", source: "St. John Bosco", type: "saint" },
+                { text: "The virtue of chastity does not mean that we are insensitive to the urge of concupiscence, but that we sacrifice it to a higher good.", source: "St. Pope John Paul II", type: "saint" },
+                { text: "More souls go to Hell because of sins of the flesh than for any other reason.", source: "Our Lady of Fatima", type: "mary" },
+                { text: "Chastity is a difficult, long-term matter; one must wait patiently for it to bear fruit, for the happiness of loving kindness which it must bring.", source: "St. Pope John Paul II", type: "saint" },
+                { text: "Lord, grant me chastity and continence, but not yet. [Before his conversion - showing the struggle is real]", source: "St. Augustine (before conversion)", type: "saint" },
+                { text: "Grant me chastity and continence, only not yet... O Lord, help me to be pure, but not yet. [Later:] Too late have I loved You!", source: "St. Augustine", type: "saint" },
+
+                // Power of the Rosary
+                { text: "The Rosary is the most excellent form of prayer and the most efficacious means of attaining eternal life.", source: "Pope Leo XIII", type: "rosary" },
+                { text: "The Rosary is the weapon for these times.", source: "St. Padre Pio", type: "rosary" },
+                { text: "Give me an army saying the Rosary and I will conquer the world.", source: "Bl. Pope Pius IX", type: "rosary" },
+                { text: "The Rosary is a powerful weapon to put the demons to flight and to keep oneself from sin.", source: "Pope Pius XI", type: "rosary" },
+                { text: "Never will anyone who says his Rosary every day be led astray. This is a statement that I would gladly sign with my blood.", source: "St. Louis de Montfort", type: "rosary" },
+                { text: "The Rosary is the most powerful weapon to touch the Heart of Jesus, Our Redeemer, who loves His Mother.", source: "St. Louis de Montfort", type: "rosary" },
+                { text: "When you say the Rosary, the angels rejoice, the Most Holy Trinity is glorified, my Son finds joy in it, and I myself am more pleased than with any other prayer.", source: "Our Lady to St. Dominic", type: "rosary" },
+                { text: "If you persevere in reciting the Rosary, this will be a most probable sign of your eternal salvation.", source: "Bl. Alan de la Roche", type: "rosary" },
+                { text: "The Holy Rosary is a powerful weapon. Use it with confidence and you'll be amazed at the results.", source: "St. Josemaría Escrivá", type: "rosary" },
+                { text: "Say the Rosary every day to obtain peace in the world.", source: "Our Lady of Fatima", type: "rosary" },
+                { text: "Continue to pray the Rosary every day.", source: "Our Lady of Fatima", type: "rosary" },
+                { text: "The Rosary is my favorite prayer. A marvelous prayer! Marvelous in its simplicity and its depth.", source: "St. Pope John Paul II", type: "rosary" },
+                { text: "One day, through the Rosary and the Scapular, Our Lady will save the world.", source: "St. Dominic", type: "rosary" },
+                { text: "You shall obtain all you ask of me by the recitation of the Rosary.", source: "Our Lady to Bl. Alan de la Roche", type: "rosary" },
+                { text: "When the Holy Rosary is said well, it gives Jesus and Mary more glory and is more meritorious than any other prayer.", source: "St. Louis de Montfort", type: "rosary" },
+                { text: "The Rosary is the scourge of the devil.", source: "Pope Adrian VI", type: "rosary" },
+                { text: "If you wish peace to reign in your homes, recite the family Rosary.", source: "Pope Pius X", type: "rosary" },
+                { text: "Among all the devotions approved by the Church, none has been so favored by so many miracles as the devotion of the Most Holy Rosary.", source: "Pope Pius IX", type: "rosary" },
+
+                // Our Lady & Protection
+                { text: "Never be afraid of loving the Blessed Virgin too much. You can never love her more than Jesus did.", source: "St. Maximilian Kolbe", type: "mary" },
+                { text: "If you are in danger, she will hasten to free you. If you are troubled, she will console you. If you are sick, she will bring you relief. If you are in need, she will help you.", source: "St. Bernard of Clairvaux", type: "mary" },
+                { text: "Mary is the safest, easiest, shortest, and most perfect way of approaching Jesus.", source: "St. Louis de Montfort", type: "mary" },
+                { text: "He who is devout to the Virgin Mother will certainly never be lost.", source: "St. Ignatius of Antioch", type: "mary" },
+                { text: "Run to Mary, for she is always ready to help us.", source: "St. John Bosco", type: "mary" },
+                { text: "Those who are bound to Mary by the sweet chains of love are led by her to Jesus.", source: "St. Bonaventure", type: "mary" },
+                { text: "Fly to the protection of the Blessed Virgin Mary and no temptation will overcome you.", source: "St. John Vianney", type: "mary" }
+            ];
+
+            function showEmergencyQuote() {
+                const quote = emergencyQuotes[Math.floor(Math.random() * emergencyQuotes.length)];
+                // Set icon and label based on quote type
+                let icon, typeLabel;
+                switch (quote.type) {
+                    case 'bible':
+                        icon = '📖';
+                        typeLabel = 'Bible Verse';
+                        break;
+                    case 'rosary':
+                        icon = '📿';
+                        typeLabel = 'Power of the Rosary';
+                        break;
+                    case 'mary':
+                        icon = '🙏';
+                        typeLabel = 'Our Lady\'s Protection';
+                        break;
+                    default:
+                        icon = '✝️';
+                        typeLabel = 'Saint Quote';
+                }
+
+                // Create modal
+                const modal = document.createElement('div');
+                modal.id = 'emergency-modal';
+                modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 10000; padding: 1rem;';
+
+                modal.innerHTML = `
+                    <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 2rem; border-radius: 15px; max-width: 500px; width: 100%; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.5); animation: modalFadeIn 0.3s ease;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">${icon}</div>
+                        <div style="color: #667eea; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 1rem;">${typeLabel}</div>
+                        <p style="color: #e4e4e4; font-size: 1.2rem; line-height: 1.8; margin-bottom: 1.5rem; font-style: italic;">"${quote.text}"</p>
+                        <p style="color: #e94560; font-weight: bold; font-size: 1rem; margin-bottom: 2rem;">— ${quote.source}</p>
+                        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                            <button onclick="showEmergencyQuote(); this.closest('#emergency-modal').remove();" style="padding: 0.75rem 1.5rem; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold;">
+                                🔄 Another Quote
+                            </button>
+                            <button onclick="this.closest('#emergency-modal').remove();" style="padding: 0.75rem 1.5rem; background: #28a745; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold;">
+                                💪 I'm Stronger Now
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                // Remove existing modal if any
+                const existing = document.getElementById('emergency-modal');
+                if (existing) existing.remove();
+
+                document.body.appendChild(modal);
+
+                // Close on background click
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) modal.remove();
+                });
+
+                // Close on Escape key
+                document.addEventListener('keydown', function escHandler(e) {
+                    if (e.key === 'Escape') {
+                        modal.remove();
+                        document.removeEventListener('keydown', escHandler);
+                    }
+                });
+            }
+
+            // Show Ranking System Modal
+            function showRankingSystem() {
+                const rankList = ranks.map((rank, index) => {
+                    const nextRank = ranks[index + 1];
+                    const daysRange = nextRank ? `${rank.days} - ${nextRank.days - 1}` : `${rank.days}+`;
+                    return `
+                        <div style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 8px; border-left: 4px solid ${rank.color};">
+                            <div style="font-size: 2rem; min-width: 50px; text-align: center;">${rank.icon}</div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: bold; color: ${rank.color}; font-size: 1.1rem;">${rank.title}</div>
+                                <div style="color: #888; font-size: 0.85rem;">${rank.subtitle}</div>
+                            </div>
+                            <div style="color: #667eea; font-size: 0.9rem; font-weight: bold; min-width: 80px; text-align: right;">
+                                ${daysRange} days
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                const modal = document.createElement('div');
+                modal.id = 'ranking-modal';
+                modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; z-index: 10000; padding: 1rem;';
+
+                modal.innerHTML = `
+                    <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 2rem; border-radius: 15px; max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.5); animation: modalFadeIn 0.3s ease;">
+                        <div style="text-align: center; margin-bottom: 1.5rem;">
+                            <div style="font-size: 3rem; margin-bottom: 0.5rem;">🏆</div>
+                            <h2 style="color: #e94560; margin: 0; font-size: 1.5rem;">Ranking System</h2>
+                            <p style="color: #888; margin-top: 0.5rem; font-size: 0.9rem;">Your journey to mastery</p>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            ${rankList}
+                        </div>
+                        <div style="text-align: center; margin-top: 1.5rem;">
+                            <button onclick="this.closest('#ranking-modal').remove();" style="padding: 0.75rem 2rem; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold;">
+                                ✖️ Close
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                const existing = document.getElementById('ranking-modal');
+                if (existing) existing.remove();
+
+                document.body.appendChild(modal);
+
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) modal.remove();
+                });
+
+                document.addEventListener('keydown', function escHandler(e) {
+                    if (e.key === 'Escape') {
+                        modal.remove();
+                        document.removeEventListener('keydown', escHandler);
+                    }
+                });
+            }
+
+            function showEditCounter() {
+                const clockDisplay = document.getElementById('clock-display');
+                if (!clockDisplay) {
+                    alert('⚠️ Counter not started yet. Please start the counter first.');
+                    return;
+                }
+
+                const startTime = clockDisplay.dataset.startTime;
+                if (!startTime) {
+                    alert('⚠️ Counter not started yet. Please start the counter first.');
+                    return;
+                }
+
+                const currentStart = new Date(startTime);
+                const now = new Date();
+                const diff = Math.floor((now - currentStart) / 1000);
+
+                const currentDays = Math.floor(diff / 86400);
+                const currentHours = Math.floor((diff % 86400) / 3600);
+                const currentMinutes = Math.floor((diff % 3600) / 60);
+
+                const modal = document.createElement('div');
+                modal.id = 'edit-counter-modal';
+                modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; z-index: 10000; padding: 1rem;';
+
+                modal.innerHTML = `
+                    <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 2rem; border-radius: 15px; max-width: 500px; width: 100%; box-shadow: 0 10px 40px rgba(0,0,0,0.5); animation: modalFadeIn 0.3s ease;">
+                        <div style="text-align: center; margin-bottom: 1.5rem;">
+                            <div style="font-size: 3rem; margin-bottom: 0.5rem;">✏️</div>
+                            <h2 style="color: #667eea; margin: 0; font-size: 1.5rem;">Edit Counter</h2>
+                            <p style="color: #888; margin-top: 0.5rem; font-size: 0.9rem;">Adjust your rewiring counter time</p>
+                        </div>
+                        <form id="edit-counter-form" method="POST" action="/clock/edit">
+                            <div style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.5rem;">
+                                <div>
+                                    <label style="color: #e4e4e4; font-size: 0.9rem; display: block; margin-bottom: 0.5rem;">Days</label>
+                                    <input type="number" name="days" min="0" value="${currentDays}" required
+                                        style="width: 100%; padding: 0.75rem; background: #0f3460; border: 2px solid #333355; border-radius: 8px; color: #e4e4e4; font-size: 1rem; font-family: 'Courier New', monospace; font-weight: bold;">
+                                </div>
+                                <div>
+                                    <label style="color: #e4e4e4; font-size: 0.9rem; display: block; margin-bottom: 0.5rem;">Hours (0-23)</label>
+                                    <input type="number" name="hours" min="0" max="23" value="${currentHours}" required
+                                        style="width: 100%; padding: 0.75rem; background: #0f3460; border: 2px solid #333355; border-radius: 8px; color: #e4e4e4; font-size: 1rem; font-family: 'Courier New', monospace; font-weight: bold;">
+                                </div>
+                                <div>
+                                    <label style="color: #e4e4e4; font-size: 0.9rem; display: block; margin-bottom: 0.5rem;">Minutes (0-59)</label>
+                                    <input type="number" name="minutes" min="0" max="59" value="${currentMinutes}" required
+                                        style="width: 100%; padding: 0.75rem; background: #0f3460; border: 2px solid #333355; border-radius: 8px; color: #e4e4e4; font-size: 1rem; font-family: 'Courier New', monospace; font-weight: bold;">
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 1rem; justify-content: center;">
+                                <button type="submit" style="padding: 0.75rem 1.5rem; background: #28a745; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.3s;">
+                                    💾 Save Changes
+                                </button>
+                                <button type="button" onclick="this.closest('#edit-counter-modal').remove();" style="padding: 0.75rem 1.5rem; background: #e94560; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.3s;">
+                                    ✖️ Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                `;
+
+                const existing = document.getElementById('edit-counter-modal');
+                if (existing) existing.remove();
+
+                document.body.appendChild(modal);
+
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) modal.remove();
+                });
+
+                document.addEventListener('keydown', function escHandler(e) {
+                    if (e.key === 'Escape') {
+                        modal.remove();
+                        document.removeEventListener('keydown', escHandler);
+                    }
+                });
+            }
+        </script>
+
         <style>
-            @media (max-width: 480px) {
-                .hide-on-small {
-                    display: none;
+            @keyframes modalFadeIn {
+                from {
+                    opacity: 0;
+                    transform: scale(0.9);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: scale(1);
                 }
             }
         </style>
 
-        <%- include('partials/footer') %>
+        <div class="dashboard-grid">
+            <div class="stats-card">
+                <h2>🔥 Rewiring Days</h2>
+                <div class="stats-value" id="stats-rewiring-days">
+                    <% if (clockStartTime) { %>
+                    <script>
+                    document.write(Math.floor((new Date() - new Date('<%= clockStartTime.toISOString() %>')) / 86400000));
+                    </script>
+                    <% } else { %>
+                    0
+                    <% } %>
+                </div>
+                <p style="color: #999; margin-top: 0.5rem;">since last reset</p>
+            </div>
+
+            <div class="stats-card">
+                <h2>✅ Clean Days</h2>
+                <div class="stats-value">
+                    <%= streakSummary.cleanDays %>
+                </div>
+                <p style="color: #999; margin-top: 0.5rem;">days</p>
+            </div>
+
+            <div class="stats-card">
+                <h2>⚠️ A Little Bit</h2>
+                <div class="stats-value" style="color: #ffc107;">
+                    <%= streakSummary.slipDays %>
+                </div>
+                <p style="color: #999; margin-top: 0.5rem;">days</p>
+            </div>
+
+            <div class="stats-card">
+                <h2>💀 Totally Failed</h2>
+                <div class="stats-value" style="color: #e74c3c;">
+                    <%= streakSummary.totallyFailedDays %>
+                </div>
+                <p style="color: #999; margin-top: 0.5rem;">days</p>
+            </div>
+        </div>
+
+        <h2 style="color: #333; margin-bottom: 1rem;">Quick Actions</h2>
+        <div class="action-buttons">
+            <a href="/entries" class="action-btn">📝 Log Entry</a>
+            <a href="/calendar" class="action-btn secondary">📅 Calendar</a>
+            <a href="/summary" class="action-btn">📊 Summary</a>
+        </div>
+
+        <div style="margin-top: 2rem; text-align: center;">
+            <button type="button" onclick="confirmReset()" class="reset-btn"
+                style="background: #e74c3c; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; font-size: 0.9rem;">
+                🗑️ Reset All Progress
+            </button>
+        </div>
+
+        <form id="resetForm" method="POST" action="/entries/reset-all" style="display: none;"></form>
+
+        <script>
+            function confirmReset() {
+                if (confirm('Are you sure you want to reset ALL your progress? This will delete all your tracking entries and cannot be undone!')) {
+                    if (confirm('This action is PERMANENT. Are you absolutely sure?')) {
+                        document.getElementById('resetForm').submit();
+                    }
+                }
+            }
+        </script>
+
+        <hr style="margin:2rem 0; border: none; border-top: 1px solid var(--border-color);">
+
+        <!-- Link to History Page -->
+        <div
+            style="background: var(--card-bg); padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px var(--shadow-color); margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <h2 style="color: var(--info-color); margin: 0 0 0.5rem 0;">📊 Record History</h2>
+                <p style="color: var(--text-secondary); margin: 0; font-size: 0.9rem;">
+                    <% if (streakHistory && streakHistory.length> 0) { %>
+                    <%= streakHistory.length %> record<%= streakHistory.length> 1 ? 's' : '' %> • Best:
+                    🔥 <%= Math.max(...streakHistory.map(r=> r.streak_days)) %> days
+                    <% } else { %>
+                    No records yet
+                    <% } %>
+                </p>
+            </div>
+            <a href="/history"
+                style="padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 8px; text-decoration: none; font-weight: 600;">
+                View History →
+            </a>
+        </div>
+
+        <hr style="margin:2rem 0; border: none; border-top: 1px solid var(--border-color);">
+        <h2 style="color: var(--info-color); margin-bottom: 1rem;">Your Progress</h2>
+        <% if (progressEntries && progressEntries.length> 0) { %>
+        <div class="progress-section" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+            <table class="progress-table"
+                style="width:100%;margin-bottom:2rem;border-collapse:collapse; min-width: 400px;">
+                <thead style="background: var(--bg-tertiary);">
+                    <tr>
+                        <th
+                            style="padding:0.75rem 0.5rem; text-align: left; color: var(--text-primary);">
+                            Date</th>
+                        <th
+                            style="padding:0.75rem 0.5rem; text-align: center; color: var(--text-primary);">
+                            Status</th>
+                        <th style="padding:0.75rem 0.5rem; text-align: left; color: var(--text-primary);"
+                            class="hide-on-small">
+                            Note</th>
+                        <th
+                            style="padding:0.75rem 0.5rem; text-align: center; color: var(--text-primary);">
+                            Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% const todayDate=new Date(today); progressEntries.forEach(entry=> {
+                        const entryDateStr = entry.date.toISOString().slice(0,10);
+                        const entryDate = new Date(entryDateStr);
+                        const isFuture = entryDate > todayDate;
+                        %>
+                    <tr style="<%= isFuture ? 'background: rgba(102, 126, 234, 0.1);' : '' %>">
+                        <td
+                            style="padding:0.75rem 0.5rem;border-bottom:1px solid var(--border-color); white-space: nowrap; color: var(--text-primary);">
+                            <%= entryDateStr %>
+                            <% if (isFuture) { %>
+                            <span
+                                style="color: var(--info-color); font-size: 0.75rem; margin-left: 0.25rem;">📅
+                                Future</span>
+                            <% } %>
+                        </td>
+                        <td
+                            style="padding:0.75rem 0.5rem;border-bottom:1px solid var(--border-color); text-align: center;">
+                            <% if (entry.had_leakage) { %>
+                            <span style="color: var(--danger-color);font-weight:bold;">⚠️</span>
+                            <% } else { %>
+                            <span
+                                style="color: var(--success-color);font-weight:bold;">✅</span>
+                            <% } %>
+                        </td>
+                        <td style="padding:0.75rem 0.5rem;border-bottom:1px solid var(--border-color); max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-primary);"
+                            class="hide-on-small">
+                            <%= entry.note || '-' %>
+                        </td>
+                        <td
+                            style="padding:0.75rem 0.5rem;border-bottom:1px solid var(--border-color); text-align: center; white-space: nowrap;">
+                            <a href="/entries/<%= entryDateStr %>"
+                                style="color: var(--info-color); padding: 0.25rem 0.5rem; font-size: 0.9rem;">✏️</a>
+                            <form method="POST" action="/entries/<%= entry.id %>/delete"
+                                style="display:inline;"
+                                onsubmit="return confirm('Delete <%= entry.had_leakage ? 'A Little Bit' : 'Clean' %> entry for <%= entryDateStr %><%= isFuture ? ' (future date)' : '' %>?');">
+                                <button type="submit"
+                                    style="background:none;border:none;color: var(--danger-color);cursor:pointer;padding:0.25rem 0.5rem; font-size: 0.9rem;">🗑️</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+        <% } else { %>
+        <div
+            style="color: var(--text-muted);text-align:center;padding:2rem; background: var(--card-bg); border-radius: 10px; box-shadow: 0 2px 10px var(--shadow-color);">
+            No
+            progress entries yet. Log your first
+            entry!</div>
+        <% } %>
+    </div>
+
+    <style>
+        @media (max-width: 480px) {
+            .hide-on-small {
+                display: none;
+            }
+        }
+    </style>
+
+    <%- include('partials/footer') %>
 </body>
 
 </html>

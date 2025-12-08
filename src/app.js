@@ -80,8 +80,12 @@ app.use(async (req, res, next) => {
 
 // Routes
 app.get('/', (req, res) => {
+  // Redirect to dashboard if already logged in
+  if (req.session.userId) {
+    return res.redirect('/dashboard');
+  }
   res.render('index', {
-    title: 'Purity Revive Center'
+    title: 'Chastity Revire Center'
   });
 });
 

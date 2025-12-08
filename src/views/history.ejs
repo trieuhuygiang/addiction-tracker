@@ -4,190 +4,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-        <%= title %>
-    </title>
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-    <script src="/js/theme-init.js"></script>
-    <link rel="stylesheet" href="/css/style.css">
-    <style>
-        .history-container {
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 0 20px;
-        }
+    <title>Chastity Revire Center</title>
+    <%= title %>
+        </title>
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+        <script src="/js/theme-init.js"></script>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=EB+Garamond:wght@400;500;600;700&family=Crimson+Text:wght@400;600;700&display=swap"
+            rel="stylesheet">
+        <link rel="stylesheet" href="/css/style.css">
+        <style>
+            .history-container {
+                max-width: 800px;
+                margin: 2rem auto;
+                padding: 0 20px;
+            }
 
-        .history-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .history-header h1 {
-            color: #667eea;
-            font-size: 2rem;
-            margin: 0;
-        }
-
-        .back-btn {
-            padding: 0.5rem 1rem;
-            background-color: #667eea;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: background-color 0.3s;
-        }
-
-        .back-btn:hover {
-            background-color: #5a6fd6;
-        }
-
-        .history-table-container {
-            background: var(--card-bg);
-            border-radius: 10px;
-            box-shadow: 0 2px 10px var(--shadow-color);
-            overflow: hidden;
-            margin-bottom: 2rem;
-        }
-
-        .history-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .history-table thead {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .history-table th,
-        .history-table td {
-            padding: 1rem 0.75rem;
-            text-align: center;
-        }
-
-        .history-table tbody tr {
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .history-table tbody tr:nth-child(even) {
-            background: var(--bg-tertiary);
-        }
-
-        .history-table tbody tr:hover {
-            background: var(--bg-secondary);
-            opacity: 0.9;
-        }
-
-        .days-badge {
-            font-weight: bold;
-            color: var(--info-color);
-            font-size: 1.1rem;
-        }
-
-        .relapse-date {
-            color: var(--danger-color);
-        }
-
-        .delete-btn {
-            background: none;
-            border: none;
-            color: #e74c3c;
-            cursor: pointer;
-            padding: 0.5rem;
-            font-size: 1.1rem;
-            transition: transform 0.2s;
-        }
-
-        .delete-btn:hover {
-            transform: scale(1.2);
-        }
-
-        .clear-all-container {
-            padding: 1rem;
-            text-align: center;
-            border-top: 1px solid #eee;
-        }
-
-        .clear-all-btn {
-            background: #e74c3c;
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 600;
-            transition: background-color 0.3s;
-        }
-
-        .clear-all-btn:hover {
-            background: #c0392b;
-        }
-
-        .empty-state {
-            color: var(--text-muted);
-            text-align: center;
-            padding: 3rem;
-            background: var(--card-bg);
-            border-radius: 10px;
-            box-shadow: 0 2px 10px var(--shadow-color);
-        }
-
-        .empty-state p {
-            font-size: 1.1rem;
-            margin-bottom: 1rem;
-        }
-
-        .stats-summary {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-
-        .stat-card h3 {
-            color: #667eea;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-card .value {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #333;
-        }
-
-        @media (max-width: 600px) {
             .history-header {
-                flex-direction: column;
-                align-items: flex-start;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 2rem;
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+
+            .history-header h1 {
+                color: #667eea;
+                font-size: 2rem;
+                margin: 0;
+            }
+
+            .back-btn {
+                padding: 0.5rem 1rem;
+                background-color: #667eea;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                text-decoration: none;
+                font-weight: 600;
+                transition: background-color 0.3s;
+            }
+
+            .back-btn:hover {
+                background-color: #5a6fd6;
+            }
+
+            .history-table-container {
+                background: var(--card-bg);
+                border-radius: 10px;
+                box-shadow: 0 2px 10px var(--shadow-color);
+                overflow: hidden;
+                margin-bottom: 2rem;
+            }
+
+            .history-table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            .history-table thead {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
             }
 
             .history-table th,
             .history-table td {
-                padding: 0.75rem 0.5rem;
-                font-size: 0.85rem;
+                padding: 1rem 0.75rem;
+                text-align: center;
+            }
+
+            .history-table tbody tr {
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .history-table tbody tr:nth-child(even) {
+                background: var(--bg-tertiary);
+            }
+
+            .history-table tbody tr:hover {
+                background: var(--bg-secondary);
+                opacity: 0.9;
             }
 
             .days-badge {
-                font-size: 1rem;
+                font-weight: bold;
+                color: var(--info-color);
+                font-size: 1.1rem;
             }
-        }
-    </style>
+
+            .relapse-date {
+                color: var(--danger-color);
+            }
+
+            .delete-btn {
+                background: none;
+                border: none;
+                color: #e74c3c;
+                cursor: pointer;
+                padding: 0.5rem;
+                font-size: 1.1rem;
+                transition: transform 0.2s;
+            }
+
+            .delete-btn:hover {
+                transform: scale(1.2);
+            }
+
+            .clear-all-container {
+                padding: 1rem;
+                text-align: center;
+                border-top: 1px solid #eee;
+            }
+
+            .clear-all-btn {
+                background: #e74c3c;
+                color: white;
+                border: none;
+                padding: 0.75rem 1.5rem;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 0.9rem;
+                font-weight: 600;
+                transition: background-color 0.3s;
+            }
+
+            .clear-all-btn:hover {
+                background: #c0392b;
+            }
+
+            .empty-state {
+                color: var(--text-muted);
+                text-align: center;
+                padding: 3rem;
+                background: var(--card-bg);
+                border-radius: 10px;
+                box-shadow: 0 2px 10px var(--shadow-color);
+            }
+
+            .empty-state p {
+                font-size: 1.1rem;
+                margin-bottom: 1rem;
+            }
+
+            .stats-summary {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 1rem;
+                margin-bottom: 2rem;
+            }
+
+            .stat-card {
+                background: white;
+                padding: 1.5rem;
+                border-radius: 10px;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                text-align: center;
+            }
+
+            .stat-card h3 {
+                color: #667eea;
+                font-size: 0.9rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .stat-card .value {
+                font-size: 1.8rem;
+                font-weight: bold;
+                color: #333;
+            }
+
+            @media (max-width: 600px) {
+                .history-header {
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
+
+                .history-table th,
+                .history-table td {
+                    padding: 0.75rem 0.5rem;
+                    font-size: 0.85rem;
+                }
+
+                .days-badge {
+                    font-size: 1rem;
+                }
+            }
+        </style>
 </head>
 
 <body>

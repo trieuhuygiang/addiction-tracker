@@ -53,6 +53,19 @@ class User {
     }
   }
 
+  // Find user by id with full data including clock
+  static async findByIdFull(id) {
+    try {
+      const result = await query(
+        'SELECT id, email, username, created_at, clock_start, is_admin FROM users WHERE id = $1',
+        [id]
+      );
+      return result.rows[0];
+    } catch (error) {
+      throw error;
+    }
+  }
+
   // Update user
   static async update(id, data) {
     try {

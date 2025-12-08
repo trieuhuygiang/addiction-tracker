@@ -1,5 +1,4 @@
-// Theme initialization - must run before body renders to prevent flash
+// Force dark theme only - crusader mode
 (function () {
-    const savedTheme = localStorage.getItem('theme') || 'dark';
-    document.documentElement.setAttribute('data-theme', savedTheme);
+    document.documentElement.setAttribute('data-theme', 'dark');
 })();

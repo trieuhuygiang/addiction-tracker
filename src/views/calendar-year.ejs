@@ -4,10 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-        <%= title %> - Purity Revive Center
-    </title>
+    <title><%= title %></title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=EB+Garamond:wght@400;500;600;700&family=Crimson+Text:wght@400;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="/css/style.css">
     <style>
         .calendar-year-container {
@@ -302,122 +305,122 @@
 <body>
     <%- include('partials/header') %>
 
-        <div class="calendar-year-container">
-            <a href="/dashboard" class="back-link"
-                style="display: inline-block; text-align: left; margin-bottom: 1rem;">← Back to Dashboard</a>
+    <div class="calendar-year-container">
+        <a href="/dashboard" class="back-link"
+            style="display: inline-block; text-align: left; margin-bottom: 1rem;">← Back to Dashboard</a>
 
-            <div class="calendar-year-header">
-                <h1>📅 Year Calendar</h1>
-                <p>View your progress by year</p>
-            </div>
-
-            <div class="view-toggle">
-                <a href="/calendar">Month Calendar</a>
-                <a href="/calendar/year/<%= year %>" class="active">Year Calendar</a>
-            </div>
-
-            <div class="year-navigation">
-                <a href="/calendar/year/<%= year - 1 %>" class="year-nav-btn">← <%= year - 1 %></a>
-                <span class="year-display">
-                    <%= year %>
-                </span>
-                <a href="/calendar/year/<%= year + 1 %>" class="year-nav-btn">
-                    <%= year + 1 %> →
-                </a>
-            </div>
-
-            <% if (error) { %>
-                <div class="error-message">
-                    <%= error %>
-                </div>
-                <% } else { %>
-
-                    <div class="year-stats">
-                        <div class="year-stat clean">
-                            <div class="year-stat-value">🟢 <%= stats.cleanDays %>
-                            </div>
-                            <div class="year-stat-label">Clean Days</div>
-                        </div>
-                        <div class="year-stat slip">
-                            <div class="year-stat-value">🟡 <%= stats.slipDays %>
-                            </div>
-                            <div class="year-stat-label">Just a Little Bit Days</div>
-                        </div>
-                        <div class="year-stat failed">
-                            <div class="year-stat-value">🔴 <%= stats.failedDays %>
-                            </div>
-                            <div class="year-stat-label">Totally Failed Days</div>
-                        </div>
-                        <div class="year-stat total">
-                            <div class="year-stat-value">📊 <%= stats.totalDays %>
-                            </div>
-                            <div class="year-stat-label">Total Logged</div>
-                        </div>
-                    </div>
-
-                    <div class="months-grid">
-                        <% yearCalendar.forEach(monthData=> { %>
-                            <div class="month-card">
-                                <div class="month-card-header">
-                                    <a href="/calendar/<%= year %>/<%= monthData.month %>">
-                                        <%= monthData.monthName %>
-                                    </a>
-                                </div>
-                                <div class="mini-calendar">
-                                    <div class="mini-weekdays">
-                                        <div>S</div>
-                                        <div>M</div>
-                                        <div>T</div>
-                                        <div>W</div>
-                                        <div>T</div>
-                                        <div>F</div>
-                                        <div>S</div>
-                                    </div>
-                                    <div class="mini-days">
-                                        <% monthData.calendar.forEach(week=> { %>
-                                            <% week.forEach(dayObj=> { %>
-                                                <% if (dayObj) { %>
-                                                    <a href="/entries/<%= dayObj.date %>"
-                                                        class="mini-day <%= dayObj.status %>"
-                                                        title="<%= dayObj.date %>: <%= dayObj.status === 'clean' ? 'Clean' : (dayObj.status === 'slip' ? 'Just a Little Bit' : (dayObj.status === 'failed' ? 'Totally Failed' : 'No entry')) %>">
-                                                        <%= dayObj.day %>
-                                                    </a>
-                                                    <% } else { %>
-                                                        <div class="mini-day empty"></div>
-                                                        <% } %>
-                                                            <% }); %>
-                                                                <% }); %>
-                                    </div>
-                                </div>
-                            </div>
-                            <% }); %>
-                    </div>
-
-                    <div class="legend">
-                        <div class="legend-item">
-                            <div class="legend-color" style="background-color: #d4edda;"></div>
-                            <span>🟢 Clean</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color" style="background-color: #fff3cd;"></div>
-                            <span>🟡 Just a Little Bit</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color" style="background-color: #f8d7da;"></div>
-                            <span>🔴 Totally Failed</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color" style="background-color: #f9f9f9;"></div>
-                            <span>⚪ No Log</span>
-                        </div>
-                    </div>
-
-                    <% } %>
-
-                        <a href="/dashboard" class="back-link">← Back to Dashboard</a>
+        <div class="calendar-year-header">
+            <h1>📅 Year Calendar</h1>
+            <p>View your progress by year</p>
         </div>
 
-        <%- include('partials/footer') %>
+        <div class="view-toggle">
+            <a href="/calendar">Month Calendar</a>
+            <a href="/calendar/year/<%= year %>" class="active">Year Calendar</a>
+        </div>
+
+        <div class="year-navigation">
+            <a href="/calendar/year/<%= year - 1 %>" class="year-nav-btn">← <%= year - 1 %></a>
+            <span class="year-display">
+                <%= year %>
+            </span>
+            <a href="/calendar/year/<%= year + 1 %>" class="year-nav-btn">
+                <%= year + 1 %> →
+            </a>
+        </div>
+
+        <% if (error) { %>
+        <div class="error-message">
+            <%= error %>
+        </div>
+        <% } else { %>
+
+        <div class="year-stats">
+            <div class="year-stat clean">
+                <div class="year-stat-value">🟢 <%= stats.cleanDays %>
+                </div>
+                <div class="year-stat-label">Clean Days</div>
+            </div>
+            <div class="year-stat slip">
+                <div class="year-stat-value">🟡 <%= stats.slipDays %>
+                </div>
+                <div class="year-stat-label">Just a Little Bit Days</div>
+            </div>
+            <div class="year-stat failed">
+                <div class="year-stat-value">🔴 <%= stats.failedDays %>
+                </div>
+                <div class="year-stat-label">Totally Failed Days</div>
+            </div>
+            <div class="year-stat total">
+                <div class="year-stat-value">📊 <%= stats.totalDays %>
+                </div>
+                <div class="year-stat-label">Total Logged</div>
+            </div>
+        </div>
+
+        <div class="months-grid">
+            <% yearCalendar.forEach(monthData=> { %>
+            <div class="month-card">
+                <div class="month-card-header">
+                    <a href="/calendar/<%= year %>/<%= monthData.month %>">
+                        <%= monthData.monthName %>
+                    </a>
+                </div>
+                <div class="mini-calendar">
+                    <div class="mini-weekdays">
+                        <div>S</div>
+                        <div>M</div>
+                        <div>T</div>
+                        <div>W</div>
+                        <div>T</div>
+                        <div>F</div>
+                        <div>S</div>
+                    </div>
+                    <div class="mini-days">
+                        <% monthData.calendar.forEach(week=> { %>
+                        <% week.forEach(dayObj=> { %>
+                        <% if (dayObj) { %>
+                        <a href="/entries/<%= dayObj.date %>"
+                            class="mini-day <%= dayObj.status %>"
+                            title="<%= dayObj.date %>: <%= dayObj.status === 'clean' ? 'Clean' : (dayObj.status === 'slip' ? 'Just a Little Bit' : (dayObj.status === 'failed' ? 'Totally Failed' : 'No entry')) %>">
+                            <%= dayObj.day %>
+                        </a>
+                        <% } else { %>
+                        <div class="mini-day empty"></div>
+                        <% } %>
+                        <% }); %>
+                        <% }); %>
+                    </div>
+                </div>
+            </div>
+            <% }); %>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #d4edda;"></div>
+                <span>🟢 Clean</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #fff3cd;"></div>
+                <span>🟡 Just a Little Bit</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #f8d7da;"></div>
+                <span>🔴 Totally Failed</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #f9f9f9;"></div>
+                <span>⚪ No Log</span>
+            </div>
+        </div>
+
+        <% } %>
+
+        <a href="/dashboard" class="back-link">← Back to Dashboard</a>
+    </div>
+
+    <%- include('partials/footer') %>
 </body>
 
 </html>

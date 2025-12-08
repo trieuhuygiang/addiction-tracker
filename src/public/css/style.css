@@ -6,49 +6,49 @@
 
 /* ===== THEME VARIABLES ===== */
 :root {
-    /* Light Theme (default) */
-    --bg-primary: #f8f9fa;
-    --bg-secondary: #ffffff;
-    --bg-tertiary: #f5f5f5;
-    --text-primary: #333333;
-    --text-secondary: #666666;
-    --text-muted: #999999;
-    --border-color: #e0e0e0;
-    --shadow-color: rgba(0, 0, 0, 0.1);
-    --card-bg: #ffffff;
+    /* Light Theme (default) - Crusader Stone & Steel */
+    --bg-primary: #e8e0d5;
+    --bg-secondary: #f5f0e8;
+    --bg-tertiary: #d4c8b8;
+    --text-primary: #1a1410;
+    --text-secondary: #3d3428;
+    --text-muted: #6d6050;
+    --border-color: #8b7355;
+    --shadow-color: rgba(61, 52, 40, 0.3);
+    --card-bg: #f5f0e8;
     --input-bg: #ffffff;
-    --input-border: #ddd;
-    --success-color: #28a745;
-    --danger-color: #e74c3c;
-    --warning-color: #ffc107;
-    --info-color: #667eea;
-    --gradient-start: #667eea;
-    --gradient-end: #764ba2;
+    --input-border: #8b7355;
+    --success-color: #2d5016;
+    --danger-color: #8b1a1a;
+    --warning-color: #b8860b;
+    --info-color: #4a5568;
+    --gradient-start: #2d3748;
+    --gradient-end: #8b7355;
 }
 
 [data-theme="dark"] {
-    /* Dark Theme */
-    --bg-primary: #1a1a2e;
-    --bg-secondary: #16213e;
-    --bg-tertiary: #0f3460;
-    --text-primary: #e4e4e4;
-    --text-secondary: #b0b0b0;
-    --text-muted: #888888;
-    --border-color: #333355;
-    --shadow-color: rgba(0, 0, 0, 0.3);
-    --card-bg: #16213e;
-    --input-bg: #0f3460;
-    --input-border: #333355;
-    --success-color: #2ecc71;
-    --danger-color: #e94560;
-    --warning-color: #f39c12;
-    --info-color: #667eea;
-    --gradient-start: #667eea;
-    --gradient-end: #764ba2;
+    /* Dark Theme - Crusader Knight: Midnight Steel & Blood Red */
+    --bg-primary: #0a0a0f;
+    --bg-secondary: #14141f;
+    --bg-tertiary: #1f1f2e;
+    --text-primary: #d4c8b8;
+    --text-secondary: #a39888;
+    --text-muted: #736858;
+    --border-color: #3d3428;
+    --shadow-color: rgba(139, 0, 0, 0.4);
+    --card-bg: #14141f;
+    --input-bg: #1f1f2e;
+    --input-border: #3d3428;
+    --success-color: #4a5c2d;
+    --danger-color: #8b0000;
+    --warning-color: #d4a005;
+    --info-color: #6d7a8e;
+    --gradient-start: #1f1f2e;
+    --gradient-end: #4a1616;
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Cinzel', 'EB Garamond', 'Crimson Text', 'Libre Baskerville', Georgia, serif;
     line-height: 1.6;
     color: var(--text-primary);
     background-color: var(--bg-primary);
@@ -57,6 +57,8 @@ body {
     flex-direction: column;
     transition: background-color 0.3s ease, color 0.3s ease;
     position: relative;
+    font-weight: 500;
+    letter-spacing: 0.3px;
 }
 
 /* ===== BACKGROUND VIDEO ===== */
@@ -532,13 +534,15 @@ main {
 
 /* ===== NAVBAR ===== */
 .navbar {
-    background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
-    color: white;
+    background: linear-gradient(135deg, rgba(31, 31, 46, 0.75) 0%, rgba(74, 22, 22, 0.75) 100%);
+    color: #d4c8b8;
     padding: 1rem 0;
-    box-shadow: 0 2px 8px var(--shadow-color);
+    box-shadow: 0 2px 8px rgba(139, 0, 0, 0.4);
     position: sticky;
     top: 0;
     z-index: 1000;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(61, 52, 40, 0.6);
 }
 
 .navbar-container {
@@ -553,7 +557,7 @@ main {
 .logo a {
     font-size: 1.5rem;
     font-weight: bold;
-    color: white;
+    color: #d4c8b8;
     text-decoration: none;
     display: flex;
     align-items: center;
@@ -561,15 +565,15 @@ main {
     transition: all 0.3s ease;
     padding: 0.5rem 1rem;
     border-radius: 8px;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(147, 112, 219, 0.2));
-    box-shadow: 0 0 15px rgba(147, 112, 219, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.1);
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(139, 0, 0, 0.2));
+    box-shadow: 0 0 15px rgba(139, 0, 0, 0.4), inset 0 0 10px rgba(212, 200, 184, 0.1);
     letter-spacing: 0.5px;
 }
 
 .logo a:hover {
     transform: scale(1.05);
-    box-shadow: 0 0 25px rgba(147, 112, 219, 0.6), inset 0 0 15px rgba(255, 255, 255, 0.15);
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(147, 112, 219, 0.3));
+    box-shadow: 0 0 25px rgba(139, 0, 0, 0.6), inset 0 0 15px rgba(212, 200, 184, 0.15);
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(139, 0, 0, 0.3));
 }
 
 .nav-menu {
@@ -589,7 +593,7 @@ main {
 
 .nav-menu a,
 .logout-link {
-    color: white;
+    color: #d4c8b8;
     text-decoration: none;
     padding: 0.5rem 1rem;
     border-radius: 5px;
@@ -599,7 +603,7 @@ main {
 
 .nav-menu a:hover,
 .logout-link:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(212, 175, 55, 0.2);
     opacity: 0.95;
 }
 
@@ -609,7 +613,9 @@ main {
     cursor: pointer;
     font-size: 1rem;
     font-weight: 500;
+    font-family: inherit;
     padding: 0.5rem 1rem;
+    color: #d4c8b8;
 }
 
 .hamburger {
@@ -643,26 +649,30 @@ main {
 .hero {
     text-align: center;
     padding: 4rem 2rem;
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
-    color: white;
+    background: linear-gradient(135deg, rgba(31, 31, 46, 0.75) 0%, rgba(74, 22, 22, 0.75) 100%);
+    color: #d4c8b8;
     border-radius: 10px;
     margin-bottom: 3rem;
     backdrop-filter: blur(10px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 32px rgba(139, 0, 0, 0.4);
+    border: 2px solid rgba(61, 52, 40, 0.6);
 }
 
 .hero h1 {
     font-size: 3rem;
     margin-bottom: 1rem;
     font-weight: 700;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    text-shadow: 2px 2px 8px rgba(139, 0, 0, 0.6);
+    color: #d4c8b8;
+    letter-spacing: 0.05em;
 }
 
 .hero p {
     font-size: 1.25rem;
     margin-bottom: 2rem;
     opacity: 0.95;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    color: #a39888;
 }
 
 .cta-buttons {
@@ -679,32 +689,44 @@ main {
     border-radius: 5px;
     text-decoration: none;
     font-weight: 600;
-    transition: transform 0.3s, box-shadow 0.3s;
-    border: none;
+    transition: transform 0.3s, box-shadow 0.3s, background 0.3s, color 0.3s, border 0.3s;
+    border: 2px solid transparent;
     cursor: pointer;
     font-size: 1rem;
+    outline: none;
+}
+
+.btn:focus {
+    outline: none;
 }
 
 .btn-primary {
-    background-color: #fff;
-    color: #667eea;
+    background: linear-gradient(135deg, rgba(31, 31, 46, 0.75) 0%, rgba(74, 22, 22, 0.75) 100%);
+    color: #d4c8b8;
+    border: 2px solid rgba(61, 52, 40, 0.6);
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    background: #fff !important;
+    background-image: none !important;
+    color: #667eea;
+    border: 2px solid #fff;
 }
 
 .btn-secondary {
-    background-color: transparent;
-    color: white;
-    border: 2px solid white;
+    background: linear-gradient(135deg, rgba(31, 31, 46, 0.75) 0%, rgba(74, 22, 22, 0.75) 100%);
+    color: #d4c8b8;
+    border: 2px solid rgba(61, 52, 40, 0.6);
 }
 
 .btn-secondary:hover {
-    background-color: white;
+    background: white !important;
+    background-image: none !important;
     color: #667eea;
     transform: translateY(-2px);
+    border: 2px solid white;
 }
 
 /* ===== FEATURES SECTION ===== */
@@ -729,29 +751,30 @@ main {
     background: var(--card-bg);
     padding: 2rem;
     border-radius: 10px;
-    box-shadow: 0 2px 8px var(--shadow-color);
+    box-shadow: 0 2px 8px rgba(139, 0, 0, 0.4);
     transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
     backdrop-filter: blur(10px);
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(31, 31, 46, 0.75);
+    border: 2px solid rgba(61, 52, 40, 0.6);
 }
 
 [data-theme="dark"] .feature-card {
-    background: rgba(22, 33, 62, 0.95);
+    background: rgba(31, 31, 46, 0.75);
 }
 
 .feature-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 4px 16px var(--shadow-color);
+    box-shadow: 0 4px 16px rgba(139, 0, 0, 0.6);
 }
 
 .feature-card h3 {
     font-size: 1.5rem;
     margin-bottom: 1rem;
-    color: var(--info-color);
+    color: #d4c8b8;
 }
 
 .feature-card p {
-    color: var(--text-secondary);
+    color: #a39888;
     line-height: 1.6;
 }
 
@@ -1299,29 +1322,29 @@ main {
 }
 
 .days-display {
-    font-family: 'Eurostile', 'Rajdhani', 'Orbitron', 'Michroma', 'Arial Black', 'Impact', sans-serif;
+    font-family: 'Cinzel', 'Crimson Text', 'EB Garamond', Georgia, serif;
     font-size: 4.5rem;
     font-weight: 900;
     color: var(--danger-color);
     line-height: 1;
     text-shadow:
-        0 0 20px rgba(233, 69, 96, 0.5),
+        0 0 20px rgba(139, 0, 0, 0.5),
         0 2px 4px rgba(0, 0, 0, 0.3);
-    letter-spacing: -0.05em;
-    filter: drop-shadow(0 0 10px rgba(233, 69, 96, 0.3));
+    letter-spacing: 0.05em;
+    filter: drop-shadow(0 0 10px rgba(139, 0, 0, 0.3));
     min-width: 3ch;
     text-align: center;
 }
 
 [data-theme="dark"] .days-display {
     text-shadow:
-        0 0 30px rgba(233, 69, 96, 0.8),
-        0 0 15px rgba(233, 69, 96, 0.6),
+        0 0 30px rgba(139, 0, 0, 0.8),
+        0 0 15px rgba(139, 0, 0, 0.6),
         0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .days-label {
-    font-family: 'Eurostile', 'Rajdhani', 'Orbitron', 'Michroma', 'Arial Black', 'Impact', sans-serif;
+    font-family: 'Cinzel', 'Crimson Text', serif;
     font-size: 0.85rem;
     font-weight: bold;
     color: var(--text-secondary);
@@ -1332,7 +1355,7 @@ main {
 
 /* Time Display (HH:MM:SS format) */
 .time-display {
-    font-family: 'Eurostile', 'Rajdhani', 'Orbitron', 'Michroma', 'Arial Black', 'Impact', sans-serif;
+    font-family: 'Cinzel', 'Crimson Text', serif;
     font-size: 1.5rem;
     font-weight: 900;
     color: var(--danger-color);

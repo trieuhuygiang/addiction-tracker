@@ -8,23 +8,65 @@
             style.id = 'bg-override';
             style.textContent = '.video-background { display: none !important; }';
             document.head.appendChild(style);
+        } else {
+            // Immediately try to play video as soon as DOM loads
+            document.addEventListener('DOMContentLoaded', function () {
+                const video = document.getElementById('bg-video');
+                if (video) {
+                    video.muted = true;
+                    video.volume = 0;
+                    video.play().catch(e => console.log('Initial play failed:', e));
+
+                    // Retry every 200ms for first 2 seconds
+                    let attempts = 0;
+                    const retryInterval = setInterval(() => {
+                        if (video.paused && attempts < 10) {
+                            video.play().catch(e => { });
+                            attempts++;
+                        } else {
+                            clearInterval(retryInterval);
+                        }
+                    }, 200);
+                }
+            });
         }
     })();
 </script>
 
 <!-- Background Video -->
 <div class="video-background" id="videoBackground" style="<%= backgroundVideoEnabled ? '' : 'display: none;' %>">
-    <video autoplay muted loop playsinline id="bg-video">
+    <video autoplay muted loop playsinline preload="metadata" id="bg-video" webkit-playsinline x5-playsinline>
         <source src="/videos/background.mp4" type="video/mp4">
         <source src="/videos/background.webm" type="video/webm">
     </video>
     <div class="video-overlay"></div>
+
+    <script>
+        // Inline immediate autoplay
+        (function () {
+            const v = document.getElementById('bg-video');
+            if (v && <%= backgroundVideoEnabled %>) {
+                v.muted = true;
+                v.defaultMuted = true;
+                v.volume = 0;
+
+                function play() {
+                    v.play().catch(() => setTimeout(play, 100));
+                }
+
+                play();
+                v.addEventListener('loadeddata', play);
+                v.addEventListener('canplay', play);
+                setInterval(() => { if (v.paused) play(); }, 500);
+            }
+        })();
+    </script>
 </div>
 
 <header class="navbar">
     <div class="navbar-container">
         <div class="logo">
-            <a href="/">✨ Purity Revive Center</a>
+            <a href="/">✨ Chastity Revire Center</a>
         </div>
         <div class="hamburger" id="hamburger">
             <span></span>
@@ -48,12 +90,6 @@
                         </li>
                         <% } %>
                             <li>
-                                <button class="theme-toggle" id="themeToggle" title="Toggle theme">
-                                    <span class="icon-sun">☀️</span>
-                                    <span class="icon-moon">🌙</span>
-                                </button>
-                            </li>
-                            <li>
                                 <form method="POST" action="/logout" style="display: inline;">
                                     <button type="submit" class="logout-link">🚪 Logout</button>
                                 </form>
@@ -64,12 +100,6 @@
                         <li><a href="/">🏠 Home</a></li>
                         <li><a href="/login">🔐 Login</a></li>
                         <li><a href="/signup">✍️ Sign Up</a></li>
-                        <li>
-                            <button class="theme-toggle" id="themeToggle" title="Toggle theme">
-                                <span class="icon-sun">☀️</span>
-                                <span class="icon-moon">🌙</span>
-                            </button>
-                        </li>
                     </ul>
                     <% } %>
         </nav>
@@ -77,26 +107,6 @@
 </header>
 
 <script>
-    // Theme Toggle
-    (function () {
-        const themeToggle = document.getElementById('themeToggle');
-        const html = document.documentElement;
-
-        // Get saved theme or default to dark
-        const savedTheme = localStorage.getItem('theme') || 'dark';
-        html.setAttribute('data-theme', savedTheme);
-
-        if (themeToggle) {
-            themeToggle.addEventListener('click', () => {
-                const currentTheme = html.getAttribute('data-theme');
-                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-
-                html.setAttribute('data-theme', newTheme);
-                localStorage.setItem('theme', newTheme);
-            });
-        }
-    })();
-
     // Auto-detect timezone and set cookie
     (function () {
         const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -120,6 +130,50 @@
         const iconVideoOn = document.querySelector('.icon-video-on');
         const iconVideoOff = document.querySelector('.icon-video-off');
 
+        // Aggressive autoplay with multiple retry attempts
+        function forceVideoPlay() {
+            if (!bgVideo || !videoBackground || videoBackground.style.display === 'none') {
+                return;
+            }
+
+            // Ensure proper attributes for autoplay
+            bgVideo.muted = true;
+            bgVideo.setAttribute('muted', '');
+            bgVideo.setAttribute('playsinline', '');
+            bgVideo.setAttribute('autoplay', '');
+            bgVideo.defaultMuted = true;
+            bgVideo.volume = 0;
+
+            // Immediate play - no promise handling
+            try {
+                bgVideo.play();
+            } catch (e) { }
+
+            // Multiple play attempts with different timings
+            const playAttempts = [0, 50, 100, 200, 300, 500, 800, 1000, 1500, 2000];
+            playAttempts.forEach((delay) => {
+                setTimeout(() => {
+                    if (bgVideo.paused) {
+                        bgVideo.play().then(() => {
+                            console.log('✅ Video started at', delay, 'ms');
+                        }).catch(err => {
+                            console.log('Retry at', delay, 'ms:', err.message);
+                        });
+                    }
+                }, delay);
+            });
+
+            // Continuous monitoring - keep trying to play if paused
+            const keepAlive = setInterval(() => {
+                if (bgVideo.paused && videoBackground.style.display !== 'none') {
+                    bgVideo.play().catch(() => { });
+                }
+            }, 500);
+
+            // Stop monitoring after 10 seconds
+            setTimeout(() => clearInterval(keepAlive), 10000);
+        }
+
         // Function to apply background state
         function applyBackgroundState(isEnabled) {
             const styleOverride = document.getElementById('bg-override');
@@ -133,7 +187,7 @@
                     videoBackground.style.display = 'block';
                 }
                 if (bgVideo) {
-                    bgVideo.play().catch(err => console.log('Video play error:', err));
+                    forceVideoPlay();
                 }
                 if (iconVideoOn) iconVideoOn.style.display = 'inline';
                 if (iconVideoOff) iconVideoOff.style.display = 'none';
@@ -159,6 +213,23 @@
         // Get current state from server
         const serverBackgroundEnabled = <%= backgroundVideoEnabled %>;
         applyBackgroundState(serverBackgroundEnabled);
+
+        // Additional mobile-specific fixes
+        if (bgVideo) {
+            // Try to play when video can play
+            bgVideo.addEventListener('canplay', () => {
+                if (serverBackgroundEnabled && videoBackground.style.display !== 'none') {
+                    forceVideoPlay();
+                }
+            });
+
+            // Retry play when page becomes visible (for mobile background/foreground switching)
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden && serverBackgroundEnabled && videoBackground.style.display !== 'none') {
+                    forceVideoPlay();
+                }
+            });
+        }
 
         // Toggle button click handler
         if (backgroundToggle) {

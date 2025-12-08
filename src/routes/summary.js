@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const { requireLogin } = require('../middleware/auth');
 const Entry = require('../models/Entry');
+const ClockHistory = require('../models/ClockHistory');
+const User = require('../models/User');
 const { getStreakSummary } = require('../utils/streakCalculator');
 
 // Get summary page
@@ -16,9 +18,58 @@ router.get('/summary', requireLogin, async (req, res) => {
     // Get all entries for detailed statistics
     const allEntries = await Entry.findByUser(userId);
 
+    // Get user data to check current clock
+    const user = await User.findByIdFull(userId);
+
+    // Get clock history for rewiring days calculation
+    const clockHistory = await ClockHistory.findByUser(userId);
+
+    // Calculate rewiring days from counter (in seconds converted to days)
+    let totalRewireSeconds = 0;
+    let longestRewireSession = 0;
+
+    // Add completed clock sessions
+    if (clockHistory.length > 0) {
+      totalRewireSeconds = clockHistory.reduce((sum, record) => sum + record.duration_seconds, 0);
+      longestRewireSession = Math.max(...clockHistory.map(record => record.duration_seconds));
+    }
+
+    // Add current running clock if it exists
+    if (user && user.clock_start) {
+      const currentClockSeconds = Math.floor((Date.now() - new Date(user.clock_start).getTime()) / 1000);
+      totalRewireSeconds += currentClockSeconds;
+
+      // Update longest session if current is longer
+      if (currentClockSeconds > longestRewireSession) {
+        longestRewireSession = currentClockSeconds;
+      }
+    }
+
+    // Convert seconds to days (1 day = 86400 seconds)
+    const totalRewireDays = Math.floor(totalRewireSeconds / 86400);
+    const longestRewireSessionDays = Math.floor(longestRewireSession / 86400);
+    const longestRewireSessionHours = Math.floor((longestRewireSession % 86400) / 3600);
+
+    // Debug logging
+    console.log('=== SUMMARY DEBUG ===');
+    console.log('User ID:', userId);
+    console.log('Clock start:', user?.clock_start);
+    console.log('Clock history count:', clockHistory.length);
+    console.log('Total rewire seconds:', totalRewireSeconds);
+    console.log('Total rewire days:', totalRewireDays);
+    console.log('Longest session seconds:', longestRewireSession);
+    console.log('Longest session days:', longestRewireSessionDays);
+    console.log('Longest session hours:', longestRewireSessionHours);
+    console.log('===================');
+
     // Calculate additional statistics
     const stats = {
       ...streakSummary,
+      totalRewireDays: totalRewireDays,
+      longestRewireSession: longestRewireSession,
+      longestRewireSessionDays: longestRewireSessionDays,
+      longestRewireSessionHours: longestRewireSessionHours,
+      totalDays: streakSummary.totalDays || 0,
       averageDaysPerMonth: 0,
       lastEntryDate: null,
       recentEntries: []
@@ -65,6 +116,10 @@ router.get('/summary', requireLogin, async (req, res) => {
         currentStreak: 0,
         longestStreak: 0,
         totalDays: 0,
+        totalRewireDays: 0,
+        longestRewireSession: 0,
+        longestRewireSessionDays: 0,
+        longestRewireSessionHours: 0,
         cleanDays: 0,
         slipDays: 0,
         successRate: 0,

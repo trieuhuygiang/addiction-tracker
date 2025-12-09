@@ -1,4 +1,4 @@
-# Chastity Revire Center
+# Chastity Revive Center
 
 A web application to track your addiction recovery progress with daily logs, streaks, and calendar views.
 

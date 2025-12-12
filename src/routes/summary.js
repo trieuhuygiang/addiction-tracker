@@ -12,7 +12,7 @@ router.get('/summary', requireLogin, async (req, res) => {
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
   res.set('Pragma', 'no-cache');
   res.set('Expires', '0');
-  
+
   try {
     const userId = req.session.userId;
     const userTimezone = req.timezone || 'America/Los_Angeles';

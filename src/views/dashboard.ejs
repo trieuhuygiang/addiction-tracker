@@ -478,7 +478,7 @@
                                         <input type="checkbox" id="dashboardMorningWood" <% if (todayEntry &&
                                             todayEntry.has_morning_wood) { %>checked<% } %>
                                             style="width: 18px; height: 18px; cursor: pointer; accent-color: #667eea;">
-                                            <span style="color: var(--text-primary);">🌳 Morning Wood Today</span>
+                                            <span style="color: var(--text-primary);">🌳 Tree of Life Today</span>
                                     </label>
                                     <div style="color: #888; font-size: 0.85rem; margin-top: 5px; margin-left: 30px;">
                                         Positive sign of recovery
@@ -494,12 +494,12 @@
                                             body: JSON.stringify({ hasMorningWood: this.checked })
                                         }).then(response => {
                                             if (!response.ok) {
-                                                alert('Error updating morning wood status');
+                                                alert('Error updating tree of life status');
                                                 this.checked = !this.checked;
                                             }
                                         }).catch(error => {
                                             console.error('Error:', error);
-                                            alert('Error updating morning wood status');
+                                            alert('Error updating tree of life status');
                                             this.checked = !this.checked;
                                         });
                                     });

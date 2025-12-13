@@ -91,93 +91,169 @@ async function testDatabaseConnection(host, port, user, password, database) {
     }
 }
 
+async function detectAndSetupDatabase() {
+    const { Pool, Client } = require('pg');
+    const host = process.env.DB_HOST || 'localhost';
+    const port = process.env.DB_PORT || '5432';
+    const dbName = process.env.DB_NAME || 'addiction_tracker';
+
+    log.info('Detecting PostgreSQL database setup...');
+
+    // Try to connect as postgres superuser first
+    let adminClient = null;
+    try {
+        adminClient = new Client({
+            host,
+            port: parseInt(port),
+            user: 'postgres',
+            password: 'postgres',
+            database: 'postgres'
+        });
+        await adminClient.connect();
+        log.success('Connected as postgres superuser');
+    } catch (e) {
+        // postgres user not available or wrong password
+        try {
+            adminClient = new Client({
+                host,
+                port: parseInt(port),
+                user: 'postgres',
+                password: '',
+                database: 'postgres'
+            });
+            await adminClient.connect();
+            log.info('Connected as postgres (no password)');
+        } catch (e2) {
+            log.warn('Could not connect as postgres user - database may already be configured');
+            return { user: 'addiction_user', password: 'addiction_tracker_pass' };
+        }
+    }
+
+    try {
+        // Check if database exists
+        const dbResult = await adminClient.query(
+            `SELECT datname FROM pg_database WHERE datname = $1`,
+            [dbName]
+        );
+
+        if (dbResult.rows.length === 0) {
+            log.info(`Creating database: ${dbName}`);
+            await adminClient.query(`CREATE DATABASE ${dbName}`);
+            log.success(`Database ${dbName} created`);
+        } else {
+            log.success(`Database ${dbName} already exists`);
+        }
+
+        // Check if user exists
+        const userResult = await adminClient.query(
+            `SELECT usename FROM pg_user WHERE usename = $1`,
+            ['addiction_user']
+        );
+
+        if (userResult.rows.length === 0) {
+            log.info('Creating database user: addiction_user');
+            await adminClient.query(`CREATE USER addiction_user WITH PASSWORD 'addiction_tracker_pass'`);
+            await adminClient.query(`ALTER ROLE addiction_user CREATEDB`);
+            log.success('User addiction_user created');
+        } else {
+            log.success('User addiction_user already exists');
+            // Reset password to ensure it's correct
+            await adminClient.query(`ALTER USER addiction_user WITH PASSWORD 'addiction_tracker_pass'`);
+            log.info('Reset addiction_user password');
+        }
+
+        // Grant privileges
+        await adminClient.query(`GRANT ALL PRIVILEGES ON DATABASE ${dbName} TO addiction_user`);
+        log.success('Privileges granted');
+
+        return { user: 'addiction_user', password: 'addiction_tracker_pass' };
+    } catch (error) {
+        log.warn(`Database setup error: ${error.message}`);
+        log.info('Trying to use existing addiction_user...');
+        return { user: 'addiction_user', password: 'addiction_tracker_pass' };
+    } finally {
+        if (adminClient) {
+            await adminClient.end();
+        }
+    }
+}
+
 async function setupEnv() {
     log.title('Step 2: Environment Configuration');
 
+    log.info('Setting up environment variables...');
+
+    // Default values
+    let dbUser = 'addiction_user';
+    let dbPassword = 'addiction_tracker_pass';
+    let dbHost = process.env.DB_HOST || 'localhost';
+    let dbPort = process.env.DB_PORT || '5432';
+    let dbName = process.env.DB_NAME || 'addiction_tracker';
+
+    // Try to detect/setup database
+    try {
+        const dbConfig = await detectAndSetupDatabase();
+        dbUser = dbConfig.user;
+        dbPassword = dbConfig.password;
+    } catch (error) {
+        log.warn(`Could not auto-setup database: ${error.message}`);
+        log.info('Using default credentials - ensure PostgreSQL is configured manually');
+    }
+
+    // Check if .env exists and has valid values
+    let envContent = '';
     if (fs.existsSync(ENV_FILE)) {
-        log.success('.env file already exists');
-        return true;
-    }
-
-    log.info('Creating .env file...');
-    log.info('Detecting database credentials...');
-
-    // Use environment variables or defaults (non-interactive mode)
-    let answers = {
-        port: process.env.PORT || '3000',
-        dbHost: process.env.DB_HOST || 'localhost',
-        dbPort: process.env.DB_PORT || '5432',
-        dbUser: process.env.DB_USER || 'postgres',
-        dbPassword: process.env.DB_PASSWORD || 'postgres',
-        dbName: process.env.DB_NAME || 'addiction_tracker',
-        sessionSecret: process.env.SESSION_SECRET || generateSecret(),
-        nodeEnv: process.env.NODE_ENV || 'development'
-    };
-
-    // If default postgres credentials are being used, try to detect the actual user
-    if (!process.env.DB_USER && !process.env.DB_PASSWORD) {
-        log.info('Testing default PostgreSQL credentials...');
-        const defaultWorks = await testDatabaseConnection(
-            answers.dbHost,
-            answers.dbPort,
-            'postgres',
-            'postgres',
-            answers.dbName
-        );
-
-        if (!defaultWorks) {
-            log.warn('Default PostgreSQL credentials (postgres:postgres) not working');
-            log.info('Trying to detect existing database user...');
-
-            // Try common alternatives
-            const commonUsers = [
-                { user: 'addiction_user', password: 'addiction_tracker_pass' },
-                { user: 'tracker_user', password: 'tracker_password' },
-                { user: 'nofap_user', password: 'nofap_password' }
-            ];
-
-            let foundUser = false;
-            for (const alt of commonUsers) {
-                const altWorks = await testDatabaseConnection(
-                    answers.dbHost,
-                    answers.dbPort,
-                    alt.user,
-                    alt.password,
-                    answers.dbName
-                );
-                if (altWorks) {
-                    log.success(`Found working credentials: user=${alt.user}`);
-                    answers.dbUser = alt.user;
-                    answers.dbPassword = alt.password;
-                    foundUser = true;
-                    break;
+        const existing = fs.readFileSync(ENV_FILE, 'utf8');
+        // If .env exists and has content, keep it but update critical values
+        if (existing.trim()) {
+            log.info('Updating existing .env file with correct credentials...');
+            // Parse existing .env
+            const lines = existing.split('\n');
+            const envVars = {};
+            lines.forEach(line => {
+                const [key, ...valueParts] = line.split('=');
+                if (key && key.trim()) {
+                    envVars[key.trim()] = valueParts.join('=');
                 }
-            }
+            });
+            // Update database credentials
+            envVars.DB_USER = dbUser;
+            envVars.DB_PASSWORD = dbPassword;
+            envVars.DB_HOST = envVars.DB_HOST || dbHost;
+            envVars.DB_PORT = envVars.DB_PORT || dbPort;
+            envVars.DB_NAME = envVars.DB_NAME || dbName;
+            envVars.PORT = envVars.PORT || '3000';
+            envVars.NODE_ENV = envVars.NODE_ENV || 'development';
+            envVars.SESSION_SECRET = envVars.SESSION_SECRET || generateSecret();
 
-            if (!foundUser) {
-                log.warn('Could not auto-detect database credentials');
-                log.info('⚠️  You may need to manually configure your database');
-                log.info('Edit the .env file with your actual PostgreSQL credentials');
-            }
+            // Rebuild .env content
+            envContent = Object.entries(envVars)
+                .filter(([key]) => key.trim())
+                .map(([key, value]) => `${key}=${value}`)
+                .join('\n') + '\n';
         }
+    } else {
+        log.success('Creating .env file...');
     }
 
-    const envContent = `PORT=${answers.port}
-DB_HOST=${answers.dbHost}
-DB_PORT=${answers.dbPort}
-DB_USER=${answers.dbUser}
-DB_PASSWORD=${answers.dbPassword}
-DB_NAME=${answers.dbName}
-SESSION_SECRET=${answers.sessionSecret}
-NODE_ENV=${answers.nodeEnv}
+    // Generate fresh .env if not yet set
+    if (!envContent) {
+        envContent = `PORT=3000
+DB_HOST=${dbHost}
+DB_PORT=${dbPort}
+DB_USER=${dbUser}
+DB_PASSWORD=${dbPassword}
+DB_NAME=${dbName}
+SESSION_SECRET=${generateSecret()}
+NODE_ENV=development
 `;
+    }
 
     try {
         fs.writeFileSync(ENV_FILE, envContent);
-        log.success('.env file created');
-        if (answers.dbUser !== 'postgres') {
-            log.info(`Using database user: ${answers.dbUser}`);
-        }
+        log.success('.env file created/updated');
+        log.info(`Database user: ${dbUser}`);
+        log.info(`Database name: ${dbName}`);
         return true;
     } catch (error) {
         log.error(`Failed to create .env: ${error.message}`);
@@ -257,7 +333,7 @@ async function startServer() {
                 log.warn('Server may already be running on port 3000');
                 log.info('Access your app at: http://localhost:3000');
                 resolve();
-            } 
+            }
             // Database authentication errors
             else if (code !== 0) {
                 log.error(`Server exited with code ${code}`);

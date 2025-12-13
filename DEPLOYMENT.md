@@ -4,13 +4,35 @@ This guide provides instructions for deploying the NoFap Progress Tracker applic
 
 ## Local Development
 
+### Quick Start (Automated Setup)
+
+**Everything in one command!** ⚡
+
+```bash
+npm run setup-all
+# or
+npm run init
+```
+
+This interactive script will:
+- ✅ Install all dependencies
+- ✅ Create and configure `.env` file (with prompts for your settings)
+- ✅ Initialize the database with tables
+- ✅ Start the development server
+
+**That's it!** Your app will be running at `http://localhost:3000`
+
+---
+
 ### Prerequisites
 
 - Node.js (v14 or higher)
 - PostgreSQL (v12 or higher)
 - Git
 
-### Setup
+### Manual Setup
+
+If you prefer to set up manually instead of using `npm run setup-all`, follow these steps:
 
 1. **Clone the repository:**
 

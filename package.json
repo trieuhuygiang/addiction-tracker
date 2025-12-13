@@ -11,7 +11,9 @@
     "start": "node src/server.js",
     "setup": "node src/config/init.js",
     "setup-admin": "node src/config/setupAdmin.js",
-    "build": "npm run setup"
+    "build": "npm run setup",
+    "setup-all": "node scripts/setup-all.js",
+    "init": "npm run setup-all"
   },
   "keywords": [
     "addiction",

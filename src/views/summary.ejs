@@ -4,7 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %></title>
+    <title>
+        <%= title %>
+    </title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <script src="/js/theme-init.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -213,143 +215,144 @@
 <body>
     <%- include('partials/header') %>
 
-    <div class="summary-container">
-        <a href="/dashboard" class="back-link">← Back to Dashboard</a>
+        <div class="summary-container">
+            <a href="/dashboard" class="back-link">← Back to Dashboard</a>
 
-        <div class="summary-header">
-            <h1>📊 Summary Statistics</h1>
-            <p>Your complete progress overview</p>
+            <div class="summary-header">
+                <h1>📊 Summary Statistics</h1>
+                <p>Your complete progress overview</p>
+            </div>
+
+            <% if (error) { %>
+                <div class="error-message">
+                    <%= error %>
+                </div>
+                <% } %>
+
+                    <!-- Main Statistics -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">Rewiring Days</div>
+                            <div class="stat-value">🔥 <%= stats.totalRewireDays %>
+                            </div>
+                            <div class="stat-sublabel">days from counter</div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-label">Longest Session</div>
+                            <div class="stat-value">⏱️ <%= stats.longestRewireSessionDays %>d <%=
+                                        stats.longestRewireSessionHours %>h
+                            </div>
+                            <div class="stat-sublabel">longest counter session</div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-label">Clean Rewiring Days</div>
+                            <div class="stat-value">🟢 <%= stats.cleanDays %>
+                            </div>
+                            <div class="stat-sublabel">pure rewiring days</div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-label">Just a Little Bit Days</div>
+                            <div class="stat-value">🔴 <%= stats.slipDays %>
+                            </div>
+                            <div class="stat-sublabel">days</div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-label">Totally Failed Days</div>
+                            <div class="stat-value">💀 <%= stats.totallyFailedDays %>
+                            </div>
+                            <div class="stat-sublabel">days</div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-label">Morning Wood Days</div>
+                            <div class="stat-value">🌳 <%= stats.morningWoodCount %>
+                            </div>
+                            <div class="stat-sublabel">recovery indicator</div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-label">Success Rate</div>
+                            <div class="stat-value">📈 <%= stats.successRate %>%</div>
+                            <div class="stat-sublabel">clean days</div>
+                        </div>
+                    </div>
+
+                    <% if (stats.totalRewireDays> 0 || stats.totalDays > 0) { %>
+                        <!-- Streak History -->
+                        <div class="section">
+                            <div class="section-title">📋 Streak History</div>
+                            <% if (streaksData.length> 0) { %>
+                                <% streaksData.forEach((streak, index)=> { %>
+                                    <div class="streak-item <%= streak.ongoing ? 'streak-ongoing' : '' %>">
+                                        <span class="streak-length">
+                                            <%= streak.length %> days
+                                        </span>
+                                        <div class="streak-dates">
+                                            <%= streak.startDate %> to <%= streak.endDate %>
+                                                    <% if (streak.ongoing) { %>
+                                                        <strong>(Ongoing 🔥)</strong>
+                                                        <% } %>
+                                        </div>
+                                    </div>
+                                    <% }); %>
+                                        <% } else { %>
+                                            <div class="empty-message">No streaks recorded yet</div>
+                                            <% } %>
+                        </div>
+
+                        <!-- Recent Entries -->
+                        <div class="section">
+                            <div class="section-title">📝 Recent Entries</div>
+                            <% if (stats.recentEntries.length> 0) { %>
+                                <div class="table-container">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Status</th>
+                                                <th>Notes</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% stats.recentEntries.forEach(entry=> { %>
+                                                <tr>
+                                                    <td>
+                                                        <%= entry.dateFormatted %>
+                                                    </td>
+                                                    <td>
+                                                        <span
+                                                            class="<%= entry.had_leakage ? 'entry-slip' : 'entry-clean' %>">
+                                                            <%= entry.statusText %>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <%= entry.note ? entry.note : '-' %>
+                                                    </td>
+                                                </tr>
+                                                <% }); %>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <% } else { %>
+                                    <div class="empty-message">No entries recorded yet</div>
+                                    <% } %>
+                        </div>
+                        <% } else { %>
+                            <div class="section">
+                                <div class="empty-message">
+                                    <p>No entries logged yet. Start tracking your progress by <a href="/entries"
+                                            style="color: #667eea; text-decoration: underline;">logging your first
+                                            entry</a>!</p>
+                                </div>
+                            </div>
+                            <% } %>
         </div>
 
-        <% if (error) { %>
-        <div class="error-message">
-            <%= error %>
-        </div>
-        <% } %>
-
-        <!-- Main Statistics -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-label">Rewiring Days</div>
-                <div class="stat-value">🔥 <%= stats.totalRewireDays %>
-                </div>
-                <div class="stat-sublabel">days from counter</div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-label">Longest Session</div>
-                <div class="stat-value">⏱️ <%= stats.longestRewireSessionDays %>d <%=
-                    stats.longestRewireSessionHours %>h
-                </div>
-                <div class="stat-sublabel">longest counter session</div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-label">Clean Rewiring Days</div>
-                <div class="stat-value">🟢 <%= stats.cleanDays %>
-                </div>
-                <div class="stat-sublabel">pure rewiring days</div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-label">Just a Little Bit Days</div>
-                <div class="stat-value">🔴 <%= stats.slipDays %>
-                </div>
-                <div class="stat-sublabel">days</div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-label">Totally Failed Days</div>
-                <div class="stat-value">💀 <%= stats.totallyFailedDays %>
-                </div>
-                <div class="stat-sublabel">days</div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-label">Morning Wood Days</div>
-                <div class="stat-value">🌳 <%= stats.morningWoodCount %>
-                </div>
-                <div class="stat-sublabel">recovery indicator</div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-label">Success Rate</div>
-                <div class="stat-value">📈 <%= stats.successRate %>%</div>
-                <div class="stat-sublabel">clean days</div>
-            </div>
-        </div>
-
-        <% if (stats.totalRewireDays> 0 || stats.totalDays > 0) { %>
-        <!-- Streak History -->
-        <div class="section">
-            <div class="section-title">📋 Streak History</div>
-            <% if (streaksData.length> 0) { %>
-            <% streaksData.forEach((streak, index)=> { %>
-            <div class="streak-item <%= streak.ongoing ? 'streak-ongoing' : '' %>">
-                <span class="streak-length">
-                    <%= streak.length %> days
-                </span>
-                <div class="streak-dates">
-                    <%= streak.startDate %> to <%= streak.endDate %>
-                    <% if (streak.ongoing) { %>
-                    <strong>(Ongoing 🔥)</strong>
-                    <% } %>
-                </div>
-            </div>
-            <% }); %>
-            <% } else { %>
-            <div class="empty-message">No streaks recorded yet</div>
-            <% } %>
-        </div>
-
-        <!-- Recent Entries -->
-        <div class="section">
-            <div class="section-title">📝 Recent Entries</div>
-            <% if (stats.recentEntries.length> 0) { %>
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Status</th>
-                            <th>Notes</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% stats.recentEntries.forEach(entry=> { %>
-                        <tr>
-                            <td>
-                                <%= entry.dateFormatted %>
-                            </td>
-                            <td>
-                                <span class="<%= entry.had_leakage ? 'entry-slip' : 'entry-clean' %>">
-                                    <%= entry.statusText %>
-                                </span>
-                            </td>
-                            <td>
-                                <%= entry.note ? entry.note : '-' %>
-                            </td>
-                        </tr>
-                        <% }); %>
-                    </tbody>
-                </table>
-            </div>
-            <% } else { %>
-            <div class="empty-message">No entries recorded yet</div>
-            <% } %>
-        </div>
-        <% } else { %>
-        <div class="section">
-            <div class="empty-message">
-                <p>No entries logged yet. Start tracking your progress by <a href="/entries"
-                        style="color: #667eea; text-decoration: underline;">logging your first
-                        entry</a>!</p>
-            </div>
-        </div>
-        <% } %>
-    </div>
-
-    <%- include('partials/footer') %>
+        <%- include('partials/footer') %>
 </body>
 
 </html>

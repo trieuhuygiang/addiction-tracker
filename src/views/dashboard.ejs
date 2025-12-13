@@ -472,6 +472,38 @@
                                         📝 Add Note
                                     </a>
                                 </div>
+                                <div style="margin-bottom: 1rem;">
+                                    <label
+                                        style="display: flex; align-items: center; gap: 10px; cursor: pointer; background: var(--bg-secondary); padding: 0.75rem; border-radius: 8px; width: fit-content;">
+                                        <input type="checkbox" id="dashboardMorningWood" <% if (todayEntry &&
+                                            todayEntry.has_morning_wood) { %>checked<% } %>
+                                            style="width: 18px; height: 18px; cursor: pointer; accent-color: #667eea;">
+                                            <span style="color: var(--text-primary);">🌳 Morning Wood Today</span>
+                                    </label>
+                                    <div style="color: #888; font-size: 0.85rem; margin-top: 5px; margin-left: 30px;">
+                                        Positive sign of recovery
+                                    </div>
+                                </div>
+                                <script>
+                                    document.getElementById('dashboardMorningWood').addEventListener('change', function () {
+                                        fetch('/entries/<%= today %>/morning-wood', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json'
+                                            },
+                                            body: JSON.stringify({ hasMorningWood: this.checked })
+                                        }).then(response => {
+                                            if (!response.ok) {
+                                                alert('Error updating morning wood status');
+                                                this.checked = !this.checked;
+                                            }
+                                        }).catch(error => {
+                                            console.error('Error:', error);
+                                            alert('Error updating morning wood status');
+                                            this.checked = !this.checked;
+                                        });
+                                    });
+                                </script>
                                 <div style="border-top: 1px solid var(--border-color); padding-top: 1rem;">
                                     <form method="POST" action="/entries/relapse" style="width: 100%;"
                                         onsubmit="return confirm('⚠️ RELAPSE - This will reset ALL your progress! Are you sure?') && confirm('This action cannot be undone. Are you absolutely sure?');">

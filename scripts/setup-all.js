@@ -77,23 +77,22 @@ async function setupEnv() {
 
     if (fs.existsSync(ENV_FILE)) {
         log.success('.env file already exists');
-        const useExisting = await question('Use existing .env? (y/n): ');
-        if (useExisting.toLowerCase() === 'y') {
-            return true;
-        }
+        return true;
     }
 
     log.info('Creating .env file...');
+    log.info('Using environment variables or defaults');
 
+    // Use environment variables or defaults (non-interactive mode)
     const answers = {
-        port: await question('PORT (default 3000): ') || '3000',
-        dbHost: await question('DB_HOST (default localhost): ') || 'localhost',
-        dbPort: await question('DB_PORT (default 5432): ') || '5432',
-        dbUser: await question('DB_USER (default postgres): ') || 'postgres',
-        dbPassword: await question('DB_PASSWORD: '),
-        dbName: await question('DB_NAME (default addiction_tracker): ') || 'addiction_tracker',
-        sessionSecret: await question('SESSION_SECRET (or press Enter to generate): ') || generateSecret(),
-        nodeEnv: await question('NODE_ENV (default development): ') || 'development'
+        port: process.env.PORT || '3000',
+        dbHost: process.env.DB_HOST || 'localhost',
+        dbPort: process.env.DB_PORT || '5432',
+        dbUser: process.env.DB_USER || 'postgres',
+        dbPassword: process.env.DB_PASSWORD || 'postgres',
+        dbName: process.env.DB_NAME || 'addiction_tracker',
+        sessionSecret: process.env.SESSION_SECRET || generateSecret(),
+        nodeEnv: process.env.NODE_ENV || 'development'
     };
 
     const envContent = `PORT=${answers.port}
@@ -157,7 +156,7 @@ async function startServer() {
     log.info('💡 First time? Create an account and start logging your progress!');
     log.info('');
 
-    return new Promise(() => {
+    return new Promise((resolve) => {
         const server = spawn('npm', ['start'], {
             cwd: ROOT_DIR,
             stdio: 'inherit',
@@ -170,11 +169,21 @@ async function startServer() {
         });
 
         server.on('close', (code) => {
-            if (code !== 0) {
+            // Port already in use is OK - server is already running
+            if (code === 1 && process.stdout.isTTY) {
+                log.warn('Server may already be running on port 3000');
+                log.info('Access your app at: http://localhost:3000');
+                resolve();
+            } else if (code !== 0) {
                 log.error(`Server exited with code ${code}`);
                 process.exit(code);
+            } else {
+                resolve();
             }
         });
+
+        // Keep the promise pending - server runs indefinitely
+        // This allows npm start to stay running in the foreground
     });
 }
 
@@ -203,6 +212,7 @@ ${colors.reset}
 
         // Step 2: Setup .env
         const envOk = await setupEnv();
+        rl.close(); // Close readline since we don't need interactive input anymore
         if (!envOk) {
             log.error('Failed to setup environment');
             process.exit(1);
@@ -216,6 +226,7 @@ ${colors.reset}
 
     } catch (error) {
         log.error(`Setup failed: ${error.message}`);
+        rl.close();
         process.exit(1);
     }
 }

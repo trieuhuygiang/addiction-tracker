@@ -185,6 +185,20 @@ const initializeDatabase = async () => {
       await mainClient.query(sessionTableQuery);
       console.log('✓ Session table created or already exists');
 
+      // Create global_settings table for application settings
+      const globalSettingsTableQuery = `
+        CREATE TABLE IF NOT EXISTS global_settings (
+          id SERIAL PRIMARY KEY,
+          setting_key VARCHAR(255) UNIQUE NOT NULL,
+          setting_value TEXT,
+          updated_by INT REFERENCES users(id) ON DELETE SET NULL,
+          created_at TIMESTAMP DEFAULT NOW(),
+          updated_at TIMESTAMP DEFAULT NOW()
+        );
+      `;
+      await mainClient.query(globalSettingsTableQuery);
+      console.log('✓ Global settings table created or already exists');
+
       console.log('\n✓ Database initialization completed successfully!');
     } finally {
       mainClient.release();

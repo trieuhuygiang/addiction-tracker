@@ -279,4 +279,29 @@ router.post('/streak-history/delete-all', requireLogin, async (req, res) => {
   }
 });
 
+// Update morning wood status for a specific date
+router.post('/entries/:date/morning-wood', requireLogin, async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    const date = req.params.date;
+    const { hasMorningWood } = req.body;
+
+    // Find or create entry for the date
+    let entry = await Entry.findByUserAndDate(userId, date);
+
+    if (entry) {
+      // Update existing entry with morning wood status
+      await Entry.updateMorningWood(entry.id, hasMorningWood);
+    } else {
+      // Create new entry with morning wood status only
+      await Entry.create(userId, date, false, null, 0, hasMorningWood);
+    }
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Morning wood update error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 module.exports = router;

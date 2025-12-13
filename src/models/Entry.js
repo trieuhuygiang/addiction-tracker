@@ -82,6 +82,19 @@ class Entry {
     }
   }
 
+  // Update just the morning wood status
+  static async updateMorningWood(entryId, hasMorningWood) {
+    try {
+      const result = await query(
+        'UPDATE entries SET has_morning_wood = $1, updated_at = NOW() WHERE id = $2 RETURNING *',
+        [hasMorningWood, entryId]
+      );
+      return result.rows[0];
+    } catch (error) {
+      throw error;
+    }
+  }
+
   // Delete an entry
   static async delete(entryId) {
     try {

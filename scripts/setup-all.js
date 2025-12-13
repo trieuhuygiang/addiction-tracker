@@ -72,6 +72,25 @@ async function checkDependencies() {
     });
 }
 
+async function testDatabaseConnection(host, port, user, password, database) {
+    const { Pool } = require('pg');
+    try {
+        const testPool = new Pool({
+            host,
+            port: parseInt(port),
+            user,
+            password,
+            database: 'postgres' // Connect to default postgres database to test credentials
+        });
+        const client = await testPool.connect();
+        client.release();
+        await testPool.end();
+        return true;
+    } catch (error) {
+        return false;
+    }
+}
+
 async function setupEnv() {
     log.title('Step 2: Environment Configuration');
 
@@ -81,10 +100,10 @@ async function setupEnv() {
     }
 
     log.info('Creating .env file...');
-    log.info('Using environment variables or defaults');
+    log.info('Detecting database credentials...');
 
     // Use environment variables or defaults (non-interactive mode)
-    const answers = {
+    let answers = {
         port: process.env.PORT || '3000',
         dbHost: process.env.DB_HOST || 'localhost',
         dbPort: process.env.DB_PORT || '5432',
@@ -94,6 +113,54 @@ async function setupEnv() {
         sessionSecret: process.env.SESSION_SECRET || generateSecret(),
         nodeEnv: process.env.NODE_ENV || 'development'
     };
+
+    // If default postgres credentials are being used, try to detect the actual user
+    if (!process.env.DB_USER && !process.env.DB_PASSWORD) {
+        log.info('Testing default PostgreSQL credentials...');
+        const defaultWorks = await testDatabaseConnection(
+            answers.dbHost,
+            answers.dbPort,
+            'postgres',
+            'postgres',
+            answers.dbName
+        );
+
+        if (!defaultWorks) {
+            log.warn('Default PostgreSQL credentials (postgres:postgres) not working');
+            log.info('Trying to detect existing database user...');
+
+            // Try common alternatives
+            const commonUsers = [
+                { user: 'addiction_user', password: 'addiction_tracker_pass' },
+                { user: 'tracker_user', password: 'tracker_password' },
+                { user: 'nofap_user', password: 'nofap_password' }
+            ];
+
+            let foundUser = false;
+            for (const alt of commonUsers) {
+                const altWorks = await testDatabaseConnection(
+                    answers.dbHost,
+                    answers.dbPort,
+                    alt.user,
+                    alt.password,
+                    answers.dbName
+                );
+                if (altWorks) {
+                    log.success(`Found working credentials: user=${alt.user}`);
+                    answers.dbUser = alt.user;
+                    answers.dbPassword = alt.password;
+                    foundUser = true;
+                    break;
+                }
+            }
+
+            if (!foundUser) {
+                log.warn('Could not auto-detect database credentials');
+                log.info('⚠️  You may need to manually configure your database');
+                log.info('Edit the .env file with your actual PostgreSQL credentials');
+            }
+        }
+    }
 
     const envContent = `PORT=${answers.port}
 DB_HOST=${answers.dbHost}
@@ -108,6 +175,9 @@ NODE_ENV=${answers.nodeEnv}
     try {
         fs.writeFileSync(ENV_FILE, envContent);
         log.success('.env file created');
+        if (answers.dbUser !== 'postgres') {
+            log.info(`Using database user: ${answers.dbUser}`);
+        }
         return true;
     } catch (error) {
         log.error(`Failed to create .env: ${error.message}`);
@@ -133,7 +203,15 @@ async function initializeDatabase() {
                 resolve(true);
             } else {
                 log.warn('⚠️  Database setup encountered an issue');
-                log.info('This is normal if the database already exists');
+                log.info('This usually means one of the following:');
+                log.info('  1. Database user credentials are incorrect (check .env)');
+                log.info('  2. PostgreSQL is not running');
+                log.info('  3. Database already exists and is properly initialized');
+                log.info('');
+                log.info('To fix database credentials:');
+                log.info('  1. Check your PostgreSQL user and password in .env');
+                log.info('  2. Run: npm run setup');
+                log.info('');
                 log.info('Continuing with server startup...');
                 resolve(true);
             }
@@ -169,13 +247,27 @@ async function startServer() {
         });
 
         server.on('close', (code) => {
+            // Code 130 = SIGINT (Ctrl+C), normal shutdown
+            if (code === 130) {
+                log.success('Server stopped');
+                resolve();
+            }
             // Port already in use is OK - server is already running
-            if (code === 1 && process.stdout.isTTY) {
+            else if (code === 1 && process.stdout.isTTY) {
                 log.warn('Server may already be running on port 3000');
                 log.info('Access your app at: http://localhost:3000');
                 resolve();
-            } else if (code !== 0) {
+            } 
+            // Database authentication errors
+            else if (code !== 0) {
                 log.error(`Server exited with code ${code}`);
+                log.error('');
+                log.error('Troubleshooting:');
+                log.error('  1. Check your .env file for correct database credentials');
+                log.error('  2. Verify PostgreSQL is running: sudo systemctl status postgresql');
+                log.error('  3. Test your connection: psql -U <user> -h localhost -d <dbname>');
+                log.error('');
+                log.error('Once fixed, run again: npm start');
                 process.exit(code);
             } else {
                 resolve();

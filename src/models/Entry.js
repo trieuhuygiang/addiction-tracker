@@ -160,6 +160,19 @@ class Entry {
     }
   }
 
+  // Get count of morning wood entries for a user
+  static async getMorningWoodCount(userId) {
+    try {
+      const result = await query(
+        'SELECT COUNT(*) FROM entries WHERE user_id = $1 AND has_morning_wood = true',
+        [userId]
+      );
+      return parseInt(result.rows[0].count, 10);
+    } catch (error) {
+      throw error;
+    }
+  }
+
   // Delete all entries for a user (reset progress)
   static async deleteAllByUser(userId) {
     try {

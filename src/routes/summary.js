@@ -29,6 +29,9 @@ router.get('/summary', requireLogin, async (req, res) => {
     // Get clock history for rewiring days calculation
     const clockHistory = await ClockHistory.findByUser(userId);
 
+    // Get morning wood count
+    const morningWoodCount = await Entry.getMorningWoodCount(userId);
+
     // Calculate current counter value (only current running clock)
     let currentClockSeconds = 0;
     if (user?.clock_start) {
@@ -69,6 +72,7 @@ router.get('/summary', requireLogin, async (req, res) => {
     console.log('Longest session seconds:', longestRewireSession);
     console.log('Longest session days:', longestRewireSessionDays);
     console.log('Longest session hours:', longestRewireSessionHours);
+    console.log('Morning wood count:', morningWoodCount);
     console.log('===================');
 
     // Calculate additional statistics
@@ -78,6 +82,7 @@ router.get('/summary', requireLogin, async (req, res) => {
       longestRewireSession: longestRewireSession,
       longestRewireSessionDays: longestRewireSessionDays,
       longestRewireSessionHours: longestRewireSessionHours,
+      morningWoodCount: morningWoodCount,
       totalDays: streakSummary.totalDays || 0,
       averageDaysPerMonth: 0,
       lastEntryDate: null,
@@ -129,6 +134,7 @@ router.get('/summary', requireLogin, async (req, res) => {
         longestRewireSession: 0,
         longestRewireSessionDays: 0,
         longestRewireSessionHours: 0,
+        morningWoodCount: 0,
         cleanDays: 0,
         slipDays: 0,
         successRate: 0,

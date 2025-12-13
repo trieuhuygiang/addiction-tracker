@@ -119,7 +119,7 @@ NODE_ENV=${answers.nodeEnv}
 async function initializeDatabase() {
     log.title('Step 3: Database Initialization');
 
-    log.info('Running database setup...');
+    log.info('Setting up database tables and columns...');
 
     return new Promise((resolve) => {
         const setup = spawn('npm', ['run', 'setup'], {
@@ -130,12 +130,19 @@ async function initializeDatabase() {
 
         setup.on('close', (code) => {
             if (code === 0) {
-                log.success('Database initialized');
+                log.success('Database initialized successfully');
                 resolve(true);
             } else {
-                log.warn('Database setup completed with warnings (may already exist)');
+                log.warn('⚠️  Database setup encountered an issue');
+                log.info('This is normal if the database already exists');
+                log.info('Continuing with server startup...');
                 resolve(true);
             }
+        });
+
+        setup.on('error', (error) => {
+            log.error(`Database setup error: ${error.message}`);
+            resolve(true); // Continue anyway
         });
     });
 }
@@ -143,7 +150,12 @@ async function initializeDatabase() {
 async function startServer() {
     log.title('Step 4: Starting Server');
 
-    log.success('All setup complete! Starting server...\n');
+    log.success('All setup complete! Starting server...');
+    log.info('');
+    log.info('Your app will be available at: http://localhost:3000');
+    log.info('');
+    log.info('💡 First time? Create an account and start logging your progress!');
+    log.info('');
 
     return new Promise(() => {
         const server = spawn('npm', ['start'], {
@@ -155,6 +167,13 @@ async function startServer() {
         server.on('error', (error) => {
             log.error(`Failed to start server: ${error.message}`);
             process.exit(1);
+        });
+
+        server.on('close', (code) => {
+            if (code !== 0) {
+                log.error(`Server exited with code ${code}`);
+                process.exit(code);
+            }
         });
     });
 }

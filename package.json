@@ -13,7 +13,8 @@
     "setup-admin": "node src/config/setupAdmin.js",
     "build": "npm run setup",
     "setup-all": "node scripts/setup-all.js",
-    "init": "npm run setup-all"
+    "init": "npm run setup-all",
+    "check-db": "node scripts/check-db.js"
   },
   "keywords": [
     "addiction",

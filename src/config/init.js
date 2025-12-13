@@ -110,6 +110,13 @@ const initializeDatabase = async () => {
       await mainClient.query(entriesTableQuery);
       console.log('✓ Entries table created or already exists');
 
+      // Add failure_level column if it doesn't exist (for existing databases)
+      const addFailureLevelColumn = `
+        ALTER TABLE entries ADD COLUMN IF NOT EXISTS failure_level INT DEFAULT 0;
+      `;
+      await mainClient.query(addFailureLevelColumn);
+      console.log('✓ Failure level column added or already exists');
+
       // Add morning_wood column if it doesn't exist (for existing databases)
       const addMorningWoodColumn = `
         ALTER TABLE entries ADD COLUMN IF NOT EXISTS has_morning_wood BOOLEAN DEFAULT FALSE;

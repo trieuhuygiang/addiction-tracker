@@ -3,13 +3,13 @@ const { query } = require('../config/db');
 class Entry {
   // Create a new entry
   // failureLevel: 0 = clean, 1 = a little bit, 2 = totally failed
-  static async create(userId, date, hadSlip, note = null, failureLevel = null) {
+  static async create(userId, date, hadSlip, note = null, failureLevel = null, hasMorningWood = false) {
     try {
       // If failureLevel not provided, derive from hadSlip for backwards compatibility
       const level = failureLevel !== null ? failureLevel : (hadSlip ? 1 : 0);
       const result = await query(
-        'INSERT INTO entries (user_id, date, had_leakage, failure_level, note) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-        [userId, date, hadSlip, level, note]
+        'INSERT INTO entries (user_id, date, had_leakage, failure_level, note, has_morning_wood) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+        [userId, date, hadSlip, level, note, hasMorningWood]
       );
       return result.rows[0];
     } catch (error) {
@@ -69,12 +69,12 @@ class Entry {
     }
   }
 
-  // Update an entry with failure level
-  static async updateWithLevel(entryId, hadSlip, note = null, failureLevel = 0) {
+  // Update an entry with failure level and morning wood
+  static async updateWithLevel(entryId, hadSlip, note = null, failureLevel = 0, hasMorningWood = false) {
     try {
       const result = await query(
-        'UPDATE entries SET had_leakage = $1, note = $2, failure_level = $3, updated_at = NOW() WHERE id = $4 RETURNING *',
-        [hadSlip, note, failureLevel, entryId]
+        'UPDATE entries SET had_leakage = $1, note = $2, failure_level = $3, has_morning_wood = $4, updated_at = NOW() WHERE id = $5 RETURNING *',
+        [hadSlip, note, failureLevel, hasMorningWood, entryId]
       );
       return result.rows[0];
     } catch (error) {

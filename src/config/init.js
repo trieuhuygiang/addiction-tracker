@@ -100,6 +100,8 @@ const initializeDatabase = async () => {
           date DATE NOT NULL,
           had_leakage BOOLEAN NOT NULL,
           note TEXT,
+          failure_level INT DEFAULT 0,
+          has_morning_wood BOOLEAN DEFAULT FALSE,
           created_at TIMESTAMP DEFAULT NOW(),
           updated_at TIMESTAMP DEFAULT NOW(),
           UNIQUE (user_id, date)
@@ -107,6 +109,13 @@ const initializeDatabase = async () => {
       `;
       await mainClient.query(entriesTableQuery);
       console.log('✓ Entries table created or already exists');
+
+      // Add morning_wood column if it doesn't exist (for existing databases)
+      const addMorningWoodColumn = `
+        ALTER TABLE entries ADD COLUMN IF NOT EXISTS has_morning_wood BOOLEAN DEFAULT FALSE;
+      `;
+      await mainClient.query(addMorningWoodColumn);
+      console.log('✓ Morning wood tracking column added or already exists');
 
       // Create index for faster queries
       const indexQuery = `

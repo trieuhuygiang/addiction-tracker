@@ -119,7 +119,7 @@ router.get('/entries/:date?', requireLogin, async (req, res) => {
 router.post('/entries', requireLogin, async (req, res) => {
   try {
     const userId = req.session.userId;
-    const { date, hadSlip, failureLevel, note } = req.body;
+    const { date, hadSlip, failureLevel, note, hasMorningWood } = req.body;
 
     // Validation
     if (!date) {
@@ -159,17 +159,20 @@ router.post('/entries', requireLogin, async (req, res) => {
       level = 1;
     }
     const slipValue = level > 0;
+    
+    // Convert morning wood checkbox to boolean
+    const morningWood = hasMorningWood === 'on' || hasMorningWood === true;
 
     // Check if entry already exists
     const existingEntry = await Entry.findByUserAndDate(userId, date);
 
     let savedEntry;
     if (existingEntry) {
-      // Update existing entry with failure level
-      savedEntry = await Entry.updateWithLevel(existingEntry.id, slipValue, note || null, level);
+      // Update existing entry with failure level and morning wood
+      savedEntry = await Entry.updateWithLevel(existingEntry.id, slipValue, note || null, level, morningWood);
     } else {
-      // Create new entry with failure level
-      savedEntry = await Entry.create(userId, date, slipValue, note || null, level);
+      // Create new entry with failure level and morning wood
+      savedEntry = await Entry.create(userId, date, slipValue, note || null, level, morningWood);
     }
 
     res.render('entries', {

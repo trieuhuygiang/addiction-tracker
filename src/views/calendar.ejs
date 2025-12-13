@@ -393,7 +393,7 @@
                                         <% if (dayObj) { %>
                                             <a href="/entries/<%= dayObj.date %>"
                                                 class="calendar-day <%= dayObj.status %>"
-                                                title="<%= dayObj.status === 'clean' ? 'Clean' : dayObj.status === 'slip' ? 'A Little Bit' : dayObj.status === 'failed' ? 'Totally Failed' : 'No entry' %>">
+                                                title="<%= dayObj.status === 'clean' ? 'Clean' : dayObj.status === 'slip' ? 'A Little Bit' : dayObj.status === 'failed' ? 'Totally Failed' : 'No entry' %><%= dayObj.entry && dayObj.entry.has_morning_wood ? ' + Morning Wood 🌳' : '' %>">
                                                 <div class="day-number">
                                                     <%= dayObj.day %>
                                                 </div>
@@ -408,6 +408,9 @@
                                                                     ⚪
                                                                     <% } %>
                                                 </div>
+                                                <% if (dayObj.entry && dayObj.entry.has_morning_wood) { %>
+                                                    <div style="font-size: 0.9rem; margin-top: 2px;">🌳</div>
+                                                    <% } %>
                                             </a>
                                             <% } else { %>
                                                 <div class="calendar-day other-month"></div>

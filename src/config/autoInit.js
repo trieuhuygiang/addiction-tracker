@@ -109,6 +109,26 @@ const autoInitialize = async () => {
       console.log('✓ Admin user created (username: admin, password: 49914991)');
     }
 
+    // Create global_settings table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS global_settings (
+        id SERIAL PRIMARY KEY,
+        setting_key VARCHAR(255) UNIQUE NOT NULL,
+        setting_value TEXT,
+        updated_by INT REFERENCES users(id) ON DELETE SET NULL,
+        created_at TIMESTAMP DEFAULT NOW(),
+        updated_at TIMESTAMP DEFAULT NOW()
+      );
+    `);
+
+    // Initialize background video setting to enabled by default
+    await client.query(`
+      INSERT INTO global_settings (setting_key, setting_value)
+      VALUES ('background_video_enabled', 'true')
+      ON CONFLICT (setting_key) DO NOTHING;
+    `);
+    console.log('✓ Background video enabled by default');
+
     console.log('✓ Database tables ready');
   } catch (error) {
     console.error('Auto-init error:', error.message);

@@ -313,6 +313,15 @@ const initializeDatabase = async () => {
       await mainClient.query(globalSettingsTableQuery);
       console.log('✓ Global settings table created or already exists');
 
+      // Initialize background video setting to enabled by default
+      const backgroundVideoInitQuery = `
+        INSERT INTO global_settings (setting_key, setting_value)
+        VALUES ('background_video_enabled', 'true')
+        ON CONFLICT (setting_key) DO NOTHING;
+      `;
+      await mainClient.query(backgroundVideoInitQuery);
+      console.log('✓ Background video enabled by default');
+
       console.log('\n✓ Database initialization completed successfully!');
     } finally {
       mainClient.release();

@@ -1,8 +1,35 @@
 require('dotenv').config();
 const { Pool } = require('pg');
 const { execSync } = require('child_process');
+const fs = require('fs');
+const path = require('path');
+const crypto = require('crypto');
 
-// Connection configuration - support both DATABASE_URL and individual vars
+// Auto-create .env file if it doesn't exist
+const envPath = path.join(__dirname, '../../.env');
+if (!fs.existsSync(envPath)) {
+  console.log('⚙️  Creating .env file...');
+  const sessionSecret = crypto.randomBytes(32).toString('hex');
+  const envContent = `PORT=3000
+NODE_ENV=development
+
+# Database Configuration
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=tracker_user
+DB_PASSWORD=tracker_password
+DB_NAME=addiction_tracker
+
+# Session Configuration
+SESSION_SECRET=${sessionSecret}
+`;
+  fs.writeFileSync(envPath, envContent);
+  console.log('✓ .env file created');
+  // Reload environment variables
+  require('dotenv').config();
+}
+
+// // Connection configuration - support both DATABASE_URL and individual vars
 const getConnectionConfig = () => {
   if (process.env.DATABASE_URL) {
     // Railway/Heroku/Render style - use DATABASE_URL

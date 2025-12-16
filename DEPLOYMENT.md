@@ -4,41 +4,45 @@ This guide provides instructions for deploying the NoFap Progress Tracker applic
 
 ## Local Development
 
-### Quick Start (Automated Setup)
-
-**Everything in one command!** ⚡
-
-```bash
-npm run setup-all
-# or
-npm run init
-```
-
-This interactive script will:
-- ✅ Install all dependencies
-- ✅ Create and configure `.env` file (with prompts for your settings)
-- ✅ Initialize the database with tables
-- ✅ Start the development server
-
-**That's it!** Your app will be running at `http://localhost:3000`
-
----
-
 ### Prerequisites
 
-- Node.js (v14 or higher)
+- Node.js (v18 or higher)
 - PostgreSQL (v12 or higher)
 - Git
 
-### Manual Setup
+---
 
-If you prefer to set up manually instead of using `npm run setup-all`, follow these steps:
+## ⚡ FAST SETUP (Recommended)
+
+**One command to set everything up automatically!**
+
+```bash
+./setup.sh
+```
+
+This shell script will:
+- ✅ Check and install dependencies (if needed)
+- ✅ Create PostgreSQL user and database automatically
+- ✅ Configure `.env` file
+- ✅ Initialize all database tables with proper permissions
+- ✅ Create admin user
+- ✅ Start the development server
+
+**No manual database setup needed!** The script handles everything using sudo to create the PostgreSQL user and database.
+
+**Your app will be available at:** `http://localhost:3000`
+
+---
+
+## 📋 STANDARD SETUP (Step-by-Step)
+
+If you prefer manual setup or need more control:
 
 1. **Clone the repository:**
 
    ```bash
    git clone <repository-url>
-   cd Project
+   cd addiction-tracker
    ```
 
 2. **Install dependencies:**
@@ -47,32 +51,61 @@ If you prefer to set up manually instead of using `npm run setup-all`, follow th
    npm install
    ```
 
-3. **Create `.env` file:**
+3. **Create PostgreSQL user and database** (only if not already done):
 
+   ```bash
+   sudo -u postgres psql << EOF
+   CREATE USER addiction_user WITH ENCRYPTED PASSWORD 'addiction_tracker_pass';
+   CREATE DATABASE addiction_tracker;
+   GRANT ALL PRIVILEGES ON DATABASE addiction_tracker TO addiction_user;
+   \c addiction_tracker
+   GRANT ALL ON SCHEMA public TO addiction_user;
+   EOF
    ```
+
+4. **Create `.env` file** in the root directory:
+
+   ```env
    PORT=3000
+   NODE_ENV=development
+
+   # Database Configuration
    DB_HOST=localhost
    DB_PORT=5432
-   DB_USER=your_postgres_user
-   DB_PASSWORD=your_postgres_password
-   DB_NAME=nofap_tracker
+   DB_USER=addiction_user
+   DB_PASSWORD=addiction_tracker_pass
+   DB_NAME=addiction_tracker
+
+   # Session Configuration (generate: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))")
    SESSION_SECRET=your_random_secret_key_here
-   NODE_ENV=development
    ```
 
-4. **Initialize database:**
+5. **Initialize database tables:**
 
    ```bash
    npm run setup
    ```
 
-5. **Start development server:**
+6. **Start development server:**
 
    ```bash
-   npm run dev
+   npm start
    ```
 
    Server will run at `http://localhost:3000`
+
+---
+
+## 🚀 NPM Commands Reference
+
+| Command | Description |
+|---------|-------------|
+| `./setup.sh` | Complete automated setup (fast setup) |
+| `npm install` | Install dependencies |
+| `npm run setup` | Initialize database tables |
+| `npm start` | Start development server |
+| `npm run check-db` | Verify database structure |
+| `npm run setup-admin` | Create additional admin user |
 
 ## Production Deployment
 

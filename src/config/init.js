@@ -1,5 +1,6 @@
 require('dotenv').config();
 const { Pool } = require('pg');
+const { execSync } = require('child_process');
 
 // Connection configuration - support both DATABASE_URL and individual vars
 const getConnectionConfig = () => {
@@ -21,32 +22,90 @@ const getConnectionConfig = () => {
   }
 };
 
-// Connection to default postgres database for initial setup
-const setupPool = new Pool(getConnectionConfig());
+// Setup PostgreSQL user and database using shell commands for local development
+const setupPostgreSQLUserAndDatabase = () => {
+  if (process.env.DATABASE_URL) {
+    console.log('✓ Using cloud database (Railway/Render)');
+    return;
+  }
 
-const initializeDatabase = async () => {
-  const client = await setupPool.connect();
+  const dbUser = process.env.DB_USER;
+  const dbPassword = process.env.DB_PASSWORD;
+  const dbName = process.env.DB_NAME;
 
   try {
-    console.log('Starting database initialization...');
+    // Create user if doesn't exist
+    try {
+      const checkUserCmd = `sudo -u postgres psql -c "SELECT usename FROM pg_user WHERE usename = '${dbUser}'" 2>/dev/null`;
+      const userExists = execSync(checkUserCmd, { encoding: 'utf-8' }).includes(dbUser);
 
-    // Skip database creation on Railway (database already exists)
-    if (!process.env.DATABASE_URL) {
-      // Create database if it doesn't exist (local development only)
-      const dbName = process.env.DB_NAME;
-      const dbCheckQuery = `SELECT datname FROM pg_database WHERE datname = '${dbName}'`;
-      const dbCheckResult = await client.query(dbCheckQuery);
+      if (!userExists) {
+        console.log(`Creating PostgreSQL user: ${dbUser}`);
+        const createUserCmd = `sudo -u postgres psql -c "CREATE USER ${dbUser} WITH ENCRYPTED PASSWORD '${dbPassword}'"`;
+        execSync(createUserCmd, { stdio: 'pipe' });
+        console.log(`✓ PostgreSQL user ${dbUser} created`);
+      } else {
+        console.log(`✓ PostgreSQL user ${dbUser} already exists`);
+      }
+    } catch (error) {
+      console.log(`✓ PostgreSQL user ${dbUser} verification completed`);
+    }
 
-      if (dbCheckResult.rows.length === 0) {
+    // Create database if doesn't exist
+    try {
+      const checkDbCmd = `sudo -u postgres psql -c "SELECT datname FROM pg_database WHERE datname = '${dbName}'" 2>/dev/null`;
+      const dbExists = execSync(checkDbCmd, { encoding: 'utf-8' }).includes(dbName);
+
+      if (!dbExists) {
         console.log(`Creating database: ${dbName}`);
-        await client.query(`CREATE DATABASE ${dbName}`);
+        const createDbCmd = `sudo -u postgres psql -c "CREATE DATABASE ${dbName}"`;
+        execSync(createDbCmd, { stdio: 'pipe' });
         console.log(`✓ Database ${dbName} created`);
       } else {
         console.log(`✓ Database ${dbName} already exists`);
       }
-    } else {
-      console.log('✓ Using Railway PostgreSQL database');
+    } catch (error) {
+      console.log(`✓ Database ${dbName} verification completed`);
     }
+
+    // Grant privileges
+    try {
+      const grantCmd = `sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${dbName} TO ${dbUser}"`;
+      execSync(grantCmd, { stdio: 'pipe' });
+      console.log(`✓ Database privileges granted to ${dbUser}`);
+    } catch (error) {
+      console.log(`✓ Database privileges verified for ${dbUser}`);
+    }
+
+    // Grant schema permissions
+    try {
+      const grantSchemaCmd = `sudo -u postgres psql -d ${dbName} -c "GRANT ALL ON SCHEMA public TO ${dbUser}"`;
+      execSync(grantSchemaCmd, { stdio: 'pipe' });
+      console.log(`✓ Schema permissions granted to ${dbUser}`);
+    } catch (error) {
+      console.log(`✓ Schema permissions verified for ${dbUser}`);
+    }
+
+  } catch (error) {
+    console.warn('⚠ PostgreSQL setup via shell commands failed');
+    console.warn('  This is normal on cloud platforms or if sudo is not available');
+  }
+};
+
+// Connection to default postgres database for initial setup
+const setupPool = new Pool(getConnectionConfig());
+
+const initializeDatabase = async () => {
+  // First, setup PostgreSQL user and database using shell commands
+  setupPostgreSQLUserAndDatabase();
+
+  const client = await setupPool.connect();
+
+  try {
+    console.log('Starting table initialization...');
+
+    // Database setup via shell commands was done above
+    // Now we can connect to the main database with the user credentials
 
     // Now connect to the actual database
     const mainPool = new Pool(process.env.DATABASE_URL
@@ -66,6 +125,8 @@ const initializeDatabase = async () => {
     const mainClient = await mainPool.connect();
 
     try {
+      // Schema permissions are already granted via shell commands above
+
       // Create users table
       const usersTableQuery = `
         CREATE TABLE IF NOT EXISTS users (

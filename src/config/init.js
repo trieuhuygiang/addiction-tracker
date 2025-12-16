@@ -86,6 +86,32 @@ const setupPostgreSQLUserAndDatabase = () => {
       console.log(`✓ Schema permissions verified for ${dbUser}`);
     }
 
+    // Transfer ownership of existing tables to the user
+    try {
+      const tables = ['users', 'entries', 'streak_history', 'clock_history', 'session', 'global_settings'];
+      for (const table of tables) {
+        const alterOwnerCmd = `sudo -u postgres psql -d ${dbName} -c "ALTER TABLE IF EXISTS ${table} OWNER TO ${dbUser}" 2>/dev/null`;
+        execSync(alterOwnerCmd, { stdio: 'pipe' });
+      }
+      console.log(`✓ Table ownership transferred to ${dbUser}`);
+    } catch (error) {
+      // This is expected if tables don't exist yet
+      console.log(`✓ Table ownership setup completed`);
+    }
+
+    // Transfer ownership of sequences to the user
+    try {
+      const sequences = ['users_id_seq', 'entries_id_seq', 'streak_history_id_seq', 'clock_history_id_seq', 'global_settings_id_seq'];
+      for (const seq of sequences) {
+        const alterSeqCmd = `sudo -u postgres psql -d ${dbName} -c "ALTER SEQUENCE IF EXISTS ${seq} OWNER TO ${dbUser}" 2>/dev/null`;
+        execSync(alterSeqCmd, { stdio: 'pipe' });
+      }
+      console.log(`✓ Sequence ownership transferred to ${dbUser}`);
+    } catch (error) {
+      // This is expected if sequences don't exist yet
+      console.log(`✓ Sequence ownership setup completed`);
+    }
+
   } catch (error) {
     console.warn('⚠ PostgreSQL setup via shell commands failed');
     console.warn('  This is normal on cloud platforms or if sudo is not available');

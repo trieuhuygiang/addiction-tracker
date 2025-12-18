@@ -113,6 +113,50 @@ npm start
 NODE_ENV=production npm start
 ```
 
+### Using PM2 (Process Manager)
+
+PM2 is a production process manager for Node.js applications. It ensures your server runs continuously and restarts automatically if it crashes.
+
+1. **Install PM2 globally:**
+
+   ```bash
+   npm install -g pm2
+   ```
+
+2. **Start the server with PM2:**
+
+   ```bash
+   pm2 start npm --name "addiction-tracker" -- start
+   ```
+
+3. **Start the server with PM2 in production mode:**
+
+   ```bash
+   pm2 start npm --name "addiction-tracker" -- start --env production
+   ```
+
+4. **View PM2 status:**
+
+   ```bash
+   pm2 status
+   pm2 logs addiction-tracker
+   ```
+
+5. **Setup PM2 to start on system boot:**
+
+   ```bash
+   pm2 startup
+   pm2 save
+   ```
+
+6. **Stop or restart the application:**
+
+   ```bash
+   pm2 stop addiction-tracker
+   pm2 restart addiction-tracker
+   pm2 delete addiction-tracker
+   ```
+
 ## Deployment Options
 
 ### Option 1: Railway (Recommended - Free tier available)

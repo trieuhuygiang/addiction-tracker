@@ -42,7 +42,7 @@
             border-radius: 5px;
             cursor: pointer;
             font-weight: 600;
-            font-family: 'Rajdhani', sans-serif;
+            font-family: inherit;
             transition: background-color 0.3s;
         }
 
@@ -297,12 +297,13 @@
                                 style="margin-bottom: 1.5rem; padding: 1rem; background: rgba(102, 126, 234, 0.1); border-radius: 12px; border: 2px solid rgba(102, 126, 234, 0.3);">
                                 <div
                                     style="display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap;">
-                                    <div id="rank-icon" style="font-size: 3rem;">🌱</div>
+                                    <div id="rank-icon" style="font-size: 3rem;">🌀</div>
                                     <div style="text-align: left;">
                                         <div id="rank-title"
-                                            style="font-size: 1.4rem; font-weight: bold; color: #667eea;">Seedling</div>
-                                        <div id="rank-subtitle" style="color: #888; font-size: 0.85rem;">Beginning your
-                                            journey</div>
+                                            style="font-size: 1.4rem; font-weight: bold; color: #667eea;">Luyện Khí -
+                                            Tầng 1</div>
+                                        <div id="rank-subtitle" style="color: #888; font-size: 0.85rem;">Bắt đầu tụ khí
+                                        </div>
                                     </div>
                                 </div>
                                 <div style="margin-top: 1rem;">
@@ -313,7 +314,8 @@
                                         </div>
                                     </div>
                                     <div id="rank-progress-text"
-                                        style="color: #888; font-size: 0.8rem; margin-top: 0.5rem;">0 days to next rank
+                                        style="color: #888; font-size: 0.8rem; margin-top: 0.5rem;">0 ngày đến cảnh giới
+                                        tiếp theo
                                     </div>
                                 </div>
                             </div>
@@ -393,7 +395,7 @@
                                         <span style="color: #444;">|</span>
                                         <a href="#" onclick="showRankingSystem(); return false;"
                                             style="color: #e94560; text-decoration: none; font-size: 0.9rem;">
-                                            🏆 View All Ranks
+                                            🧘 Xem Cảnh Giới
                                         </a>
                                         <span style="color: #444;">|</span>
                                         <a href="#" onclick="showEditCounter(); return false;"
@@ -585,17 +587,17 @@
                                         </div>
                                         <div id="rank-display" style="margin-bottom: 1.5rem; padding: 1rem; background: rgba(102, 126, 234, 0.1); border-radius: 12px; border: 2px solid rgba(102, 126, 234, 0.3);">
                                             <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap;">
-                                                <div id="rank-icon" style="font-size: 3rem;">🌱</div>
+                                                <div id="rank-icon" style="font-size: 3rem;">🌀</div>
                                                 <div style="text-align: left;">
-                                                    <div id="rank-title" style="font-size: 1.4rem; font-weight: bold; color: #667eea;">Seedling</div>
-                                                    <div id="rank-subtitle" style="color: #888; font-size: 0.85rem;">Beginning your journey</div>
+                                                    <div id="rank-title" style="font-size: 1.4rem; font-weight: bold; color: #667eea;">Luyện Khí - Tầng 1</div>
+                                                    <div id="rank-subtitle" style="color: #888; font-size: 0.85rem;">Bắt đầu tụ khí</div>
                                                 </div>
                                             </div>
                                             <div style="margin-top: 1rem;">
                                                 <div id="rank-progress-container" style="background: rgba(0,0,0,0.3); border-radius: 10px; height: 12px; overflow: hidden;">
                                                     <div id="rank-progress-bar" style="height: 100%; background: linear-gradient(90deg, #667eea, #e94560); border-radius: 10px; transition: width 0.5s ease; width: 0%;"></div>
                                                 </div>
-                                                <div id="rank-progress-text" style="color: #888; font-size: 0.8rem; margin-top: 0.5rem;">0 days to next rank</div>
+                                                <div id="rank-progress-text" style="color: #888; font-size: 0.8rem; margin-top: 0.5rem;">0 ngày đến cảnh giới tiếp theo</div>
                                             </div>
                                         </div>
                                         <form method="POST" action="/clock/reset" id="clock-reset-form" style="display: inline;">
@@ -619,22 +621,52 @@
                                 });
                         }
 
-                        // Ranking System - Legendary Names (Global scope for access by showRankingSystem)
+                        // Ranking System - Cảnh giới tu tiên (Global scope for access by showRankingSystem)
                         const ranks = [
-                            { days: 0, icon: '🌑', title: 'The Fallen', subtitle: 'Rise from the ashes', color: '#666666' },
-                            { days: 7, icon: '🌒', title: 'The Awakened', subtitle: 'First week - The fog begins to lift', color: '#8BC34A' },
-                            { days: 14, icon: '🌓', title: 'The Initiate', subtitle: 'Two weeks - Your will grows stronger', color: '#4CAF50' },
-                            { days: 30, icon: '⚔️', title: 'Spartan Warrior', subtitle: '30 days - Forged in discipline', color: '#FF9800' },
-                            { days: 60, icon: '🔥', title: 'Phoenix Rising', subtitle: '60 days - Reborn from flames', color: '#FF5722' },
-                            { days: 90, icon: '🦁', title: 'The Conqueror', subtitle: '90 days - Brain reboot complete!', color: '#E91E63' },
-                            { days: 120, icon: '🐉', title: 'Dragon Slayer', subtitle: '120 days - Master of inner demons', color: '#9C27B0' },
-                            { days: 150, icon: '👑', title: 'The Sovereign', subtitle: '150 days - Ruler of your domain', color: '#673AB7' },
-                            { days: 180, icon: '🏛️', title: 'Titan of Will', subtitle: '180 days - Half year of iron resolve', color: '#3F51B5' },
-                            { days: 270, icon: '💎', title: 'Diamond Mind', subtitle: '270 days - Unshatterable spirit', color: '#00BCD4' },
-                            { days: 365, icon: '⭐', title: 'The Transcendent', subtitle: '1 Year - Beyond mortal desires', color: '#FFD700' },
-                            { days: 500, icon: '☀️', title: 'Solar Emperor', subtitle: '500 days - Radiating divine energy', color: '#FFA000' },
-                            { days: 730, icon: '🔱', title: 'The Immortal', subtitle: '2 Years - Legend walks among men', color: '#E040FB' },
-                            { days: 1000, icon: '👼', title: 'The Anointed One', subtitle: '1000+ days - Walking in divine grace', color: '#FFFFFF' }
+                            // Luyện Khí (1-9)
+                            { days: 0, icon: '🌀', title: 'Luyện Khí - Tầng 1', subtitle: 'Bắt đầu tụ khí', color: '#8BC34A' },
+                            { days: 2, icon: '🌬️', title: 'Luyện Khí - Tầng 2', subtitle: 'Hô hấp điều hòa, tâm dần tĩnh', color: '#7CB342' },
+                            { days: 4, icon: '🍃', title: 'Luyện Khí - Tầng 3', subtitle: 'Khí mạch thông suốt hơn', color: '#689F38' },
+                            { days: 7, icon: '🧘', title: 'Luyện Khí - Tầng 4', subtitle: 'Ý chí bén, thói quen hình thành', color: '#4CAF50' },
+                            { days: 10, icon: '🫧', title: 'Luyện Khí - Tầng 5', subtitle: 'Tạp niệm giảm, tự chủ tăng', color: '#43A047' },
+                            { days: 14, icon: '🔰', title: 'Luyện Khí - Tầng 6', subtitle: 'Khí tức ổn định, tâm không loạn', color: '#388E3C' },
+                            { days: 18, icon: '🪷', title: 'Luyện Khí - Tầng 7', subtitle: 'Giữ giới vững, lòng bền', color: '#2E7D32' },
+                            { days: 23, icon: '💠', title: 'Luyện Khí - Tầng 8', subtitle: 'Khí tụ dày, tinh thần sáng', color: '#1B5E20' },
+                            { days: 30, icon: '🗿', title: 'Luyện Khí - Tầng 9', subtitle: 'Viên mãn luyện khí, chuẩn bị trúc cơ', color: '#00C853' },
+
+                            // Trúc Cơ
+                            { days: 40, icon: '🧱', title: 'Trúc Cơ - Sơ Kỳ', subtitle: 'Căn cơ dựng lập, tâm ổn định', color: '#00BCD4' },
+                            { days: 55, icon: '🏗️', title: 'Trúc Cơ - Trung Kỳ', subtitle: 'Căn cơ vững chắc, tiến bộ rõ rệt', color: '#03A9F4' },
+                            { days: 70, icon: '🏯', title: 'Trúc Cơ - Hậu Kỳ', subtitle: 'Nền tảng kiên cố, ít dao động', color: '#0288D1' },
+
+                            // Kim Đan
+                            { days: 90, icon: '⚪', title: 'Kim Đan - Sơ Kỳ', subtitle: 'Ngưng tụ kim đan, khí tức thâm hậu', color: '#3F51B5' },
+                            { days: 110, icon: '🔵', title: 'Kim Đan - Trung Kỳ', subtitle: 'Đan lực tăng, tâm càng vững', color: '#3949AB' },
+                            { days: 130, icon: '🟣', title: 'Kim Đan - Hậu Kỳ', subtitle: 'Đan thành viên mãn, đạo tâm sáng', color: '#303F9F' },
+
+                            // Nguyên Anh
+                            { days: 150, icon: '👶', title: 'Nguyên Anh - Sơ Kỳ', subtitle: 'Tâm pháp tinh thuần, nguyên anh thành', color: '#673AB7' },
+                            { days: 180, icon: '🧠', title: 'Nguyên Anh - Trung Kỳ', subtitle: 'Thần niệm mạnh, tự chủ cao', color: '#5E35B1' },
+                            { days: 210, icon: '🛡️', title: 'Nguyên Anh - Hậu Kỳ', subtitle: 'Chống tâm ma tốt, kiên định', color: '#512DA8' },
+
+                            // Hóa Thần
+                            { days: 240, icon: '✨', title: 'Hóa Thần - Sơ Kỳ', subtitle: 'Thần niệm khai mở, khí thần hợp', color: '#E91E63' },
+                            { days: 270, icon: '🔥', title: 'Hóa Thần - Trung Kỳ', subtitle: 'Ý chí bền, dục vọng suy', color: '#D81B60' },
+                            { days: 300, icon: '🌌', title: 'Hóa Thần - Hậu Kỳ', subtitle: 'Tâm sáng như gương, định lực sâu', color: '#C2185B' },
+
+                            // Cao cảnh
+                            { days: 330, icon: '☁️', title: 'Luyện Hư', subtitle: 'Hư thực tương dung, tâm cảnh rộng mở', color: '#9C27B0' },
+                            { days: 365, icon: '🤝', title: 'Hợp Thể', subtitle: 'Tâm-thân hợp nhất, đạo tâm vững vàng', color: '#8E24AA' },
+                            { days: 420, icon: '🏔️', title: 'Đại Thừa', subtitle: 'Đạo hạnh sâu dày, khí thế như sơn', color: '#7B1FA2' },
+
+                            // Độ Kiếp (nhiều trọng)
+                            { days: 500, icon: '⚡', title: 'Độ Kiếp - Nhất Trọng', subtitle: 'Vượt chướng ngại đầu tiên', color: '#FF9800' },
+                            { days: 600, icon: '⛈️', title: 'Độ Kiếp - Nhị Trọng', subtitle: 'Tâm ma khó, vẫn không lùi', color: '#FB8C00' },
+                            { days: 730, icon: '🌩️', title: 'Độ Kiếp - Tam Trọng', subtitle: 'Kiên trì lâu dài, khí vận mở', color: '#F57C00' },
+
+                            // Tiên
+                            { days: 850, icon: '👑', title: 'Tiên Vương', subtitle: 'Danh chấn tứ phương, đạo lực hùng hậu', color: '#E040FB' },
+                            { days: 1000, icon: '🌞', title: 'Tiên Đế', subtitle: 'Ngàn ngày kiên trì, bước vào cảnh giới tối thượng', color: '#FFFFFF' }
                         ];
 
                         // Initialize clock timer
@@ -692,12 +724,12 @@
 
                                     document.getElementById('rank-progress-bar').style.width = progressPercent + '%';
                                     document.getElementById('rank-progress-bar').style.background = `linear-gradient(90deg, ${currentRank.color}, ${nextRank.color})`;
-                                    document.getElementById('rank-progress-text').innerHTML = `<span style="color: ${nextRank.color}">${nextRank.icon} ${nextRank.title}</span> in ${daysToNext} days`;
+                                    document.getElementById('rank-progress-text').innerHTML = `<span style="color: ${nextRank.color}">${nextRank.icon} ${nextRank.title}</span> còn ${daysToNext} ngày`;
                                 } else {
                                     // Max rank reached
                                     document.getElementById('rank-progress-bar').style.width = '100%';
                                     document.getElementById('rank-progress-bar').style.background = `linear-gradient(90deg, ${currentRank.color}, gold)`;
-                                    document.getElementById('rank-progress-text').innerHTML = '🎊 Maximum rank achieved! You are a master!';
+                                    document.getElementById('rank-progress-text').innerHTML = '🎊 Đạt cảnh giới tối thượng!';
                                 }
                             }
 
@@ -865,7 +897,7 @@
                                 <div style="color: #888; font-size: 0.85rem;">${rank.subtitle}</div>
                             </div>
                             <div style="color: #667eea; font-size: 0.9rem; font-weight: bold; min-width: 80px; text-align: right;">
-                                ${daysRange} days
+                                ${daysRange} ngày
                             </div>
                         </div>
                     `;
@@ -878,16 +910,16 @@
                             modal.innerHTML = `
                     <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 2rem; border-radius: 15px; max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.5); animation: modalFadeIn 0.3s ease;">
                         <div style="text-align: center; margin-bottom: 1.5rem;">
-                            <div style="font-size: 3rem; margin-bottom: 0.5rem;">🏆</div>
-                            <h2 style="color: #e94560; margin: 0; font-size: 1.5rem;">Ranking System</h2>
-                            <p style="color: #888; margin-top: 0.5rem; font-size: 0.9rem;">Your journey to mastery</p>
+                            <div style="font-size: 3rem; margin-bottom: 0.5rem;">🧘</div>
+                            <h2 style="color: #e94560; margin: 0; font-size: 1.5rem;">Cảnh Giới Tu Tiên</h2>
+                            <p style="color: #888; margin-top: 0.5rem; font-size: 0.9rem;">Con đường tu luyện của bạn</p>
                         </div>
                         <div style="display: flex; flex-direction: column; gap: 0.75rem;">
                             ${rankList}
                         </div>
                         <div style="text-align: center; margin-top: 1.5rem;">
                             <button onclick="this.closest('#ranking-modal').remove();" style="padding: 0.75rem 2rem; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold;">
-                                ✖️ Close
+                                ✖️ Đóng
                             </button>
                         </div>
                     </div>

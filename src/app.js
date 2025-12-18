@@ -85,7 +85,7 @@ app.get('/', (req, res) => {
     return res.redirect('/dashboard');
   }
   res.render('index', {
-    title: 'Chastity Revive Center'
+    title: 'Cultivation Center'
   });
 });
 

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap');
+
 * {
     margin: 0;
     padding: 0;
@@ -24,6 +26,9 @@
     --info-color: #4a5568;
     --gradient-start: #2d3748;
     --gradient-end: #8b7355;
+
+    /* Typography */
+    --font-primary: 'Fredoka', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
 }
 
 [data-theme="dark"] {
@@ -48,7 +53,7 @@
 }
 
 body {
-    font-family: 'Cinzel', 'EB Garamond', 'Crimson Text', 'Libre Baskerville', Georgia, serif;
+    font-family: var(--font-primary);
     line-height: 1.6;
     color: var(--text-primary);
     background-color: var(--bg-primary);
@@ -1322,7 +1327,7 @@ main {
 }
 
 .days-display {
-    font-family: 'Cinzel', 'Crimson Text', 'EB Garamond', Georgia, serif;
+    font-family: var(--font-primary);
     font-size: 4.5rem;
     font-weight: 900;
     color: var(--danger-color);
@@ -1344,7 +1349,7 @@ main {
 }
 
 .days-label {
-    font-family: 'Cinzel', 'Crimson Text', serif;
+    font-family: var(--font-primary);
     font-size: 0.85rem;
     font-weight: bold;
     color: var(--text-secondary);
@@ -1355,7 +1360,7 @@ main {
 
 /* Time Display (HH:MM:SS format) */
 .time-display {
-    font-family: 'Cinzel', 'Crimson Text', serif;
+    font-family: var(--font-primary);
     font-size: 1.5rem;
     font-weight: 900;
     color: var(--danger-color);

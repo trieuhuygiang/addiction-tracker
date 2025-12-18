@@ -91,54 +91,6 @@ async function testDatabaseConnection(host, port, user, password, database) {
     }
 }
 
-async function autoFixPasswordAuth(host, port, targetUser, targetPassword, dbName) {
-    const { Client } = require('pg');
-    
-    // Try to connect as postgres superuser to reset the password
-    let adminClient = null;
-    try {
-        // Try with password first
-        adminClient = new Client({
-            host,
-            port: parseInt(port),
-            user: 'postgres',
-            password: 'postgres',
-            database: 'postgres'
-        });
-        await adminClient.connect();
-    } catch (e) {
-        try {
-            // Try without password
-            adminClient = new Client({
-                host,
-                port: parseInt(port),
-                user: 'postgres',
-                password: '',
-                database: 'postgres'
-            });
-            await adminClient.connect();
-        } catch (e2) {
-            // Unable to connect as postgres - cannot fix
-            return false;
-        }
-    }
-
-    try {
-        log.info(`Auto-fixing password for user: ${targetUser}`);
-        // Reset the user's password
-        await adminClient.query(`ALTER USER ${targetUser} WITH PASSWORD '${targetPassword}'`);
-        log.success(`Password reset for ${targetUser}`);
-        return true;
-    } catch (error) {
-        log.warn(`Could not reset password: ${error.message}`);
-        return false;
-    } finally {
-        if (adminClient) {
-            await adminClient.end();
-        }
-    }
-}
-
 async function detectAndSetupDatabase() {
     const { Pool, Client } = require('pg');
     const host = process.env.DB_HOST || 'localhost';
@@ -314,76 +266,17 @@ async function initializeDatabase() {
 
     log.info('Setting up database tables and columns...');
 
-    return new Promise(async (resolve) => {
+    return new Promise((resolve) => {
         const setup = spawn('npm', ['run', 'setup'], {
             cwd: ROOT_DIR,
-            stdio: 'pipe',
+            stdio: 'inherit',
             shell: true
         });
 
-        let setupOutput = '';
-        let retried = false;
-
-        setup.stdout.on('data', (data) => {
-            setupOutput += data.toString();
-            process.stdout.write(data);
-        });
-
-        setup.stderr.on('data', (data) => {
-            setupOutput += data.toString();
-            process.stderr.write(data);
-        });
-
-        setup.on('close', async (code) => {
+        setup.on('close', (code) => {
             if (code === 0) {
                 log.success('Database initialized successfully');
                 resolve(true);
-            } else if (setupOutput.includes('password authentication failed') && !retried) {
-                // Password auth failure detected - try to auto-fix
-                log.warn('⚠️  Password authentication failed - attempting auto-fix...');
-                
-                const dbHost = process.env.DB_HOST || 'localhost';
-                const dbPort = process.env.DB_PORT || '5432';
-                const dbUser = process.env.DB_USER || 'addiction_user';
-                const dbPassword = process.env.DB_PASSWORD || 'addiction_tracker_pass';
-                const dbName = process.env.DB_NAME || 'addiction_tracker';
-
-                const fixed = await autoFixPasswordAuth(dbHost, dbPort, dbUser, dbPassword, dbName);
-                
-                if (fixed) {
-                    log.info('Password fixed - retrying database setup...');
-                    retried = true;
-                    
-                    // Retry the setup
-                    const retrySetup = spawn('npm', ['run', 'setup'], {
-                        cwd: ROOT_DIR,
-                        stdio: 'inherit',
-                        shell: true
-                    });
-
-                    retrySetup.on('close', (retryCode) => {
-                        if (retryCode === 0) {
-                            log.success('Database initialized successfully');
-                            resolve(true);
-                        } else {
-                            log.warn('⚠️  Database setup encountered an issue after password fix');
-                            log.info('Manual fix may be required - check your PostgreSQL setup');
-                            resolve(true);
-                        }
-                    });
-
-                    retrySetup.on('error', (error) => {
-                        log.error(`Database setup error: ${error.message}`);
-                        resolve(true);
-                    });
-                } else {
-                    log.warn('⚠️  Could not auto-fix password - manual intervention needed');
-                    log.info('To fix manually:');
-                    log.info('  1. Ensure PostgreSQL is running');
-                    log.info('  2. Check credentials in .env');
-                    log.info('  3. Run: npm run setup');
-                    resolve(true);
-                }
             } else {
                 log.warn('⚠️  Database setup encountered an issue');
                 log.info('This usually means one of the following:');

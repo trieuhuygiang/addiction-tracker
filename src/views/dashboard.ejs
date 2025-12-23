@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>
-        <%= title %>
+        Tổng quan | Tông Môn Tu Tiên
     </title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <script src="/js/theme-init.js"></script>
@@ -30,13 +30,14 @@
         }
 
         .dashboard-header h1 {
-            color: #667eea;
+            color: var(--info-color);
             font-size: 2rem;
+            font-family: var(--font-display);
         }
 
         .logout-btn {
             padding: 0.5rem 1rem;
-            background-color: #e74c3c;
+            background-color: var(--danger-color);
             color: white;
             border: none;
             border-radius: 5px;
@@ -47,7 +48,7 @@
         }
 
         .logout-btn:hover {
-            background-color: #c0392b;
+            filter: brightness(0.95);
         }
 
         .dashboard-grid {
@@ -75,7 +76,7 @@
         .stats-value {
             font-size: 3rem;
             font-weight: bold;
-            color: #667eea;
+            color: var(--info-color);
         }
 
         .action-buttons {
@@ -86,7 +87,7 @@
 
         .action-btn {
             padding: 1rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
             color: white;
             text-decoration: none;
             border-radius: 5px;
@@ -98,11 +99,11 @@
 
         .action-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 12px var(--shadow-color);
         }
 
         .action-btn.secondary {
-            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            background: linear-gradient(135deg, var(--gradient-end) 0%, var(--gradient-start) 100%);
         }
 
         /* Mobile Responsive Styles */
@@ -217,17 +218,17 @@
         <div class="dashboard-container">
 
             <div class="dashboard-header">
-                <h1>Welcome Back! 🎉</h1>
-                <div style="font-size:1.1rem;color:#667eea;">Logged in as: <%= userName %>
+                <h1>Đạo hữu trở lại! 🎉</h1>
+                <div style="font-size:1.1rem;color:var(--info-color);">Đang nhập: <%= userName %>
                 </div>
                 <form method="POST" action="/logout" style="margin: 0;">
-                    <button type="submit" class="logout-btn">Logout</button>
+                    <button type="submit" class="logout-btn">Đăng xuất</button>
                 </form>
             </div>
 
             <% if (typeof deleteMessage !=='undefined' && deleteMessage) { %>
                 <div
-                    style="background: #fff3cd; border: 1px solid #ffc107; color: #856404; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                    style="background: var(--bg-secondary); border: 1px solid var(--warning-color); color: var(--text-secondary); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
                     <span style="font-size: 1.2rem;">🗑️</span>
                     <span>
                         <%= deleteMessage %>
@@ -237,8 +238,8 @@
 
                     <!-- Rewiring Day Counter -->
                     <div class="rewiring-clock" id="rewiring-clock">
-                        <h2 class="rewiring-clock-title">🧠 Rewiring Day Counter</h2>
-                        <p class="rewiring-clock-subtitle">Time since last relapse</p>
+                        <h2 class="rewiring-clock-title">🧠 Bộ đếm ngày tu luyện</h2>
+                        <p class="rewiring-clock-subtitle">Thời gian kể từ lần sa ngã gần nhất</p>
 
                         <% if (clockStartTime) { %>
                             <div id="clock-display" data-start-time="<%= clockStartTime.toISOString() %>"
@@ -253,24 +254,24 @@
                                         <!-- Days Display (Top & Largest) -->
                                         <div class="days-section">
                                             <div id="clock-days" class="days-display">0</div>
-                                            <div class="days-label">DAYS</div>
+                                            <div class="days-label">NGÀY</div>
                                         </div>
 
                                         <!-- Time Display (HH:MM:SS format with labels) -->
                                         <div class="time-display">
                                             <span class="time-group">
                                                 <span id="clock-hours" class="time-value">00</span>
-                                                <span class="time-unit">hours</span>
+                                                <span class="time-unit">giờ</span>
                                             </span>
                                             <span class="time-separator">:</span>
                                             <span class="time-group">
                                                 <span id="clock-minutes" class="time-value">00</span>
-                                                <span class="time-unit">min</span>
+                                                <span class="time-unit">phút</span>
                                             </span>
                                             <span class="time-separator">:</span>
                                             <span class="time-group">
                                                 <span id="clock-seconds" class="time-value">00</span>
-                                                <span class="time-unit">sec</span>
+                                                <span class="time-unit">giây</span>
                                             </span>
                                         </div>
                                     </div>
@@ -286,21 +287,22 @@
                             <!-- Counter Theme Toggle -->
                             <div style="margin: 1.5rem 0; text-align: center;">
                                 <button class="counter-theme-toggle" id="counterThemeToggle"
-                                    title="Toggle counter theme" onclick="toggleCounterTheme()"
-                                    style="padding: 0.5rem; background: rgba(102, 126, 234, 0.2); border: 1px solid rgba(102, 126, 234, 0.4); color: #667eea; border-radius: 6px; cursor: pointer; font-size: 1.5rem; transition: all 0.3s; min-width: 50px; min-height: 50px; display: inline-flex; align-items: center; justify-content: center;">
+                                    title="Đổi phong cách đồng hồ" onclick="toggleCounterTheme()"
+                                    style="padding: 0.5rem; background: rgba(47, 59, 68, 0.10); border: 1px solid rgba(47, 59, 68, 0.25); color: var(--info-color); border-radius: 6px; cursor: pointer; font-size: 1.5rem; transition: all 0.3s; min-width: 50px; min-height: 50px; display: inline-flex; align-items: center; justify-content: center;">
                                     🎨
                                 </button>
                             </div>
 
                             <!-- Rank Display -->
                             <div id="rank-display"
-                                style="margin-bottom: 1.5rem; padding: 1rem; background: rgba(102, 126, 234, 0.1); border-radius: 12px; border: 2px solid rgba(102, 126, 234, 0.3);">
+                                style="margin-bottom: 1.5rem; padding: 1rem; background: rgba(47, 59, 68, 0.07); border-radius: 12px; border: 2px solid rgba(47, 59, 68, 0.18);">
                                 <div
                                     style="display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap;">
                                     <div id="rank-icon" style="font-size: 3rem;">🌀</div>
                                     <div style="text-align: left;">
                                         <div id="rank-title"
-                                            style="font-size: 1.4rem; font-weight: bold; color: #667eea;">Luyện Khí -
+                                            style="font-size: 1.4rem; font-weight: bold; color: var(--info-color);">
+                                            Luyện Khí -
                                             Tầng 1</div>
                                         <div id="rank-subtitle"
                                             style="color: var(--text-secondary); font-size: 0.85rem; opacity: 0.7;">Bắt
@@ -312,7 +314,7 @@
                                     <div id="rank-progress-container"
                                         style="background: rgba(0,0,0,0.3); border-radius: 10px; height: 12px; overflow: hidden;">
                                         <div id="rank-progress-bar"
-                                            style="height: 100%; background: linear-gradient(90deg, #667eea, #e94560); border-radius: 10px; transition: width 0.5s ease; width: 0%;">
+                                            style="height: 100%; background: linear-gradient(90deg, var(--sect-jade), var(--sect-seal)); border-radius: 10px; transition: width 0.5s ease; width: 0%;">
                                         </div>
                                     </div>
                                     <div id="rank-progress-text"
@@ -325,14 +327,14 @@
 
                             <form method="POST" action="/clock/reset" id="clock-reset-form" style="display: inline;">
                                 <button type="submit"
-                                    onclick="return confirm('⚠️ Are you sure you want to reset your NoFap counter? This will save your current streak to history.');"
-                                    style="padding: 0.75rem 2rem; background: #e94560; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.3s;">
-                                    🔄 Reset Counter
+                                    onclick="return confirm('⚠️ Bạn chắc chắn muốn đặt lại bộ đếm? Chuỗi hiện tại sẽ được lưu vào lịch sử.');"
+                                    style="padding: 0.75rem 2rem; background: var(--danger-color); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.3s;">
+                                    🔄 Đặt lại bộ đếm
                                 </button>
                             </form>
                             <button type="button" onclick="showEmergencyQuote()"
-                                style="padding: 0.75rem 2rem; background: #28a745; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.3s; margin-left: 0.5rem;">
-                                🙏 Emergency
+                                style="padding: 0.75rem 2rem; background: var(--success-color); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.3s; margin-left: 0.5rem;">
+                                🙏 Khẩn cấp
                             </button>
                             <% } else { %>
                                 <div id="clock-display-inactive" class="watch-container watch-inactive">
@@ -346,24 +348,24 @@
                                             <!-- Days Display (Top & Largest) -->
                                             <div class="days-section">
                                                 <div class="days-display">0</div>
-                                                <div class="days-label">DAYS</div>
+                                                <div class="days-label">NGÀY</div>
                                             </div>
 
                                             <!-- Time Display (HH:MM:SS format with labels) -->
                                             <div class="time-display">
                                                 <span class="time-group">
                                                     <span class="time-value">00</span>
-                                                    <span class="time-unit">hours</span>
+                                                    <span class="time-unit">giờ</span>
                                                 </span>
                                                 <span class="time-separator">:</span>
                                                 <span class="time-group">
                                                     <span class="time-value">00</span>
-                                                    <span class="time-unit">min</span>
+                                                    <span class="time-unit">phút</span>
                                                 </span>
                                                 <span class="time-separator">:</span>
                                                 <span class="time-group">
                                                     <span class="time-value">00</span>
-                                                    <span class="time-unit">sec</span>
+                                                    <span class="time-unit">giây</span>
                                                 </span>
                                             </div>
                                         </div>
@@ -377,33 +379,33 @@
                                 </div>
                                 <p
                                     style="color: var(--text-muted); margin-top: 1rem; margin-bottom: 1.5rem; text-align: center; font-size: 0.95rem;">
-                                    ⏸️ Counter not started yet</p>
+                                    ⏸️ Chưa khởi động bộ đếm</p>
 
                                 <button type="button" onclick="startClockNow()"
-                                    style="padding: 0.75rem 2rem; background: #28a745; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.3s;">
-                                    ▶️ Start Counter
+                                    style="padding: 0.75rem 2rem; background: var(--success-color); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.3s;">
+                                    ▶️ Bắt đầu
                                 </button>
                                 <button type="button" onclick="showEmergencyQuote()"
-                                    style="padding: 0.75rem 2rem; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.3s; margin-left: 0.5rem;">
-                                    🙏 Emergency
+                                    style="padding: 0.75rem 2rem; background: var(--info-color); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.3s; margin-left: 0.5rem;">
+                                    🙏 Khẩn cấp
                                 </button>
                                 <% } %>
 
                                     <div
                                         style="margin-top: 1rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
                                         <a href="/clock-history"
-                                            style="color: #667eea; text-decoration: none; font-size: 0.9rem;">
-                                            📜 View Rewiring History
+                                            style="color: var(--info-color); text-decoration: none; font-size: 0.9rem;">
+                                            📜 Lịch sử tu luyện
                                         </a>
                                         <span style="color: #444;">|</span>
                                         <a href="#" onclick="showRankingSystem(); return false;"
-                                            style="color: #e94560; text-decoration: none; font-size: 0.9rem;">
+                                            style="color: var(--danger-color); text-decoration: none; font-size: 0.9rem;">
                                             🧘 Xem Cảnh Giới
                                         </a>
                                         <span style="color: #444;">|</span>
                                         <a href="#" onclick="showEditCounter(); return false;"
-                                            style="color: #667eea; text-decoration: none; font-size: 0.9rem;">
-                                            ✏️ Edit Counter
+                                            style="color: var(--info-color); text-decoration: none; font-size: 0.9rem;">
+                                            ✏️ Chỉnh bộ đếm
                                         </a>
                                     </div>
                     </div>
@@ -411,7 +413,7 @@
                     <!-- Quick Check-in for Today -->
                     <div class="quick-checkin"
                         style="background: var(--card-bg); padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px var(--shadow-color); margin-bottom: 2rem;">
-                        <h2 style="color: var(--info-color); margin-bottom: 1rem;">📋 Today's Check-in (<%= today %>)
+                        <h2 style="color: var(--info-color); margin-bottom: 1rem;">📋 Điểm danh hôm nay (<%= today %>)
                         </h2>
                         <% if (todayEntry) { %>
                             <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
@@ -426,26 +428,25 @@
                                 </div>
                                 <div style="flex: 1; min-width: 150px;">
                                     <p
-                                        style="font-weight: bold; color: <%= todayEntry.failure_level === 2 ? '#e74c3c' : (todayEntry.failure_level === 1 || todayEntry.had_leakage) ? '#ffc107' : '#28a745' %>;">
-                                        Today: <%= todayEntry.failure_level===2 ? 'Totally Failed' :
-                                            (todayEntry.failure_level===1 || todayEntry.had_leakage) ? 'A Little Bit'
-                                            : 'Clean' %>
+                                        style="font-weight: bold; color: <%= todayEntry.failure_level === 2 ? 'var(--danger-color)' : (todayEntry.failure_level === 1 || todayEntry.had_leakage) ? 'var(--warning-color)' : 'var(--success-color)' %>;">
+                                        Hôm nay: <%= todayEntry.failure_level===2 ? 'Thất thủ' :
+                                            (todayEntry.failure_level===1 || todayEntry.had_leakage) ? 'Sơ suất'
+                                            : 'Thanh tịnh' %>
                                     </p>
                                     <% if (todayEntry.note) { %>
-                                        <p style="color: var(--text-secondary); font-size: 0.9rem;">Note: <%=
+                                        <p style="color: var(--text-secondary); font-size: 0.9rem;">Ghi chú: <%=
                                                 todayEntry.note %>
                                         </p>
                                         <% } %>
                                 </div>
                                 <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
                                     <a href="/entries/<%= today %>"
-                                        style="padding: 0.75rem 1.25rem; background: var(--info-color); color: white; border-radius: 8px; text-decoration: none; font-size: 0.9rem; font-weight: 600;">Edit</a>
+                                        style="padding: 0.75rem 1.25rem; background: var(--info-color); color: white; border-radius: 8px; text-decoration: none; font-size: 0.9rem; font-weight: 600;">Sửa</a>
                                 </div>
                             </div>
                             <% } else { %>
-                                <p style="color: var(--text-secondary); margin-bottom: 1rem;">You haven't logged today
-                                    yet. How was your
-                                    day?</p>
+                                <p style="color: var(--text-secondary); margin-bottom: 1rem;">Hôm nay bạn chưa ghi.
+                                    Ngày tu luyện thế nào?</p>
                                 <div class="quick-checkin-buttons"
                                     style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem;">
                                     <form method="POST" action="/entries/quick" style="flex: 1; min-width: 100px;">
@@ -453,7 +454,7 @@
                                         <input type="hidden" name="failureLevel" value="0">
                                         <button type="submit"
                                             style="width: 100%; padding: 1rem; background: var(--success-color); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: bold;">
-                                            ✅ Clean Day
+                                            ✅ Thanh tịnh
                                         </button>
                                     </form>
                                     <form method="POST" action="/entries/quick" style="flex: 1; min-width: 100px;">
@@ -461,7 +462,7 @@
                                         <input type="hidden" name="failureLevel" value="1">
                                         <button type="submit"
                                             style="width: 100%; padding: 1rem; background: var(--warning-color); color: #333; border: none; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: bold;">
-                                            ⚠️ A Little Bit
+                                            ⚠️ Sơ suất
                                         </button>
                                     </form>
                                     <form method="POST" action="/entries/quick" style="flex: 1; min-width: 100px;">
@@ -469,12 +470,12 @@
                                         <input type="hidden" name="failureLevel" value="2">
                                         <button type="submit"
                                             style="width: 100%; padding: 1rem; background: var(--danger-color); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: bold;">
-                                            💀 Totally Failed
+                                            💀 Thất thủ
                                         </button>
                                     </form>
                                     <a href="/entries/<%= today %>"
                                         style="flex: 1; min-width: 100px; padding: 1rem; background: var(--info-color); color: white; border: none; border-radius: 8px; text-decoration: none; font-size: 0.9rem; font-weight: bold; text-align: center; display: flex; align-items: center; justify-content: center;">
-                                        📝 Add Note
+                                        📝 Thêm ghi chú
                                     </a>
                                 </div>
                                 <div style="margin-bottom: 1rem;">
@@ -482,11 +483,13 @@
                                         style="display: flex; align-items: center; gap: 10px; cursor: pointer; background: var(--bg-secondary); padding: 0.75rem; border-radius: 8px; width: fit-content;">
                                         <input type="checkbox" id="dashboardMorningWood" <% if (todayEntry &&
                                             todayEntry.has_morning_wood) { %>checked<% } %>
-                                            style="width: 18px; height: 18px; cursor: pointer; accent-color: #667eea;">
-                                            <span style="color: var(--text-primary);">🌳 Tree of Life Today</span>
+                                            style="width: 18px; height: 18px; cursor: pointer; accent-color:
+                                            var(--sect-jade);">
+                                            <span style="color: var(--text-primary);">🌳 Dấu hiệu hồi phục (sáng)</span>
                                     </label>
-                                    <div style="color: #888; font-size: 0.85rem; margin-top: 5px; margin-left: 30px;">
-                                        Positive sign of recovery
+                                    <div
+                                        style="color: var(--text-muted); font-size: 0.85rem; margin-top: 5px; margin-left: 30px;">
+                                        Tín hiệu tốt cho quá trình hồi phục
                                     </div>
                                 </div>
                                 <script>
@@ -499,22 +502,22 @@
                                             body: JSON.stringify({ hasMorningWood: this.checked })
                                         }).then(response => {
                                             if (!response.ok) {
-                                                alert('Error updating tree of life status');
+                                                alert('Lỗi cập nhật trạng thái hồi phục');
                                                 this.checked = !this.checked;
                                             }
                                         }).catch(error => {
                                             console.error('Error:', error);
-                                            alert('Error updating tree of life status');
+                                            alert('Lỗi cập nhật trạng thái hồi phục');
                                             this.checked = !this.checked;
                                         });
                                     });
                                 </script>
                                 <div style="border-top: 1px solid var(--border-color); padding-top: 1rem;">
                                     <form method="POST" action="/entries/relapse" style="width: 100%;"
-                                        onsubmit="return confirm('⚠️ RELAPSE - This will reset ALL your progress! Are you sure?') && confirm('This action cannot be undone. Are you absolutely sure?');">
+                                        onsubmit="return confirm('⚠️ TÁI NGÃ - Thao tác này sẽ đặt lại TOÀN BỘ tiến độ. Bạn chắc chứ?') && confirm('Không thể hoàn tác. Bạn chắc chắn lần nữa chứ?');">
                                         <button type="submit"
                                             style="width: 100%; padding: 0.75rem 1.5rem; background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: bold;">
-                                            💔 Relapse (Reset All Progress)
+                                            💔 Tái ngã (Đặt lại toàn bộ tiến độ)
                                         </button>
                                     </form>
                                 </div>
@@ -560,22 +563,22 @@
                                                 <div class="watch-center">
                                                     <div class="days-section">
                                                         <div id="clock-days" class="days-display">0</div>
-                                                        <div class="days-label">DAYS</div>
+                                                        <div class="days-label">NGÀY</div>
                                                     </div>
                                                     <div class="time-display">
                                                         <span class="time-group">
                                                             <span id="clock-hours" class="time-value">00</span>
-                                                            <span class="time-unit">hours</span>
+                                                            <span class="time-unit">giờ</span>
                                                         </span>
                                                         <span class="time-separator">:</span>
                                                         <span class="time-group">
                                                             <span id="clock-minutes" class="time-value">00</span>
-                                                            <span class="time-unit">min</span>
+                                                            <span class="time-unit">phút</span>
                                                         </span>
                                                         <span class="time-separator">:</span>
                                                         <span class="time-group">
                                                             <span id="clock-seconds" class="time-value">00</span>
-                                                            <span class="time-unit">sec</span>
+                                                            <span class="time-unit">giây</span>
                                                         </span>
                                                     </div>
                                                 </div>
@@ -586,27 +589,27 @@
                                             </div>
                                         </div>
                                         <div style="margin: 1.5rem 0; text-align: center;">
-                                            <button class="counter-theme-toggle" id="counterThemeToggle" title="Toggle counter theme" onclick="toggleCounterTheme()" style="padding: 0.5rem; background: rgba(102, 126, 234, 0.2); border: 1px solid rgba(102, 126, 234, 0.4); color: #667eea; border-radius: 6px; cursor: pointer; font-size: 1.5rem; transition: all 0.3s; min-width: 50px; min-height: 50px; display: inline-flex; align-items: center; justify-content: center;">🎨</button>
+                                            <button class="counter-theme-toggle" id="counterThemeToggle" title="Đổi giao diện bộ đếm" onclick="toggleCounterTheme()" style="padding: 0.5rem; background: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--info-color); border-radius: 6px; cursor: pointer; font-size: 1.5rem; transition: all 0.3s; min-width: 50px; min-height: 50px; display: inline-flex; align-items: center; justify-content: center;">🎨</button>
                                         </div>
-                                        <div id="rank-display" style="margin-bottom: 1.5rem; padding: 1rem; background: rgba(102, 126, 234, 0.1); border-radius: 12px; border: 2px solid rgba(102, 126, 234, 0.3);">
+                                        <div id="rank-display" style="margin-bottom: 1.5rem; padding: 1rem; background: var(--bg-secondary); border-radius: 12px; border: 2px solid var(--border-color);">
                                             <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap;">
                                                 <div id="rank-icon" style="font-size: 3rem;">🌀</div>
                                                 <div style="text-align: left;">
-                                                    <div id="rank-title" style="font-size: 1.4rem; font-weight: bold; color: #667eea;">Luyện Khí - Tầng 1</div>
+                                                    <div id="rank-title" style="font-size: 1.4rem; font-weight: bold; color: var(--info-color);">Luyện Khí - Tầng 1</div>
                                                     <div id="rank-subtitle" style="color: var(--text-secondary); font-size: 0.85rem; opacity: 0.7;">Bắt đầu tụ khí</div>
                                                 </div>
                                             </div>
                                             <div style="margin-top: 1rem;">
                                                 <div id="rank-progress-container" style="background: rgba(0,0,0,0.3); border-radius: 10px; height: 12px; overflow: hidden;">
-                                                    <div id="rank-progress-bar" style="height: 100%; background: linear-gradient(90deg, #667eea, #e94560); border-radius: 10px; transition: width 0.5s ease; width: 0%;"></div>
+                                                    <div id="rank-progress-bar" style="height: 100%; background: linear-gradient(90deg, var(--sect-jade), var(--sect-seal)); border-radius: 10px; transition: width 0.5s ease; width: 0%;"></div>
                                                 </div>
                                                 <div id="rank-progress-text" style="color: var(--text-secondary); font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.7;">0 ngày đến cảnh giới tiếp theo</div>
                                             </div>
                                         </div>
                                         <form method="POST" action="/clock/reset" id="clock-reset-form" style="display: inline;">
-                                            <button type="submit" onclick="return confirm('⚠️ Are you sure you want to reset your NoFap counter? This will save your current streak to history.');" style="padding: 0.75rem 2rem; background: #e94560; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.3s;">🔄 Reset Counter</button>
+                                            <button type="submit" onclick="return confirm('⚠️ Bạn chắc chắn muốn đặt lại bộ đếm? Thao tác này sẽ lưu chuỗi hiện tại vào lịch sử.');" style="padding: 0.75rem 2rem; background: var(--danger-color); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.3s;">🔄 Đặt lại bộ đếm</button>
                                         </form>
-                                        <button type="button" onclick="showEmergencyQuote()" style="padding: 0.75rem 2rem; background: #28a745; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.3s; margin-left: 0.5rem;">🙏 Emergency</button>
+                                        <button type="button" onclick="showEmergencyQuote()" style="padding: 0.75rem 2rem; background: var(--success-color); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.3s; margin-left: 0.5rem;">🙏 Chống tâm ma</button>
                                     `;
 
                                         const subtitle = container.querySelector('.rewiring-clock-subtitle');
@@ -615,12 +618,12 @@
                                         // Start the clock timer immediately
                                         initializeClock();
                                     } else {
-                                        alert('Failed to start clock. Please try again.');
+                                        alert('Không thể khởi động bộ đếm. Vui lòng thử lại.');
                                     }
                                 })
                                 .catch(error => {
                                     console.error('Clock start error:', error);
-                                    alert('Failed to start clock. Please try again.');
+                                    alert('Không thể khởi động bộ đếm. Vui lòng thử lại.');
                                 });
                         }
 
@@ -767,84 +770,26 @@
                         // NoFap Clock Timer - Initialize if clock exists
                         initializeClock();
 
-                        // Emergency Quotes - Bible Verses and Saints
+                        // Khẩu quyết khẩn cấp (tiếng Việt)
                         const emergencyQuotes = [
-                            // Bible Verses - Chastity & Purity
-                            { text: "No temptation has overtaken you except what is common to mankind. And God is faithful; he will not let you be tempted beyond what you can bear.", source: "1 Corinthians 10:13", type: "bible" },
-                            { text: "Watch and pray so that you will not fall into temptation. The spirit is willing, but the flesh is weak.", source: "Matthew 26:41", type: "bible" },
-                            { text: "Submit yourselves, then, to God. Resist the devil, and he will flee from you.", source: "James 4:7", type: "bible" },
-                            { text: "I can do all things through Christ who strengthens me.", source: "Philippians 4:13", type: "bible" },
-                            { text: "The Lord is my strength and my shield; my heart trusts in him, and he helps me.", source: "Psalm 28:7", type: "bible" },
-                            { text: "Be strong and courageous. Do not be afraid; do not be discouraged, for the Lord your God will be with you wherever you go.", source: "Joshua 1:9", type: "bible" },
-                            { text: "Create in me a pure heart, O God, and renew a steadfast spirit within me.", source: "Psalm 51:10", type: "bible" },
-                            { text: "Flee from sexual immorality. Every other sin a person commits is outside the body, but the sexually immoral person sins against his own body.", source: "1 Corinthians 6:18", type: "bible" },
-                            { text: "But the fruit of the Spirit is love, joy, peace, forbearance, kindness, goodness, faithfulness, gentleness and self-control.", source: "Galatians 5:22-23", type: "bible" },
-                            { text: "For God gave us a spirit not of fear but of power and love and self-control.", source: "2 Timothy 1:7", type: "bible" },
-                            { text: "Blessed is the man who remains steadfast under trial, for when he has stood the test he will receive the crown of life.", source: "James 1:12", type: "bible" },
-                            { text: "Set your minds on things that are above, not on things that are on earth.", source: "Colossians 3:2", type: "bible" },
-                            { text: "Do not be overcome by evil, but overcome evil with good.", source: "Romans 12:21", type: "bible" },
-                            { text: "Finally, brothers, whatever is true, whatever is honorable, whatever is just, whatever is pure, whatever is lovely, whatever is commendable, if there is any excellence, if there is anything worthy of praise, think about these things.", source: "Philippians 4:8", type: "bible" },
-                            { text: "Blessed are the pure in heart, for they shall see God.", source: "Matthew 5:8", type: "bible" },
-                            { text: "Do you not know that your bodies are temples of the Holy Spirit, who is in you, whom you have received from God? You are not your own; you were bought at a price. Therefore honor God with your bodies.", source: "1 Corinthians 6:19-20", type: "bible" },
-                            { text: "Put to death, therefore, whatever belongs to your earthly nature: sexual immorality, impurity, lust, evil desires and greed, which is idolatry.", source: "Colossians 3:5", type: "bible" },
-                            { text: "How can a young person stay on the path of purity? By living according to your word.", source: "Psalm 119:9", type: "bible" },
-                            { text: "But among you there must not be even a hint of sexual immorality, or of any kind of impurity.", source: "Ephesians 5:3", type: "bible" },
-                            { text: "For this is the will of God, your sanctification: that you abstain from sexual immorality; that each one of you know how to control his own body in holiness and honor.", source: "1 Thessalonians 4:3-4", type: "bible" },
-
-                            // Saints on Chastity & Purity
-                            { text: "Pray, hope, and don't worry. Worry is useless. God is merciful and will hear your prayer.", source: "St. Padre Pio", type: "saint" },
-                            { text: "You cannot be half a saint; you must be a whole saint or no saint at all.", source: "St. Thérèse of Lisieux", type: "saint" },
-                            { text: "To fall in love with God is the greatest romance; to seek him the greatest adventure; to find him, the greatest human achievement.", source: "St. Augustine", type: "saint" },
-                            { text: "The devil is afraid of us when we pray and make sacrifices. He is also afraid when we are humble and good. He is especially afraid when we love Jesus very much.", source: "St. Anthony of Padua", type: "saint" },
-                            { text: "Never be afraid of loving the Blessed Virgin too much. You can never love her more than Jesus did.", source: "St. Maximilian Kolbe", type: "saint" },
-                            { text: "Do not lose heart. Prayer is our most powerful weapon.", source: "St. Faustina", type: "saint" },
-                            { text: "Without God, we cannot. Without us, God will not.", source: "St. Augustine", type: "saint" },
-                            { text: "Lord, make me an instrument of your peace.", source: "St. Francis of Assisi", type: "saint" },
-                            { text: "Have patience with all things, but chiefly have patience with yourself.", source: "St. Francis de Sales", type: "saint" },
-                            { text: "You must ask God to give you power to fight against the sin of pride which is your greatest enemy.", source: "St. Teresa of Avila", type: "saint" },
-                            { text: "Start by doing what's necessary; then do what's possible; and suddenly you are doing the impossible.", source: "St. Francis of Assisi", type: "saint" },
-                            { text: "The soul that walks in love neither tires others nor grows tired.", source: "St. John of the Cross", type: "saint" },
-                            { text: "Prayer is the best weapon we possess. It is the key that opens the heart of God.", source: "St. Padre Pio", type: "saint" },
-                            { text: "God does not require that we be successful, only that we be faithful.", source: "St. Mother Teresa", type: "saint" },
-                            { text: "In difficulties, I always look to Mary. She is my strength.", source: "St. Pope John Paul II", type: "saint" },
-                            { text: "Chastity is the lily of virtues, and makes men almost equal to Angels. Nothing is beautiful but what is pure, and the purity of men is chastity.", source: "St. Francis de Sales", type: "saint" },
-                            { text: "The state of virginity or celibacy, through which one gives oneself totally to God, is objectively more perfect than marriage.", source: "St. Thomas Aquinas", type: "saint" },
-                            { text: "Purity prepares the soul for love, and love confirms the soul in purity.", source: "Bl. John Henry Newman", type: "saint" },
-                            { text: "Holy Purity, the queen of virtues, the angelic virtue, is a jewel so precious that those who possess it become like the angels of God in heaven.", source: "St. John Bosco", type: "saint" },
-                            { text: "The virtue of chastity does not mean that we are insensitive to the urge of concupiscence, but that we sacrifice it to a higher good.", source: "St. Pope John Paul II", type: "saint" },
-                            { text: "More souls go to Hell because of sins of the flesh than for any other reason.", source: "Our Lady of Fatima", type: "mary" },
-                            { text: "Chastity is a difficult, long-term matter; one must wait patiently for it to bear fruit, for the happiness of loving kindness which it must bring.", source: "St. Pope John Paul II", type: "saint" },
-                            { text: "Lord, grant me chastity and continence, but not yet. [Before his conversion - showing the struggle is real]", source: "St. Augustine (before conversion)", type: "saint" },
-                            { text: "Grant me chastity and continence, only not yet... O Lord, help me to be pure, but not yet. [Later:] Too late have I loved You!", source: "St. Augustine", type: "saint" },
-
-                            // Power of the Rosary
-                            { text: "The Rosary is the most excellent form of prayer and the most efficacious means of attaining eternal life.", source: "Pope Leo XIII", type: "rosary" },
-                            { text: "The Rosary is the weapon for these times.", source: "St. Padre Pio", type: "rosary" },
-                            { text: "Give me an army saying the Rosary and I will conquer the world.", source: "Bl. Pope Pius IX", type: "rosary" },
-                            { text: "The Rosary is a powerful weapon to put the demons to flight and to keep oneself from sin.", source: "Pope Pius XI", type: "rosary" },
-                            { text: "Never will anyone who says his Rosary every day be led astray. This is a statement that I would gladly sign with my blood.", source: "St. Louis de Montfort", type: "rosary" },
-                            { text: "The Rosary is the most powerful weapon to touch the Heart of Jesus, Our Redeemer, who loves His Mother.", source: "St. Louis de Montfort", type: "rosary" },
-                            { text: "When you say the Rosary, the angels rejoice, the Most Holy Trinity is glorified, my Son finds joy in it, and I myself am more pleased than with any other prayer.", source: "Our Lady to St. Dominic", type: "rosary" },
-                            { text: "If you persevere in reciting the Rosary, this will be a most probable sign of your eternal salvation.", source: "Bl. Alan de la Roche", type: "rosary" },
-                            { text: "The Holy Rosary is a powerful weapon. Use it with confidence and you'll be amazed at the results.", source: "St. Josemaría Escrivá", type: "rosary" },
-                            { text: "Say the Rosary every day to obtain peace in the world.", source: "Our Lady of Fatima", type: "rosary" },
-                            { text: "Continue to pray the Rosary every day.", source: "Our Lady of Fatima", type: "rosary" },
-                            { text: "The Rosary is my favorite prayer. A marvelous prayer! Marvelous in its simplicity and its depth.", source: "St. Pope John Paul II", type: "rosary" },
-                            { text: "One day, through the Rosary and the Scapular, Our Lady will save the world.", source: "St. Dominic", type: "rosary" },
-                            { text: "You shall obtain all you ask of me by the recitation of the Rosary.", source: "Our Lady to Bl. Alan de la Roche", type: "rosary" },
-                            { text: "When the Holy Rosary is said well, it gives Jesus and Mary more glory and is more meritorious than any other prayer.", source: "St. Louis de Montfort", type: "rosary" },
-                            { text: "The Rosary is the scourge of the devil.", source: "Pope Adrian VI", type: "rosary" },
-                            { text: "If you wish peace to reign in your homes, recite the family Rosary.", source: "Pope Pius X", type: "rosary" },
-                            { text: "Among all the devotions approved by the Church, none has been so favored by so many miracles as the devotion of the Most Holy Rosary.", source: "Pope Pius IX", type: "rosary" },
-
-                            // Our Lady & Protection
-                            { text: "Never be afraid of loving the Blessed Virgin too much. You can never love her more than Jesus did.", source: "St. Maximilian Kolbe", type: "mary" },
-                            { text: "If you are in danger, she will hasten to free you. If you are troubled, she will console you. If you are sick, she will bring you relief. If you are in need, she will help you.", source: "St. Bernard of Clairvaux", type: "mary" },
-                            { text: "Mary is the safest, easiest, shortest, and most perfect way of approaching Jesus.", source: "St. Louis de Montfort", type: "mary" },
-                            { text: "He who is devout to the Virgin Mother will certainly never be lost.", source: "St. Ignatius of Antioch", type: "mary" },
-                            { text: "Run to Mary, for she is always ready to help us.", source: "St. John Bosco", type: "mary" },
-                            { text: "Those who are bound to Mary by the sweet chains of love are led by her to Jesus.", source: "St. Bonaventure", type: "mary" },
-                            { text: "Fly to the protection of the Blessed Virgin Mary and no temptation will overcome you.", source: "St. John Vianney", type: "mary" }
+                            { text: "Hít sâu một hơi. Dục khởi thì dừng, tâm loạn thì lắng.", source: "Khẩu quyết nhập môn", type: "mind" },
+                            { text: "Một phút qua được hôm nay, là một tầng vững hơn ngày mai.", source: "Tông quy", type: "sect" },
+                            { text: "Đổi môi trường ngay: đứng dậy, rời màn hình, uống nước.", source: "Pháp môn thực hành", type: "mind" },
+                            { text: "Tâm ma chỉ mạnh khi ta đứng yên.", source: "Truyền thừa", type: "sect" },
+                            { text: "Đừng thương lượng với cơn thèm. Cắt đứt, rồi đi.", source: "Nội quy", type: "sect" },
+                            { text: "Giữ giới là giữ khí. Giữ khí là giữ đạo.", source: "Tông chủ dạy", type: "sect" },
+                            { text: "Ngắn hạn: chịu khó. Dài hạn: tự do.", source: "Ghi chú tu luyện", type: "mind" },
+                            { text: "Nếu muốn gục, hãy gục khi đã rời khỏi chỗ nguy hiểm.", source: "Mẹo qua kiếp", type: "mind" },
+                            { text: "Cơn sóng dục rồi cũng qua. Việc của ta là không nhảy xuống nước.", source: "Tâm pháp", type: "mind" },
+                            { text: "Tắt mạng, đóng tab, mở cửa sổ. Cho khí trời thắng khí dục.", source: "Bí kíp", type: "mind" },
+                            { text: "Hôm nay giữ được, danh dự của ngươi tăng một phần.", source: "Tông môn", type: "sect" },
+                            { text: "Một lần sa ngã kéo dài một ngày. Một lần thắng tâm ma kéo dài cả đời.", source: "Lời nhắc", type: "sect" },
+                            { text: "Không cô đơn: hãy nhắn cho người tin cậy hoặc đi ra chỗ có người.", source: "Pháp môn", type: "mind" },
+                            { text: "Tự trọng là công pháp tối thượng.", source: "Truyền khẩu", type: "sect" },
+                            { text: "Nâng tầm mục tiêu: tu luyện vì tương lai của chính mình.", source: "Tâm pháp", type: "mind" },
+                            { text: "Đừng tìm kích thích. Hãy tìm ý nghĩa.", source: "Tông quy", type: "sect" },
+                            { text: "Một ngày thanh tịnh, một bậc tiến đạo.", source: "Cổ ngữ", type: "sect" },
+                            { text: "Làm việc nhỏ ngay bây giờ: chống đẩy 10 cái, hoặc đi bộ 5 phút.", source: "Phương pháp", type: "mind" }
                         ];
 
                         function showEmergencyQuote() {
@@ -852,21 +797,17 @@
                             // Set icon and label based on quote type
                             let icon, typeLabel;
                             switch (quote.type) {
-                                case 'bible':
-                                    icon = '📖';
-                                    typeLabel = 'Bible Verse';
+                                case 'mind':
+                                    icon = '🧘';
+                                    typeLabel = 'Tâm pháp';
                                     break;
-                                case 'rosary':
-                                    icon = '📿';
-                                    typeLabel = 'Power of the Rosary';
-                                    break;
-                                case 'mary':
-                                    icon = '🙏';
-                                    typeLabel = 'Our Lady\'s Protection';
+                                case 'sect':
+                                    icon = '🛡️';
+                                    typeLabel = 'Khẩu quyết';
                                     break;
                                 default:
-                                    icon = '✝️';
-                                    typeLabel = 'Saint Quote';
+                                    icon = '🪷';
+                                    typeLabel = 'Lời nhắc';
                             }
 
                             // Create modal
@@ -875,17 +816,17 @@
                             modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 10000; padding: 1rem;';
 
                             modal.innerHTML = `
-                    <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 2rem; border-radius: 15px; max-width: 500px; width: 100%; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.5); animation: modalFadeIn 0.3s ease;">
+                    <div style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%); padding: 2rem; border-radius: 15px; max-width: 500px; width: 100%; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.5); animation: modalFadeIn 0.3s ease;">
                         <div style="font-size: 3rem; margin-bottom: 1rem;">${icon}</div>
-                        <div style="color: #667eea; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 1rem;">${typeLabel}</div>
-                        <p style="color: #e4e4e4; font-size: 1.2rem; line-height: 1.8; margin-bottom: 1.5rem; font-style: italic;">"${quote.text}"</p>
-                        <p style="color: #e94560; font-weight: bold; font-size: 1rem; margin-bottom: 2rem;">— ${quote.source}</p>
+                        <div style="color: var(--info-color); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 1rem;">${typeLabel}</div>
+                        <p style="color: var(--text-primary); font-size: 1.2rem; line-height: 1.8; margin-bottom: 1.5rem; font-style: italic;">"${quote.text}"</p>
+                        <p style="color: var(--danger-color); font-weight: bold; font-size: 1rem; margin-bottom: 2rem;">— ${quote.source}</p>
                         <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-                            <button onclick="showEmergencyQuote(); this.closest('#emergency-modal').remove();" style="padding: 0.75rem 1.5rem; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold;">
-                                🔄 Another Quote
+                            <button onclick="showEmergencyQuote(); this.closest('#emergency-modal').remove();" style="padding: 0.75rem 1.5rem; background: var(--info-color); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold;">
+                                🔄 Thêm một câu
                             </button>
-                            <button onclick="this.closest('#emergency-modal').remove();" style="padding: 0.75rem 1.5rem; background: #28a745; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold;">
-                                💪 I'm Stronger Now
+                            <button onclick="this.closest('#emergency-modal').remove();" style="padding: 0.75rem 1.5rem; background: var(--success-color); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold;">
+                                💪 Ta đã vững tâm
                             </button>
                         </div>
                     </div>
@@ -927,9 +868,9 @@
                             <div style="font-size: 2rem; min-width: 50px; text-align: center;">${rank.icon}</div>
                             <div style="flex: 1;">
                                 <div style="font-weight: ${titleWeight}; color: ${titleColor}; opacity: ${titleOpacity}; font-size: 1.1rem;">${rank.title}</div>
-                                <div style="color: #e4e4e4; opacity: ${textOpacity}; font-size: 0.85rem; font-weight: ${subWeight};">${rank.subtitle}</div>
+                                <div style="color: var(--text-secondary); opacity: ${textOpacity}; font-size: 0.85rem; font-weight: ${subWeight};">${rank.subtitle}</div>
                             </div>
-                            <div style="color: #e4e4e4; opacity: ${textOpacity}; font-size: 0.9rem; font-weight: ${titleWeight}; min-width: 80px; text-align: right;">
+                            <div style="color: var(--text-secondary); opacity: ${textOpacity}; font-size: 0.9rem; font-weight: ${titleWeight}; min-width: 80px; text-align: right;">
                                 ${daysRange} ngày
                             </div>
                         </div>
@@ -941,17 +882,17 @@
                             modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; z-index: 10000; padding: 1rem;';
 
                             modal.innerHTML = `
-                    <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 2rem; border-radius: 15px; max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.5); animation: modalFadeIn 0.3s ease;">
+                    <div style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%); padding: 2rem; border-radius: 15px; max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.5); animation: modalFadeIn 0.3s ease;">
                         <div style="text-align: center; margin-bottom: 1.5rem;">
                             <div style="font-size: 3rem; margin-bottom: 0.5rem;">🧘</div>
-                            <h2 style="color: #e94560; margin: 0; font-size: 1.5rem;">Cảnh Giới Tu Tiên</h2>
-                            <p style="color: #888; margin-top: 0.5rem; font-size: 0.9rem;">Con đường tu luyện của bạn</p>
+                            <h2 style="color: var(--sect-seal); margin: 0; font-size: 1.5rem;">Cảnh Giới Tu Tiên</h2>
+                            <p style="color: var(--text-muted); margin-top: 0.5rem; font-size: 0.9rem;">Con đường tu luyện của bạn</p>
                         </div>
                         <div style="display: flex; flex-direction: column; gap: 0.75rem;">
                             ${rankList}
                         </div>
                         <div style="text-align: center; margin-top: 1.5rem;">
-                            <button onclick="this.closest('#ranking-modal').remove();" style="padding: 0.75rem 2rem; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold;">
+                            <button onclick="this.closest('#ranking-modal').remove();" style="padding: 0.75rem 2rem; background: var(--info-color); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold;">
                                 ✖️ Đóng
                             </button>
                         </div>
@@ -978,13 +919,13 @@
                         function showEditCounter() {
                             const clockDisplay = document.getElementById('clock-display');
                             if (!clockDisplay) {
-                                alert('⚠️ Counter not started yet. Please start the counter first.');
+                                alert('⚠️ Bộ đếm chưa khởi động. Vui lòng khởi động bộ đếm trước.');
                                 return;
                             }
 
                             const startTime = clockDisplay.dataset.startTime;
                             if (!startTime) {
-                                alert('⚠️ Counter not started yet. Please start the counter first.');
+                                alert('⚠️ Bộ đếm chưa khởi động. Vui lòng khởi động bộ đếm trước.');
                                 return;
                             }
 
@@ -1001,36 +942,36 @@
                             modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; z-index: 10000; padding: 1rem;';
 
                             modal.innerHTML = `
-                    <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 2rem; border-radius: 15px; max-width: 500px; width: 100%; box-shadow: 0 10px 40px rgba(0,0,0,0.5); animation: modalFadeIn 0.3s ease;">
+                    <div style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%); padding: 2rem; border-radius: 15px; max-width: 500px; width: 100%; box-shadow: 0 10px 40px rgba(0,0,0,0.5); animation: modalFadeIn 0.3s ease;">
                         <div style="text-align: center; margin-bottom: 1.5rem;">
                             <div style="font-size: 3rem; margin-bottom: 0.5rem;">✏️</div>
-                            <h2 style="color: #667eea; margin: 0; font-size: 1.5rem;">Edit Counter</h2>
-                            <p style="color: #888; margin-top: 0.5rem; font-size: 0.9rem;">Adjust your rewiring counter time</p>
+                            <h2 style="color: var(--info-color); margin: 0; font-size: 1.5rem;">Chỉnh bộ đếm</h2>
+                            <p style="color: var(--text-muted); margin-top: 0.5rem; font-size: 0.9rem;">Điều chỉnh thời điểm bắt đầu bộ đếm</p>
                         </div>
                         <form id="edit-counter-form" method="POST" action="/clock/edit">
                             <div style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.5rem;">
                                 <div>
-                                    <label style="color: #e4e4e4; font-size: 0.9rem; display: block; margin-bottom: 0.5rem;">Days</label>
+                                    <label style="color: var(--text-primary); font-size: 0.9rem; display: block; margin-bottom: 0.5rem;">Ngày</label>
                                     <input type="number" name="days" min="0" value="${currentDays}" required
-                                        style="width: 100%; padding: 0.75rem; background: #0f3460; border: 2px solid #333355; border-radius: 8px; color: #e4e4e4; font-size: 1rem; font-family: 'Courier New', monospace; font-weight: bold;">
+                                        style="width: 100%; padding: 0.75rem; background: var(--input-bg); border: 2px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-size: 1rem; font-family: 'Courier New', monospace; font-weight: bold;">
                                 </div>
                                 <div>
-                                    <label style="color: #e4e4e4; font-size: 0.9rem; display: block; margin-bottom: 0.5rem;">Hours (0-23)</label>
+                                    <label style="color: var(--text-primary); font-size: 0.9rem; display: block; margin-bottom: 0.5rem;">Giờ (0-23)</label>
                                     <input type="number" name="hours" min="0" max="23" value="${currentHours}" required
-                                        style="width: 100%; padding: 0.75rem; background: #0f3460; border: 2px solid #333355; border-radius: 8px; color: #e4e4e4; font-size: 1rem; font-family: 'Courier New', monospace; font-weight: bold;">
+                                        style="width: 100%; padding: 0.75rem; background: var(--input-bg); border: 2px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-size: 1rem; font-family: 'Courier New', monospace; font-weight: bold;">
                                 </div>
                                 <div>
-                                    <label style="color: #e4e4e4; font-size: 0.9rem; display: block; margin-bottom: 0.5rem;">Minutes (0-59)</label>
+                                    <label style="color: var(--text-primary); font-size: 0.9rem; display: block; margin-bottom: 0.5rem;">Phút (0-59)</label>
                                     <input type="number" name="minutes" min="0" max="59" value="${currentMinutes}" required
-                                        style="width: 100%; padding: 0.75rem; background: #0f3460; border: 2px solid #333355; border-radius: 8px; color: #e4e4e4; font-size: 1rem; font-family: 'Courier New', monospace; font-weight: bold;">
+                                        style="width: 100%; padding: 0.75rem; background: var(--input-bg); border: 2px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-size: 1rem; font-family: 'Courier New', monospace; font-weight: bold;">
                                 </div>
                             </div>
                             <div style="display: flex; gap: 1rem; justify-content: center;">
-                                <button type="submit" style="padding: 0.75rem 1.5rem; background: #28a745; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.3s;">
-                                    💾 Save Changes
+                                <button type="submit" style="padding: 0.75rem 1.5rem; background: var(--success-color); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.3s;">
+                                    💾 Lưu thay đổi
                                 </button>
-                                <button type="button" onclick="this.closest('#edit-counter-modal').remove();" style="padding: 0.75rem 1.5rem; background: #e94560; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.3s;">
-                                    ✖️ Cancel
+                                <button type="button" onclick="this.closest('#edit-counter-modal').remove();" style="padding: 0.75rem 1.5rem; background: var(--danger-color); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.3s;">
+                                    ✖️ Huỷ
                                 </button>
                             </div>
                         </form>
@@ -1071,7 +1012,7 @@
 
                     <div class="dashboard-grid">
                         <div class="stats-card">
-                            <h2>🔥 Rewiring Days</h2>
+                            <h2>🔥 Ngày tu luyện</h2>
                             <div class="stats-value" id="stats-rewiring-days">
                                 <% if (clockStartTime) { %>
                                     <script>
@@ -1081,45 +1022,45 @@
                                         0
                                         <% } %>
                             </div>
-                            <p style="color: #999; margin-top: 0.5rem;">since last reset</p>
+                            <p style="color: var(--text-muted); margin-top: 0.5rem;">từ lần đặt lại gần nhất</p>
                         </div>
 
                         <div class="stats-card">
-                            <h2>✅ Clean Days</h2>
+                            <h2>✅ Ngày thanh tịnh</h2>
                             <div class="stats-value">
                                 <%= streakSummary.cleanDays %>
                             </div>
-                            <p style="color: #999; margin-top: 0.5rem;">days</p>
+                            <p style="color: var(--text-muted); margin-top: 0.5rem;">ngày</p>
                         </div>
 
                         <div class="stats-card">
-                            <h2>⚠️ A Little Bit</h2>
-                            <div class="stats-value" style="color: #ffc107;">
+                            <h2>⚠️ Sơ suất</h2>
+                            <div class="stats-value" style="color: var(--warning-color);">
                                 <%= streakSummary.slipDays %>
                             </div>
-                            <p style="color: #999; margin-top: 0.5rem;">days</p>
+                            <p style="color: var(--text-muted); margin-top: 0.5rem;">ngày</p>
                         </div>
 
                         <div class="stats-card">
-                            <h2>💀 Totally Failed</h2>
-                            <div class="stats-value" style="color: #e74c3c;">
+                            <h2>💀 Thất thủ</h2>
+                            <div class="stats-value" style="color: var(--danger-color);">
                                 <%= streakSummary.totallyFailedDays %>
                             </div>
-                            <p style="color: #999; margin-top: 0.5rem;">days</p>
+                            <p style="color: var(--text-muted); margin-top: 0.5rem;">ngày</p>
                         </div>
                     </div>
 
-                    <h2 style="color: #333; margin-bottom: 1rem;">Quick Actions</h2>
+                    <h2 style="color: var(--text-primary); margin-bottom: 1rem;">Hành động nhanh</h2>
                     <div class="action-buttons">
-                        <a href="/entries" class="action-btn">📝 Log Entry</a>
-                        <a href="/calendar" class="action-btn secondary">📅 Calendar</a>
-                        <a href="/summary" class="action-btn">📊 Summary</a>
+                        <a href="/entries" class="action-btn">📝 Ghi chép</a>
+                        <a href="/calendar" class="action-btn secondary">📅 Lịch</a>
+                        <a href="/summary" class="action-btn">📊 Thống kê</a>
                     </div>
 
                     <div style="margin-top: 2rem; text-align: center;">
                         <button type="button" onclick="confirmReset()" class="reset-btn"
-                            style="background: #e74c3c; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; font-size: 0.9rem;">
-                            🗑️ Reset All Progress
+                            style="background: var(--danger-color); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; font-size: 0.9rem;">
+                            🗑️ Xoá sạch tiến độ
                         </button>
                     </div>
 
@@ -1127,8 +1068,8 @@
 
                     <script>
                         function confirmReset() {
-                            if (confirm('Are you sure you want to reset ALL your progress? This will delete all your tracking entries and cannot be undone!')) {
-                                if (confirm('This action is PERMANENT. Are you absolutely sure?')) {
+                            if (confirm('Bạn chắc chắn muốn xoá TOÀN BỘ tiến độ? Thao tác này sẽ xoá mọi ghi chép và không thể hoàn tác!')) {
+                                if (confirm('Hành động này là VĨNH VIỄN. Bạn có chắc chắn tuyệt đối không?')) {
                                     document.getElementById('resetForm').submit();
                                 }
                             }
@@ -1141,24 +1082,24 @@
                     <div
                         style="background: var(--card-bg); padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px var(--shadow-color); margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
                         <div>
-                            <h2 style="color: var(--info-color); margin: 0 0 0.5rem 0;">📊 Record History</h2>
+                            <h2 style="color: var(--info-color); margin: 0 0 0.5rem 0;">📊 Lịch sử tu luyện</h2>
                             <p style="color: var(--text-secondary); margin: 0; font-size: 0.9rem;">
                                 <% if (streakHistory && streakHistory.length> 0) { %>
-                                    <%= streakHistory.length %> record<%= streakHistory.length> 1 ? 's' : '' %> • Best:
-                                            🔥 <%= Math.max(...streakHistory.map(r=> r.streak_days)) %> days
-                                                <% } else { %>
-                                                    No records yet
-                                                    <% } %>
+                                    <%= streakHistory.length %> bản ghi • Tốt nhất: 🔥 <%=
+                                            Math.max(...streakHistory.map(r=> r.streak_days)) %> ngày
+                                            <% } else { %>
+                                                Chưa có bản ghi
+                                                <% } %>
                             </p>
                         </div>
                         <a href="/history"
-                            style="padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 8px; text-decoration: none; font-weight: 600;">
-                            View History →
+                            style="padding: 0.75rem 1.5rem; background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%); color: white; border-radius: 8px; text-decoration: none; font-weight: 600;">
+                            Xem lịch sử →
                         </a>
                     </div>
 
                     <hr style="margin:2rem 0; border: none; border-top: 1px solid var(--border-color);">
-                    <h2 style="color: var(--info-color); margin-bottom: 1rem;">Your Progress</h2>
+                    <h2 style="color: var(--info-color); margin-bottom: 1rem;">Tiến độ của bạn</h2>
                     <% if (progressEntries && progressEntries.length> 0) { %>
                         <div class="progress-section" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
                             <table class="progress-table"
@@ -1167,16 +1108,16 @@
                                     <tr>
                                         <th
                                             style="padding:0.75rem 0.5rem; text-align: left; color: var(--text-primary);">
-                                            Date</th>
+                                            Ngày</th>
                                         <th
                                             style="padding:0.75rem 0.5rem; text-align: center; color: var(--text-primary);">
-                                            Status</th>
+                                            Trạng thái</th>
                                         <th style="padding:0.75rem 0.5rem; text-align: left; color: var(--text-primary);"
                                             class="hide-on-small">
-                                            Note</th>
+                                            Ghi chú</th>
                                         <th
                                             style="padding:0.75rem 0.5rem; text-align: center; color: var(--text-primary);">
-                                            Actions</th>
+                                            Thao tác</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -1185,14 +1126,14 @@
                                         const entryDate = new Date(entryDateStr);
                                         const isFuture = entryDate > todayDate;
                                         %>
-                                        <tr style="<%= isFuture ? 'background: rgba(102, 126, 234, 0.1);' : '' %>">
+                                        <tr style="<%= isFuture ? 'background: var(--bg-tertiary);' : '' %>">
                                             <td
                                                 style="padding:0.75rem 0.5rem;border-bottom:1px solid var(--border-color); white-space: nowrap; color: var(--text-primary);">
                                                 <%= entryDateStr %>
                                                     <% if (isFuture) { %>
                                                         <span
                                                             style="color: var(--info-color); font-size: 0.75rem; margin-left: 0.25rem;">📅
-                                                            Future</span>
+                                                            Tương lai</span>
                                                         <% } %>
                                             </td>
                                             <td
@@ -1214,7 +1155,7 @@
                                                     style="color: var(--info-color); padding: 0.25rem 0.5rem; font-size: 0.9rem;">✏️</a>
                                                 <form method="POST" action="/entries/<%= entry.id %>/delete"
                                                     style="display:inline;"
-                                                    onsubmit="return confirm('Delete <%= entry.had_leakage ? 'A Little Bit' : 'Clean' %> entry for <%= entryDateStr %><%= isFuture ? ' (future date)' : '' %>?');">
+                                                    onsubmit="return confirm('Xoá ghi chép “<%= entry.had_leakage ? 'Sơ suất' : 'Thanh tịnh' %>” ngày <%= entryDateStr %><%= isFuture ? ' (ngày tương lai)' : '' %>?');">
                                                     <button type="submit"
                                                         style="background:none;border:none;color: var(--danger-color);cursor:pointer;padding:0.25rem 0.5rem; font-size: 0.9rem;">🗑️</button>
                                                 </form>
@@ -1227,9 +1168,7 @@
                         <% } else { %>
                             <div
                                 style="color: var(--text-muted);text-align:center;padding:2rem; background: var(--card-bg); border-radius: 10px; box-shadow: 0 2px 10px var(--shadow-color);">
-                                No
-                                progress entries yet. Log your first
-                                entry!</div>
+                                Chưa có ghi chép tiến độ. Hãy ghi chép ngày đầu tiên!</div>
                             <% } %>
         </div>
 

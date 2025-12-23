@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&family=Cinzel:wght@400;600;700;900&display=swap');
 
 * {
     margin: 0;
@@ -8,48 +8,64 @@
 
 /* ===== THEME VARIABLES ===== */
 :root {
-    /* Light Theme (default) - Crusader Stone & Steel */
-    --bg-primary: #e8e0d5;
-    --bg-secondary: #f5f0e8;
-    --bg-tertiary: #d4c8b8;
-    --text-primary: #1a1410;
-    --text-secondary: #3d3428;
-    --text-muted: #6d6050;
-    --border-color: #8b7355;
-    --shadow-color: rgba(61, 52, 40, 0.3);
-    --card-bg: #f5f0e8;
-    --input-bg: #ffffff;
-    --input-border: #8b7355;
-    --success-color: #2d5016;
+    /* Light Theme (default) - Tông Môn: Giấy cổ & mực tàu */
+    --bg-primary: #f2ead7;
+    --bg-secondary: #fbf6ea;
+    --bg-tertiary: #e2d7c2;
+    --text-primary: #1b1510;
+    --text-secondary: #3a3026;
+    --text-muted: #6a5c4a;
+    --border-color: #9a7b51;
+    --shadow-color: rgba(58, 48, 38, 0.25);
+    --card-bg: #fbf6ea;
+    --input-bg: #fffdf7;
+    --input-border: #9a7b51;
+
+    /* Accents: ngọc bích / ấn đỏ / vàng đồng */
+    --success-color: #1f5a3a;
+    /* ngọc bích */
     --danger-color: #8b1a1a;
-    --warning-color: #b8860b;
-    --info-color: #4a5568;
-    --gradient-start: #2d3748;
-    --gradient-end: #8b7355;
+    /* ấn đỏ */
+    --warning-color: #b07a1b;
+    /* đồng */
+    --info-color: #2f3b44;
+    /* mực tàu */
+
+    --gradient-start: #2f3b44;
+    --gradient-end: #9a7b51;
+
+    --sect-seal: #8b1a1a;
+    --sect-jade: #1f5a3a;
+    --sect-ink: #2f3b44;
 
     /* Typography */
-    --font-primary: 'Fredoka', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+    --font-primary: 'EB Garamond', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+    --font-display: 'Cinzel', 'EB Garamond', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
 }
 
 [data-theme="dark"] {
-    /* Dark Theme - Crusader Knight: Midnight Steel & Blood Red */
-    --bg-primary: #0a0a0f;
-    --bg-secondary: #14141f;
-    --bg-tertiary: #1f1f2e;
-    --text-primary: #d4c8b8;
-    --text-secondary: #a39888;
-    --text-muted: #736858;
-    --border-color: #3d3428;
-    --shadow-color: rgba(139, 0, 0, 0.4);
-    --card-bg: #14141f;
-    --input-bg: #1f1f2e;
-    --input-border: #3d3428;
-    --success-color: #4a5c2d;
-    --danger-color: #8b0000;
-    --warning-color: #d4a005;
-    --info-color: #6d7a8e;
-    --gradient-start: #1f1f2e;
-    --gradient-end: #4a1616;
+    /* Dark Theme - Tông Môn: đêm núi sâu & ánh ngọc */
+    --bg-primary: #0b0e10;
+    --bg-secondary: #11181b;
+    --bg-tertiary: #182124;
+    --text-primary: #e7dcc7;
+    --text-secondary: #c3b59e;
+    --text-muted: #8e816e;
+    --border-color: #3b3328;
+    --shadow-color: rgba(0, 0, 0, 0.6);
+    --card-bg: #11181b;
+    --input-bg: #182124;
+    --input-border: #3b3328;
+    --success-color: #2c7a54;
+    --danger-color: #a11c1c;
+    --warning-color: #c08a2e;
+    --info-color: #a8b5bf;
+    --gradient-start: #182124;
+    --gradient-end: #2a1a1a;
+
+    --sect-seal: #a11c1c;
+    --sect-jade: #2c7a54;
+    --sect-ink: #a8b5bf;
 }
 
 body {
@@ -64,6 +80,32 @@ body {
     position: relative;
     font-weight: 500;
     letter-spacing: 0.3px;
+}
+
+/* ===== TÔNG MÔN BACKDROP (paper + ink wash) ===== */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(1200px 800px at 15% 15%, rgba(47, 59, 68, 0.06), transparent 60%),
+        radial-gradient(900px 600px at 85% 25%, rgba(139, 26, 26, 0.05), transparent 65%),
+        radial-gradient(1000px 700px at 30% 85%, rgba(31, 90, 58, 0.05), transparent 65%),
+        repeating-linear-gradient(0deg, rgba(27, 21, 16, 0.02), rgba(27, 21, 16, 0.02) 1px, transparent 1px, transparent 6px);
+    mix-blend-mode: multiply;
+    opacity: 0.9;
+}
+
+[data-theme="dark"] body::before {
+    background:
+        radial-gradient(1200px 800px at 15% 15%, rgba(168, 181, 191, 0.05), transparent 60%),
+        radial-gradient(900px 600px at 85% 25%, rgba(161, 28, 28, 0.04), transparent 65%),
+        radial-gradient(1000px 700px at 30% 85%, rgba(44, 122, 84, 0.04), transparent 65%),
+        repeating-linear-gradient(0deg, rgba(231, 220, 199, 0.02), rgba(231, 220, 199, 0.02) 1px, transparent 1px, transparent 7px);
+    mix-blend-mode: normal;
+    opacity: 0.6;
 }
 
 /* ===== BACKGROUND VIDEO ===== */

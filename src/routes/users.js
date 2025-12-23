@@ -30,7 +30,7 @@ router.get('/users', requireAdmin, async (req, res) => {
     res.render('users', {
       title: 'User Management',
       users: [],
-      error: 'Error loading users'
+      error: 'Không thể tải danh sách người dùng'
     });
   }
 });
@@ -42,21 +42,21 @@ router.post('/users/create', requireAdmin, async (req, res) => {
 
     // Validation
     if (!email || !password) {
-      return res.redirect('/users?error=' + encodeURIComponent('Email and password are required'));
+      return res.redirect('/users?error=' + encodeURIComponent('Email và mật khẩu là bắt buộc'));
     }
 
     if (password !== confirmPassword) {
-      return res.redirect('/users?error=' + encodeURIComponent('Passwords do not match'));
+      return res.redirect('/users?error=' + encodeURIComponent('Mật khẩu xác nhận không khớp'));
     }
 
     if (password.length < 6) {
-      return res.redirect('/users?error=' + encodeURIComponent('Password must be at least 6 characters'));
+      return res.redirect('/users?error=' + encodeURIComponent('Mật khẩu phải có ít nhất 6 ký tự'));
     }
 
     // Check if user already exists
     const existingUser = await User.findByEmail(email);
     if (existingUser) {
-      return res.redirect('/users?error=' + encodeURIComponent('Email already registered'));
+      return res.redirect('/users?error=' + encodeURIComponent('Email đã được đăng ký'));
     }
 
     // Hash password
@@ -65,10 +65,10 @@ router.post('/users/create', requireAdmin, async (req, res) => {
     // Create user
     await User.create(email, username || null, hashedPassword);
 
-    res.redirect('/users?success=' + encodeURIComponent('User created successfully'));
+    res.redirect('/users?success=' + encodeURIComponent('Tạo người dùng thành công'));
   } catch (error) {
     console.error('Error creating user:', error);
-    res.redirect('/users?error=' + encodeURIComponent('Error creating user'));
+    res.redirect('/users?error=' + encodeURIComponent('Không thể tạo người dùng'));
   }
 });
 
@@ -78,7 +78,7 @@ router.post('/users/update', requireAdmin, async (req, res) => {
     const { userId, email, username, password } = req.body;
 
     if (!userId || !email) {
-      return res.redirect('/users?error=' + encodeURIComponent('User ID and email are required'));
+      return res.redirect('/users?error=' + encodeURIComponent('Thiếu ID người dùng hoặc email'));
     }
 
     const updateData = { email, username: username || null };
@@ -90,10 +90,10 @@ router.post('/users/update', requireAdmin, async (req, res) => {
 
     await User.update(userId, updateData);
 
-    res.redirect('/users?success=' + encodeURIComponent('User updated successfully'));
+    res.redirect('/users?success=' + encodeURIComponent('Cập nhật người dùng thành công'));
   } catch (error) {
     console.error('Error updating user:', error);
-    res.redirect('/users?error=' + encodeURIComponent('Error updating user'));
+    res.redirect('/users?error=' + encodeURIComponent('Không thể cập nhật người dùng'));
   }
 });
 
@@ -104,15 +104,15 @@ router.post('/users/:id/delete', requireAdmin, async (req, res) => {
 
     // Prevent deleting own account
     if (userId == req.session.userId) {
-      return res.redirect('/users?error=' + encodeURIComponent('Cannot delete your own account'));
+      return res.redirect('/users?error=' + encodeURIComponent('Không thể xoá chính tài khoản của bạn'));
     }
 
     await User.delete(userId);
 
-    res.redirect('/users?success=' + encodeURIComponent('User deleted successfully'));
+    res.redirect('/users?success=' + encodeURIComponent('Xoá người dùng thành công'));
   } catch (error) {
     console.error('Error deleting user:', error);
-    res.redirect('/users?error=' + encodeURIComponent('Error deleting user'));
+    res.redirect('/users?error=' + encodeURIComponent('Không thể xoá người dùng'));
   }
 });
 
@@ -120,14 +120,14 @@ router.post('/users/:id/delete', requireAdmin, async (req, res) => {
 router.get('/api/counter-theme', async (req, res) => {
   try {
     if (!req.session.userId) {
-      return res.status(401).json({ error: 'Not authenticated' });
+      return res.status(401).json({ error: 'Chưa đăng nhập' });
     }
 
     const theme = await User.getCounterTheme(req.session.userId);
     res.json({ success: true, counterTheme: theme });
   } catch (error) {
     console.error('Error fetching counter theme:', error);
-    res.status(500).json({ error: 'Error fetching counter theme' });
+    res.status(500).json({ error: 'Không thể tải giao diện bộ đếm' });
   }
 });
 
@@ -135,20 +135,20 @@ router.get('/api/counter-theme', async (req, res) => {
 router.post('/api/counter-theme', async (req, res) => {
   try {
     if (!req.session.userId) {
-      return res.status(401).json({ error: 'Not authenticated' });
+      return res.status(401).json({ error: 'Chưa đăng nhập' });
     }
 
     const { theme } = req.body;
     const validThemes = ['ancient', 'modern', 'neon', 'minimal', 'ocean', 'forest', 'fire'];
     if (!theme || !validThemes.includes(theme)) {
-      return res.status(400).json({ error: 'Invalid theme' });
+      return res.status(400).json({ error: 'Giao diện không hợp lệ' });
     }
 
     const savedTheme = await User.setCounterTheme(req.session.userId, theme);
     res.json({ success: true, counterTheme: savedTheme });
   } catch (error) {
     console.error('Error updating counter theme:', error);
-    res.status(500).json({ error: 'Error updating counter theme' });
+    res.status(500).json({ error: 'Không thể cập nhật giao diện bộ đếm' });
   }
 });
 

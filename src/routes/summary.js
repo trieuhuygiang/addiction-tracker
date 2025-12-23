@@ -97,11 +97,18 @@ router.get('/summary', requireLogin, async (req, res) => {
       stats.lastEntryDate = allEntries[0].date;
 
       // Get recent entries (last 10)
-      stats.recentEntries = allEntries.slice(0, 10).map(entry => ({
-        ...entry,
-        statusText: entry.had_leakage ? '🔴 Just a Little Bit' : '🟢 Clean',
-        dateFormatted: formatDate(new Date(entry.date))
-      }));
+      stats.recentEntries = allEntries.slice(0, 10).map(entry => {
+        const failureLevel = typeof entry.failure_level === 'number' ? entry.failure_level : null;
+        let statusText = '🟢 Thanh tịnh';
+        if (failureLevel === 2) statusText = '💀 Thất thủ';
+        else if (failureLevel === 1 || entry.had_leakage) statusText = '🔴 Sơ suất';
+
+        return {
+          ...entry,
+          statusText,
+          dateFormatted: formatDate(new Date(entry.date))
+        };
+      });
 
       // Calculate entries per month (approximately)
       if (allEntries.length > 0) {
@@ -116,7 +123,7 @@ router.get('/summary', requireLogin, async (req, res) => {
     const streaksData = calculateStreaksBreakdown(allEntries);
 
     res.render('summary', {
-      title: 'Summary',
+      title: 'Thống kê',
       error: null,
       stats,
       streaksData
@@ -124,8 +131,8 @@ router.get('/summary', requireLogin, async (req, res) => {
   } catch (error) {
     console.error('Summary error:', error);
     res.status(500).render('summary', {
-      title: 'Summary',
-      error: 'Failed to load summary',
+      title: 'Thống kê',
+      error: 'Không thể tải trang thống kê',
       stats: {
         currentStreak: 0,
         longestStreak: 0,
@@ -150,7 +157,7 @@ router.get('/summary', requireLogin, async (req, res) => {
 // Helper function to format date
 function formatDate(date) {
   const options = { year: 'numeric', month: 'short', day: 'numeric' };
-  return date.toLocaleDateString('en-US', options);
+  return date.toLocaleDateString('vi-VN', options);
 }
 
 // Helper function to calculate all streaks

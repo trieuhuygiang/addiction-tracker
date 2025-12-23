@@ -30,7 +30,7 @@ function buildMonthCalendar(year, month, entriesWithDateStr) {
   const endDate = new Date(year, month, 0);
   const firstDay = startDate.getDay();
   const daysInMonth = endDate.getDate();
-  
+
   const calendar = [];
   let week = new Array(7).fill(null);
   let dayCounter = 1;
@@ -40,7 +40,7 @@ function buildMonthCalendar(year, month, entriesWithDateStr) {
     // Use simple string formatting to avoid timezone issues
     const dateStr = formatDateString(year, month, dayCounter);
     const entry = entriesWithDateStr.find(e => e.dateStr === dateStr);
-    
+
     week[i] = {
       day: dayCounter,
       date: dateStr,
@@ -58,7 +58,7 @@ function buildMonthCalendar(year, month, entriesWithDateStr) {
       // Use simple string formatting to avoid timezone issues
       const dateStr = formatDateString(year, month, dayCounter);
       const entry = entriesWithDateStr.find(e => e.dateStr === dateStr);
-      
+
       week[i] = {
         day: dayCounter,
         date: dateStr,
@@ -86,7 +86,7 @@ router.get('/calendar/year/:year?', requireLogin, async (req, res) => {
     const startDateStr = `${year}-01-01`;
     const endDateStr = `${year}-12-31`;
     const entries = await Entry.findByUserInRange(userId, startDateStr, endDateStr);
-    
+
     // Convert entry dates to strings for comparison
     // Use the date string directly from database to avoid timezone issues
     const entriesWithDateStr = entries.map(e => ({
@@ -111,7 +111,7 @@ router.get('/calendar/year/:year?', requireLogin, async (req, res) => {
     const totalDays = entries.length;
 
     res.render('calendar-year', {
-      title: `Calendar ${year}`,
+      title: `Lịch năm ${year}`,
       error: null,
       yearCalendar,
       year,
@@ -122,8 +122,8 @@ router.get('/calendar/year/:year?', requireLogin, async (req, res) => {
     console.error('Yearly calendar error:', error);
     const currentYear = new Date(getTodayString(req.timezone)).getFullYear();
     res.status(500).render('calendar-year', {
-      title: 'Calendar',
-      error: 'Failed to load calendar',
+      title: 'Lịch năm',
+      error: 'Không thể tải lịch',
       yearCalendar: [],
       year: currentYear,
       currentYear: currentYear,
@@ -149,8 +149,8 @@ router.get('/calendar/:year?/:month?', requireLogin, async (req, res) => {
     // Validate month and year
     if (month < 1 || month > 12) {
       return res.status(400).render('calendar', {
-        title: 'Calendar',
-        error: 'Invalid month',
+        title: 'Lịch',
+        error: 'Tháng không hợp lệ',
         calendar: null,
         year,
         month,
@@ -168,7 +168,7 @@ router.get('/calendar/:year?/:month?', requireLogin, async (req, res) => {
 
     // Get all entries for the month
     const entries = await Entry.findByUserInRange(userId, startDateStr, endDateStr);
-    
+
     // Convert entry dates to strings for comparison
     // Use the date string directly from database to avoid timezone issues
     const entriesWithDateStr = entries.map(e => ({
@@ -180,7 +180,7 @@ router.get('/calendar/:year?/:month?', requireLogin, async (req, res) => {
     const calendar = buildMonthCalendar(year, month, entriesWithDateStr);
 
     res.render('calendar', {
-      title: 'Calendar',
+      title: 'Lịch',
       error: null,
       calendar,
       year,
@@ -194,8 +194,8 @@ router.get('/calendar/:year?/:month?', requireLogin, async (req, res) => {
     const nowStr = getTodayString(req.timezone);
     const now = new Date(nowStr);
     res.status(500).render('calendar', {
-      title: 'Calendar',
-      error: 'Failed to load calendar',
+      title: 'Lịch',
+      error: 'Không thể tải lịch',
       calendar: null,
       year: now.getFullYear(),
       month: now.getMonth() + 1,

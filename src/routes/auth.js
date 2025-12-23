@@ -7,9 +7,10 @@ const { requireLogout, requireLogin } = require('../middleware/auth');
 
 // Sign up page (GET)
 router.get('/signup', requireLogout, (req, res) => {
-  res.render('signup', { 
-    title: 'Sign Up',
-    error: null 
+  res.render('signup', {
+    title: 'Đăng ký',
+    formAction: '/signup',
+    error: null
   });
 });
 
@@ -21,15 +22,17 @@ router.post('/signup', requireLogout, async (req, res) => {
     // Validation
     if (!username || !password) {
       return res.render('signup', {
-        title: 'Sign Up',
-        error: 'Username and password are required'
+        title: 'Đăng ký',
+        formAction: '/signup',
+        error: 'Vui lòng nhập tên đăng nhập và mật khẩu'
       });
     }
 
     if (password !== confirmPassword) {
       return res.render('signup', {
-        title: 'Sign Up',
-        error: 'Passwords do not match'
+        title: 'Đăng ký',
+        formAction: '/signup',
+        error: 'Mật khẩu không khớp'
       });
     }
 
@@ -37,8 +40,9 @@ router.post('/signup', requireLogout, async (req, res) => {
     const existingUsername = await User.findByUsername(username);
     if (existingUsername) {
       return res.render('signup', {
-        title: 'Sign Up',
-        error: 'Username already taken'
+        title: 'Đăng ký',
+        formAction: '/signup',
+        error: 'Tên đăng nhập đã được sử dụng'
       });
     }
 
@@ -56,17 +60,19 @@ router.post('/signup', requireLogout, async (req, res) => {
   } catch (error) {
     console.error('Signup error:', error);
     res.render('signup', {
-      title: 'Sign Up',
-      error: 'An error occurred during registration'
+      title: 'Đăng ký',
+      formAction: '/signup',
+      error: 'Đã xảy ra lỗi khi đăng ký'
     });
   }
 });
 
 // Login page (GET)
 router.get('/login', requireLogout, (req, res) => {
-  res.render('login', { 
-    title: 'Login',
-    error: null 
+  res.render('login', {
+    title: 'Đăng nhập',
+    formAction: '/login',
+    error: null
   });
 });
 
@@ -79,30 +85,33 @@ router.post('/login', requireLogout, async (req, res) => {
     // Validation
     if (!username || !password) {
       return res.render('login', {
-        title: 'Login',
-        error: 'Username and password are required'
+        title: 'Đăng nhập',
+        formAction: '/login',
+        error: 'Vui lòng nhập tên đăng nhập và mật khẩu'
       });
     }
 
     // Find user by username
     const user = await User.findByUsername(username);
     console.log('User found:', user ? 'yes' : 'no');
-    
+
     if (!user) {
       return res.render('login', {
-        title: 'Login',
-        error: 'Invalid username or password'
+        title: 'Đăng nhập',
+        formAction: '/login',
+        error: 'Sai tên đăng nhập hoặc mật khẩu'
       });
     }
 
     // Compare passwords
     const isPasswordValid = await bcrypt.compare(password, user.password_hash);
     console.log('Password valid:', isPasswordValid);
-    
+
     if (!isPasswordValid) {
       return res.render('login', {
-        title: 'Login',
-        error: 'Invalid username or password'
+        title: 'Đăng nhập',
+        formAction: '/login',
+        error: 'Sai tên đăng nhập hoặc mật khẩu'
       });
     }
 
@@ -117,8 +126,9 @@ router.post('/login', requireLogout, async (req, res) => {
       if (err) {
         console.error('Session save error:', err);
         return res.render('login', {
-          title: 'Login',
-          error: 'An error occurred during login'
+          title: 'Đăng nhập',
+          formAction: '/login',
+          error: 'Đã xảy ra lỗi khi đăng nhập'
         });
       }
       console.log('Session saved successfully, redirecting to dashboard');
@@ -127,8 +137,9 @@ router.post('/login', requireLogout, async (req, res) => {
   } catch (error) {
     console.error('Login error:', error);
     res.render('login', {
-      title: 'Login',
-      error: 'An error occurred during login'
+      title: 'Đăng nhập',
+      formAction: '/login',
+      error: 'Đã xảy ra lỗi khi đăng nhập'
     });
   }
 });
@@ -147,7 +158,7 @@ router.post('/logout', requireLogin, (req, res) => {
 // Forgot Password page (GET)
 router.get('/forgot-password', requireLogout, (req, res) => {
   res.render('forgot-password', {
-    title: 'Forgot Password',
+    title: 'Quên mật khẩu',
     error: null,
     message: null,
     resetToken: null
@@ -162,8 +173,8 @@ router.post('/forgot-password', requireLogout, async (req, res) => {
     // Validate username
     if (!username) {
       return res.render('forgot-password', {
-        title: 'Forgot Password',
-        error: 'Username is required',
+        title: 'Quên mật khẩu',
+        error: 'Vui lòng nhập tên đăng nhập',
         message: null,
         resetToken: null
       });
@@ -173,8 +184,8 @@ router.post('/forgot-password', requireLogout, async (req, res) => {
     const user = await User.findByUsername(username);
     if (!user) {
       return res.render('forgot-password', {
-        title: 'Forgot Password',
-        error: 'No account found with that username',
+        title: 'Quên mật khẩu',
+        error: 'Không tìm thấy tài khoản với tên đăng nhập này',
         message: null,
         resetToken: null
       });
@@ -189,16 +200,16 @@ router.post('/forgot-password', requireLogout, async (req, res) => {
 
     // Show the reset form with the token
     res.render('forgot-password', {
-      title: 'Forgot Password',
+      title: 'Quên mật khẩu',
       error: null,
-      message: 'Username verified! Please enter your new password below.',
+      message: 'Đã xác minh tên đăng nhập! Hãy nhập mật khẩu mới bên dưới.',
       resetToken: resetToken
     });
   } catch (error) {
     console.error('Forgot Password error:', error);
     res.render('forgot-password', {
-      title: 'Forgot Password',
-      error: 'An error occurred while processing your request.',
+      title: 'Quên mật khẩu',
+      error: 'Đã xảy ra lỗi khi xử lý yêu cầu.',
       message: null,
       resetToken: null
     });
@@ -213,8 +224,8 @@ router.post('/reset-password', requireLogout, async (req, res) => {
     // Validate inputs
     if (!token || !password || !confirmPassword) {
       return res.render('forgot-password', {
-        title: 'Forgot Password',
-        error: 'All fields are required',
+        title: 'Quên mật khẩu',
+        error: 'Vui lòng điền đầy đủ các trường',
         message: null,
         resetToken: token
       });
@@ -222,9 +233,9 @@ router.post('/reset-password', requireLogout, async (req, res) => {
 
     if (password !== confirmPassword) {
       return res.render('forgot-password', {
-        title: 'Forgot Password',
-        error: 'Passwords do not match',
-        message: 'Please enter your new password below.',
+        title: 'Quên mật khẩu',
+        error: 'Mật khẩu không khớp',
+        message: 'Hãy nhập mật khẩu mới bên dưới.',
         resetToken: token
       });
     }
@@ -233,8 +244,8 @@ router.post('/reset-password', requireLogout, async (req, res) => {
     const user = await User.findByResetToken(token);
     if (!user) {
       return res.render('forgot-password', {
-        title: 'Forgot Password',
-        error: 'Invalid or expired reset token. Please try again.',
+        title: 'Quên mật khẩu',
+        error: 'Mã đặt lại không hợp lệ hoặc đã hết hạn. Vui lòng thử lại.',
         message: null,
         resetToken: null
       });
@@ -246,15 +257,16 @@ router.post('/reset-password', requireLogout, async (req, res) => {
 
     // Redirect to login with success message
     res.render('login', {
-      title: 'Login',
+      title: 'Đăng nhập',
+      formAction: '/login',
       error: null,
-      success: 'Password reset successful! Please login with your new password.'
+      success: 'Đặt lại mật khẩu thành công! Vui lòng đăng nhập bằng mật khẩu mới.'
     });
   } catch (error) {
     console.error('Reset Password error:', error);
     res.render('forgot-password', {
-      title: 'Forgot Password',
-      error: 'An error occurred while resetting your password.',
+      title: 'Quên mật khẩu',
+      error: 'Đã xảy ra lỗi khi đặt lại mật khẩu.',
       message: null,
       resetToken: null
     });

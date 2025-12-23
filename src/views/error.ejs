@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>
-        <%= title || 'Cultivation Center' %>
-    </title>
+        Lỗi hệ thống | Tông Môn Tu Tiên
     </title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <script src="/js/theme-init.js"></script>
@@ -27,26 +26,26 @@
         .error-code {
             font-size: 5rem;
             font-weight: bold;
-            color: #e74c3c;
+            color: var(--danger-color);
             margin-bottom: 1rem;
         }
 
         .error-message {
             font-size: 2rem;
-            color: #333;
+            color: var(--text-primary);
             margin-bottom: 1rem;
         }
 
         .error-description {
             font-size: 1.1rem;
-            color: #666;
+            color: var(--text-secondary);
             margin-bottom: 2rem;
         }
 
         .back-link {
             display: inline-block;
             padding: 0.75rem 2rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
             color: white;
             text-decoration: none;
             border-radius: 5px;
@@ -65,11 +64,11 @@
 
         <div class="error-container">
             <div class="error-code">500</div>
-            <div class="error-message">Server Error</div>
+            <div class="error-message">Lỗi hệ thống</div>
             <div class="error-description">
-                Something went wrong. Please try again later.
+                Đã có trục trặc. Vui lòng thử lại sau.
             </div>
-            <a href="/" class="back-link">← Go Home</a>
+            <a href="/" class="back-link">← Về trang chủ</a>
         </div>
 
         <%- include('partials/footer') %>

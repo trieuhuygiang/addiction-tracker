@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cultivation Center</title>
+    <title>Lịch sử bộ đếm | Tông Môn Tu Tiên</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <script src="/js/theme-init.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,14 +30,14 @@
         }
 
         .history-header h1 {
-            color: #e94560;
+            color: var(--danger-color);
             font-size: 2rem;
             margin: 0;
         }
 
         .back-btn {
             padding: 0.5rem 1rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
             color: white;
             text-decoration: none;
             border-radius: 5px;
@@ -70,7 +70,7 @@
         .streak-duration {
             font-size: 1.75rem;
             font-weight: bold;
-            color: #e94560;
+            color: var(--danger-color);
         }
 
         .streak-dates {
@@ -218,8 +218,8 @@
 
         <div class="history-container">
             <div class="history-header">
-                <h1>🧠 Rewiring Day Counter History</h1>
-                <a href="/dashboard" class="back-btn">← Back to Dashboard</a>
+                <h1>🧠 Lịch sử bộ đếm ngày tu luyện</h1>
+                <a href="/dashboard" class="back-btn">← Về tổng quan</a>
             </div>
 
             <% if (clockHistory && clockHistory.length> 0) { %>
@@ -229,7 +229,7 @@
                         <div class="value">
                             <%= clockHistory.length %>
                         </div>
-                        <div class="label">Total Resets</div>
+                        <div class="label">Tổng số lần đặt lại</div>
                     </div>
                     <div class="summary-item">
                         <% const longestStreak=Math.max(...clockHistory.map(h=> h.duration_seconds));
@@ -239,7 +239,7 @@
                             <div class="value">
                                 <%= longestDays %>d <%= longestHours %>h
                             </div>
-                            <div class="label">Longest Streak</div>
+                            <div class="label">Chuỗi dài nhất</div>
                     </div>
                     <div class="summary-item">
                         <% const avgSeconds=Math.floor(clockHistory.reduce((sum, h)=> sum + h.duration_seconds, 0) /
@@ -250,7 +250,7 @@
                             <div class="value">
                                 <%= avgDays %>d <%= avgHours %>h
                             </div>
-                            <div class="label">Average Streak</div>
+                            <div class="label">Trung bình chuỗi</div>
                     </div>
                 </div>
 
@@ -263,33 +263,34 @@
 
                     const startDate = new Date(record.start_time);
                     const endDate = new Date(record.end_time);
-                    const formatDate = (d) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year:
+                    const formatDate = (d) => d.toLocaleDateString('vi-VN', { month: 'short', day: 'numeric', year:
                     'numeric' });
-                    const formatTime = (d) => d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                    const formatTime = (d) => d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
                     %>
                     <div class="history-card">
                         <div class="history-card-header">
                             <div>
                                 <div class="streak-duration">
-                                    🔥 <%= days %> days, <%= hours %>h <%= minutes %>m <%= seconds %>s
+                                    🔥 <%= days %> ngày, <%= hours %> giờ <%= minutes %> phút <%= seconds %> giây
                                 </div>
                                 <div class="streak-dates">
                                     <%= formatDate(startDate) %> → <%= formatDate(endDate) %>
                                 </div>
                             </div>
-                            <span style="color: #667eea; font-size: 0.9rem;">#<%= clockHistory.length - index %></span>
+                            <span style="color: var(--info-color); font-size: 0.9rem;">#<%= clockHistory.length - index
+                                    %></span>
                         </div>
                         <div class="history-card-body">
                             <div class="date-info">
                                 <div class="date-item">
-                                    <label>Started</label>
+                                    <label>Bắt đầu</label>
                                     <span>
                                         <%= formatDate(startDate) %>
                                             <%= formatTime(startDate) %>
                                     </span>
                                 </div>
                                 <div class="date-item">
-                                    <label>Reset</label>
+                                    <label>Đặt lại</label>
                                     <span>
                                         <%= formatDate(endDate) %>
                                             <%= formatTime(endDate) %>
@@ -298,8 +299,8 @@
                             </div>
                             <form method="POST" action="/clock-history/<%= record.id %>/delete" style="margin: 0;">
                                 <button type="submit" class="delete-btn"
-                                    onclick="return confirm('Delete this clock history record?');">
-                                    🗑️ Delete
+                                    onclick="return confirm('Xoá bản ghi lịch sử bộ đếm này?');">
+                                    🗑️ Xoá
                                 </button>
                             </form>
                         </div>
@@ -309,18 +310,18 @@
                         <div class="delete-all-section">
                             <form method="POST" action="/clock-history/delete-all">
                                 <button type="submit" class="delete-all-btn"
-                                    onclick="return confirm('Are you sure you want to delete ALL rewiring history? This cannot be undone.');">
-                                    🗑️ Delete All Rewiring History
+                                    onclick="return confirm('Bạn chắc chắn muốn xoá TOÀN BỘ lịch sử bộ đếm? Hành động này không thể hoàn tác.');">
+                                    🗑️ Xoá toàn bộ lịch sử bộ đếm
                                 </button>
                             </form>
                         </div>
                         <% } else { %>
                             <div class="empty-state">
-                                <p>📭 No rewiring history yet</p>
-                                <p style="font-size: 0.9rem;">Start your rewiring day counter and reset it to see your
-                                    history here.</p>
+                                <p>📭 Chưa có lịch sử bộ đếm</p>
+                                <p style="font-size: 0.9rem;">Hãy bắt đầu bộ đếm ngày tu luyện và đặt lại để xem lịch sử
+                                    hiển thị tại đây.</p>
                                 <a href="/dashboard" class="back-btn" style="display: inline-block; margin-top: 1rem;">←
-                                    Go to Dashboard</a>
+                                    Về tổng quan</a>
                             </div>
                             <% } %>
         </div>

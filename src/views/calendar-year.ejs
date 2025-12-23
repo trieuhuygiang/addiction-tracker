@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>
-        <%= title %>
+        Lịch năm | Tông Môn Tu Tiên
     </title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <script src="/js/theme-init.js"></script>
@@ -28,7 +28,7 @@
         }
 
         .calendar-year-header h1 {
-            color: #667eea;
+            color: var(--info-color);
             margin-bottom: 0.5rem;
             font-size: 2rem;
         }
@@ -48,7 +48,7 @@
 
         .year-nav-btn {
             padding: 0.5rem 1rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
             color: white;
             border: none;
             border-radius: 5px;
@@ -310,16 +310,16 @@
 
         <div class="calendar-year-container">
             <a href="/dashboard" class="back-link"
-                style="display: inline-block; text-align: left; margin-bottom: 1rem;">← Back to Dashboard</a>
+                style="display: inline-block; text-align: left; margin-bottom: 1rem;">← Về tổng quan</a>
 
             <div class="calendar-year-header">
-                <h1>📅 Year Calendar</h1>
-                <p>View your progress by year</p>
+                <h1>📅 Lịch năm</h1>
+                <p>Xem tiến độ theo từng năm</p>
             </div>
 
             <div class="view-toggle">
-                <a href="/calendar">Month Calendar</a>
-                <a href="/calendar/year/<%= year %>" class="active">Year Calendar</a>
+                <a href="/calendar">Lịch tháng</a>
+                <a href="/calendar/year/<%= year %>" class="active">Lịch năm</a>
             </div>
 
             <div class="year-navigation">
@@ -342,22 +342,22 @@
                         <div class="year-stat clean">
                             <div class="year-stat-value">🟢 <%= stats.cleanDays %>
                             </div>
-                            <div class="year-stat-label">Clean Days</div>
+                            <div class="year-stat-label">Ngày thanh tịnh</div>
                         </div>
                         <div class="year-stat slip">
                             <div class="year-stat-value">🟡 <%= stats.slipDays %>
                             </div>
-                            <div class="year-stat-label">Just a Little Bit Days</div>
+                            <div class="year-stat-label">Ngày sơ suất</div>
                         </div>
                         <div class="year-stat failed">
                             <div class="year-stat-value">🔴 <%= stats.failedDays %>
                             </div>
-                            <div class="year-stat-label">Totally Failed Days</div>
+                            <div class="year-stat-label">Ngày thất thủ</div>
                         </div>
                         <div class="year-stat total">
                             <div class="year-stat-value">📊 <%= stats.totalDays %>
                             </div>
-                            <div class="year-stat-label">Total Logged</div>
+                            <div class="year-stat-label">Tổng ngày đã ghi</div>
                         </div>
                     </div>
 
@@ -371,13 +371,13 @@
                                 </div>
                                 <div class="mini-calendar">
                                     <div class="mini-weekdays">
-                                        <div>S</div>
-                                        <div>M</div>
-                                        <div>T</div>
-                                        <div>W</div>
-                                        <div>T</div>
-                                        <div>F</div>
-                                        <div>S</div>
+                                        <div>C</div>
+                                        <div>2</div>
+                                        <div>3</div>
+                                        <div>4</div>
+                                        <div>5</div>
+                                        <div>6</div>
+                                        <div>7</div>
                                     </div>
                                     <div class="mini-days">
                                         <% monthData.calendar.forEach(week=> { %>
@@ -385,7 +385,7 @@
                                                 <% if (dayObj) { %>
                                                     <a href="/entries/<%= dayObj.date %>"
                                                         class="mini-day <%= dayObj.status %>"
-                                                        title="<%= dayObj.date %>: <%= dayObj.status === 'clean' ? 'Clean' : (dayObj.status === 'slip' ? 'Just a Little Bit' : (dayObj.status === 'failed' ? 'Totally Failed' : 'No entry')) %><%= dayObj.entry && dayObj.entry.has_morning_wood ? ' + Tree of Life 🌳' : '' %>"
+                                                        title="<%= dayObj.date %>: <%= dayObj.status === 'clean' ? 'Thanh tịnh' : (dayObj.status === 'slip' ? 'Sơ suất' : (dayObj.status === 'failed' ? 'Thất thủ' : 'Chưa ghi')) %><%= dayObj.entry && dayObj.entry.has_morning_wood ? ' + Dấu hiệu hồi phục 🌳' : '' %>"
                                                         style="position: relative;">
                                                         <%= dayObj.day %>
                                                             <% if (dayObj.entry && dayObj.entry.has_morning_wood) { %>
@@ -406,26 +406,26 @@
 
                     <div class="legend">
                         <div class="legend-item">
-                            <div class="legend-color" style="background-color: #d4edda;"></div>
-                            <span>🟢 Clean</span>
+                            <div class="legend-color" style="background-color: rgba(31, 90, 58, 0.20);"></div>
+                            <span>🟢 Thanh tịnh</span>
                         </div>
                         <div class="legend-item">
-                            <div class="legend-color" style="background-color: #fff3cd;"></div>
-                            <span>🟡 Just a Little Bit</span>
+                            <div class="legend-color" style="background-color: rgba(176, 122, 27, 0.20);"></div>
+                            <span>🟡 Sơ suất</span>
                         </div>
                         <div class="legend-item">
-                            <div class="legend-color" style="background-color: #f8d7da;"></div>
-                            <span>🔴 Totally Failed</span>
+                            <div class="legend-color" style="background-color: rgba(139, 26, 26, 0.18);"></div>
+                            <span>🔴 Thất thủ</span>
                         </div>
                         <div class="legend-item">
                             <div class="legend-color" style="background-color: #f9f9f9;"></div>
-                            <span>⚪ No Log</span>
+                            <span>⚪ Chưa ghi</span>
                         </div>
                     </div>
 
                     <% } %>
 
-                        <a href="/dashboard" class="back-link">← Back to Dashboard</a>
+                        <a href="/dashboard" class="back-link">← Về tổng quan</a>
         </div>
 
         <%- include('partials/footer') %>

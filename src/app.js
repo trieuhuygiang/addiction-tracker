@@ -85,7 +85,7 @@ app.get('/', (req, res) => {
     return res.redirect('/dashboard');
   }
   res.render('index', {
-    title: 'Cultivation Center'
+    title: 'Tông Môn Tu Tiên'
   });
 });
 
@@ -132,7 +132,7 @@ app.post('/api/timezone', (req, res) => {
     req.session.save();
     res.json({ success: true, timezone });
   } else {
-    res.status(400).json({ success: false, error: 'Timezone required' });
+    res.status(400).json({ success: false, error: 'Thiếu múi giờ' });
   }
 });
 
@@ -145,13 +145,13 @@ app.get('/history', requireLogin, async (req, res) => {
     console.log('History page - streakHistory:', streakHistory);
 
     res.render('history', {
-      title: 'Record History',
+      title: 'Lịch sử tu luyện',
       streakHistory
     });
   } catch (error) {
     console.error('History page error:', error);
     res.render('history', {
-      title: 'Record History',
+      title: 'Lịch sử tu luyện',
       streakHistory: []
     });
   }
@@ -193,14 +193,21 @@ app.get('/dashboard', requireLogin, async (req, res) => {
     // Check for deleted entry feedback message
     let deleteMessage = null;
     if (req.query.deleted && req.query.date) {
-      deleteMessage = `Deleted ${req.query.deleted} entry for ${req.query.date}. Day count updated.`;
+      const deletedType = String(req.query.deleted);
+      const typeMap = {
+        'Clean': 'Thanh tịnh',
+        'A Little Bit': 'Sơ suất',
+        'Totally Failed': 'Thất thủ'
+      };
+      const typeLabel = typeMap[deletedType] || deletedType;
+      deleteMessage = `Đã xoá ghi chép “${typeLabel}” ngày ${req.query.date}. Đã cập nhật số ngày.`;
     }
 
     // Get clock start time for NoFap counter
     const clockStartTime = await User.getClockStart(userId);
 
     res.render('dashboard', {
-      title: 'Dashboard',
+      title: 'Bảng tu luyện',
       streakSummary,
       userName,
       progressEntries,
@@ -213,7 +220,7 @@ app.get('/dashboard', requireLogin, async (req, res) => {
   } catch (error) {
     console.error('Dashboard error:', error);
     res.render('dashboard', {
-      title: 'Dashboard',
+      title: 'Bảng tu luyện',
       streakSummary: {
         currentStreak: 0,
         totalDays: 0,
@@ -226,6 +233,7 @@ app.get('/dashboard', requireLogin, async (req, res) => {
       streakHistory: [],
       todayEntry: null,
       today: getTodayString(req.timezone),
+      deleteMessage: null,
       clockStartTime: null
     });
   }
@@ -233,14 +241,14 @@ app.get('/dashboard', requireLogin, async (req, res) => {
 
 // 404 handler
 app.use((req, res) => {
-  res.status(404).render('404', { title: 'Page Not Found' });
+  res.status(404).render('404', { title: 'Không tìm thấy trang' });
 });
 
 // Error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).render('error', {
-    title: 'Error',
+    title: 'Lỗi',
     error: process.env.NODE_ENV === 'production' ? {} : err
   });
 });

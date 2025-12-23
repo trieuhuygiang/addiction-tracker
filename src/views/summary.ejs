@@ -1,12 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-        <%= title %>
-    </title>
+    <title>Thống kê | Tông Môn Tu Tiên</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <script src="/js/theme-init.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -27,7 +25,7 @@
         }
 
         .summary-header h1 {
-            color: #667eea;
+            color: var(--info-color);
             font-size: 2rem;
             margin-bottom: 0.5rem;
         }
@@ -50,12 +48,12 @@
         }
 
         .error-message {
-            background-color: #f8d7da;
-            color: #721c24;
+            background: var(--card-bg);
+            color: var(--danger-color);
             padding: 1rem;
             border-radius: 5px;
             margin-bottom: 1.5rem;
-            border: 1px solid #f5c6cb;
+            border: 1px solid color-mix(in srgb, var(--danger-color) 28%, transparent);
         }
 
         .stats-grid {
@@ -216,11 +214,11 @@
     <%- include('partials/header') %>
 
         <div class="summary-container">
-            <a href="/dashboard" class="back-link">← Back to Dashboard</a>
+            <a href="/dashboard" class="back-link">← Về tổng quan</a>
 
             <div class="summary-header">
-                <h1>📊 Summary Statistics</h1>
-                <p>Your complete progress overview</p>
+                <h1>📊 Thống kê tu luyện</h1>
+                <p>Tổng quan tiến độ tu luyện của bạn</p>
             </div>
 
             <% if (error) { %>
@@ -232,89 +230,89 @@
                     <!-- Main Statistics -->
                     <div class="stats-grid">
                         <div class="stat-card">
-                            <div class="stat-label">Rewiring Days</div>
+                            <div class="stat-label">Ngày tu luyện</div>
                             <div class="stat-value">🔥 <%= stats.totalRewireDays %>
                             </div>
-                            <div class="stat-sublabel">days from counter</div>
+                            <div class="stat-sublabel">ngày theo bộ đếm</div>
                         </div>
 
                         <div class="stat-card">
-                            <div class="stat-label">Longest Session</div>
+                            <div class="stat-label">Phiên tu dài nhất</div>
                             <div class="stat-value">⏱️ <%= stats.longestRewireSessionDays %>d <%=
                                         stats.longestRewireSessionHours %>h
                             </div>
-                            <div class="stat-sublabel">longest counter session</div>
+                            <div class="stat-sublabel">phiên bộ đếm dài nhất</div>
                         </div>
 
                         <div class="stat-card">
-                            <div class="stat-label">Clean Rewiring Days</div>
+                            <div class="stat-label">Ngày thanh tịnh</div>
                             <div class="stat-value">🟢 <%= stats.cleanDays %>
                             </div>
-                            <div class="stat-sublabel">pure rewiring days</div>
+                            <div class="stat-sublabel">ngày thanh tịnh</div>
                         </div>
 
                         <div class="stat-card">
-                            <div class="stat-label">Just a Little Bit Days</div>
+                            <div class="stat-label">Ngày sơ suất</div>
                             <div class="stat-value">🔴 <%= stats.slipDays %>
                             </div>
-                            <div class="stat-sublabel">days</div>
+                            <div class="stat-sublabel">ngày</div>
                         </div>
 
                         <div class="stat-card">
-                            <div class="stat-label">Totally Failed Days</div>
+                            <div class="stat-label">Ngày thất thủ</div>
                             <div class="stat-value">💀 <%= stats.totallyFailedDays %>
                             </div>
-                            <div class="stat-sublabel">days</div>
+                            <div class="stat-sublabel">ngày</div>
                         </div>
 
                         <div class="stat-card">
-                            <div class="stat-label">Tree of Life Days</div>
+                            <div class="stat-label">Dấu hiệu hồi phục (sáng)</div>
                             <div class="stat-value">🌳 <%= stats.morningWoodCount %>
                             </div>
-                            <div class="stat-sublabel">recovery indicator</div>
+                            <div class="stat-sublabel">chỉ dấu hồi phục</div>
                         </div>
 
                         <div class="stat-card">
-                            <div class="stat-label">Success Rate</div>
+                            <div class="stat-label">Tỷ lệ thành công</div>
                             <div class="stat-value">📈 <%= stats.successRate %>%</div>
-                            <div class="stat-sublabel">clean days</div>
+                            <div class="stat-sublabel">ngày thanh tịnh</div>
                         </div>
                     </div>
 
                     <% if (stats.totalRewireDays> 0 || stats.totalDays > 0) { %>
                         <!-- Streak History -->
                         <div class="section">
-                            <div class="section-title">📋 Streak History</div>
+                            <div class="section-title">📋 Lịch sử chuỗi</div>
                             <% if (streaksData.length> 0) { %>
                                 <% streaksData.forEach((streak, index)=> { %>
                                     <div class="streak-item <%= streak.ongoing ? 'streak-ongoing' : '' %>">
                                         <span class="streak-length">
-                                            <%= streak.length %> days
+                                            <%= streak.length %> ngày
                                         </span>
                                         <div class="streak-dates">
-                                            <%= streak.startDate %> to <%= streak.endDate %>
+                                            <%= streak.startDate %> đến <%= streak.endDate %>
                                                     <% if (streak.ongoing) { %>
-                                                        <strong>(Ongoing 🔥)</strong>
+                                                        <strong>(Đang tiếp diễn 🔥)</strong>
                                                         <% } %>
                                         </div>
                                     </div>
                                     <% }); %>
                                         <% } else { %>
-                                            <div class="empty-message">No streaks recorded yet</div>
+                                            <div class="empty-message">Chưa có chuỗi nào được ghi nhận</div>
                                             <% } %>
                         </div>
 
                         <!-- Recent Entries -->
                         <div class="section">
-                            <div class="section-title">📝 Recent Entries</div>
+                            <div class="section-title">📝 Ghi chép gần đây</div>
                             <% if (stats.recentEntries.length> 0) { %>
                                 <div class="table-container">
                                     <table>
                                         <thead>
                                             <tr>
-                                                <th>Date</th>
-                                                <th>Status</th>
-                                                <th>Notes</th>
+                                                <th>Ngày</th>
+                                                <th>Trạng thái</th>
+                                                <th>Ghi chú</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -326,7 +324,10 @@
                                                     <td>
                                                         <span
                                                             class="<%= entry.had_leakage ? 'entry-slip' : 'entry-clean' %>">
-                                                            <%= entry.statusText %>
+                                                            <% const statusMap={ Clean: 'Thanh tịnh'
+                                                                , 'Just a Little Bit' : 'Sơ suất' , 'Totally Failed'
+                                                                : 'Thất thủ' }; %>
+                                                                <%= statusMap[entry.statusText] || entry.statusText %>
                                                         </span>
                                                     </td>
                                                     <td>
@@ -338,15 +339,16 @@
                                     </table>
                                 </div>
                                 <% } else { %>
-                                    <div class="empty-message">No entries recorded yet</div>
+                                    <div class="empty-message">Chưa có ghi chép nào</div>
                                     <% } %>
                         </div>
                         <% } else { %>
                             <div class="section">
                                 <div class="empty-message">
-                                    <p>No entries logged yet. Start tracking your progress by <a href="/entries"
-                                            style="color: #667eea; text-decoration: underline;">logging your first
-                                            entry</a>!</p>
+                                    <p>Bạn chưa ghi chép lần nào. Hãy bắt đầu hành trình tu luyện bằng cách <a
+                                            href="/entries"
+                                            style="color: var(--info-color); text-decoration: underline;">tạo ghi chép
+                                            đầu tiên</a>!</p>
                                 </div>
                             </div>
                             <% } %>

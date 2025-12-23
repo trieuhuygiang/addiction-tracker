@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>
-        <%= title || 'Cultivation Center' %>
+        Lịch | Tông Môn Tu Tiên
     </title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <script src="/js/theme-init.js"></script>
@@ -28,7 +28,7 @@
         }
 
         .calendar-header h1 {
-            color: #667eea;
+            color: var(--info-color);
             font-size: 2rem;
             margin-bottom: 0.5rem;
         }
@@ -48,7 +48,7 @@
 
         .nav-btn {
             padding: 0.5rem 1rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
             color: white;
             border: none;
             border-radius: 5px;
@@ -319,20 +319,20 @@
     <%- include('partials/header') %>
 
         <div class="calendar-container">
-            <a href="/dashboard" class="back-link">← Back to Dashboard</a>
+            <a href="/dashboard" class="back-link">← Về tổng quan</a>
 
             <div class="calendar-header">
-                <h1>📅 Month Calendar</h1>
-                <p>View your progress by month</p>
+                <h1>📅 Lịch tháng</h1>
+                <p>Xem tiến độ theo từng tháng</p>
             </div>
 
             <div class="view-toggle" style="display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 2rem;">
                 <a href="/calendar/<%= year %>/<%= month %>"
-                    style="padding: 0.5rem 1rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 5px; text-decoration: none; font-weight: 600;">Month
-                    Calendar</a>
+                    style="padding: 0.5rem 1rem; background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%); color: white; border-radius: 5px; text-decoration: none; font-weight: 600;">Lịch
+                    tháng</a>
                 <a href="/calendar/year/<%= year %>"
-                    style="padding: 0.5rem 1rem; background: var(--bg-tertiary); color: var(--text-primary); border-radius: 5px; text-decoration: none; font-weight: 600; transition: all 0.3s;">Year
-                    Calendar</a>
+                    style="padding: 0.5rem 1rem; background: var(--bg-tertiary); color: var(--text-primary); border-radius: 5px; text-decoration: none; font-weight: 600; transition: all 0.3s;">Lịch
+                    năm</a>
             </div>
 
             <% if (error) { %>
@@ -344,7 +344,7 @@
                     <div class="month-navigation">
                         <a href="/calendar/<%= month === 1 ? year - 1 : year %>/<%= month === 1 ? 12 : month - 1 %>"
                             class="nav-btn">
-                            ← Previous
+                            ← Tháng trước
                         </a>
                         <div class="month-display">
                             <%= monthName %>
@@ -352,39 +352,39 @@
                         </div>
                         <a href="/calendar/<%= month === 12 ? year + 1 : year %>/<%= month === 12 ? 1 : month + 1 %>"
                             class="nav-btn">
-                            Next →
+                            Tháng sau →
                         </a>
                     </div>
 
                     <div class="legend">
                         <div class="legend-item">
-                            <div class="legend-color" style="background-color: #d4edda;"></div>
-                            <span>✅ Clean</span>
+                            <div class="legend-color" style="background-color: rgba(31, 90, 58, 0.20);"></div>
+                            <span>✅ Thanh tịnh</span>
                         </div>
                         <div class="legend-item">
-                            <div class="legend-color" style="background-color: #fff3cd;"></div>
-                            <span>⚠️ A Little Bit</span>
+                            <div class="legend-color" style="background-color: rgba(176, 122, 27, 0.20);"></div>
+                            <span>⚠️ Sơ suất</span>
                         </div>
                         <div class="legend-item">
-                            <div class="legend-color" style="background-color: #f8d7da;"></div>
-                            <span>💀 Totally Failed</span>
+                            <div class="legend-color" style="background-color: rgba(139, 26, 26, 0.18);"></div>
+                            <span>💀 Thất thủ</span>
                         </div>
                         <div class="legend-item">
                             <div class="legend-color" style="background-color: #f9f9f9;"></div>
-                            <span>⚪ No Log</span>
+                            <span>⚪ Chưa ghi</span>
                         </div>
                     </div>
 
                     <% if (calendar) { %>
                         <div class="calendar-table">
                             <div class="calendar-weekdays">
-                                <div class="weekday">Sun</div>
-                                <div class="weekday">Mon</div>
-                                <div class="weekday">Tue</div>
-                                <div class="weekday">Wed</div>
-                                <div class="weekday">Thu</div>
-                                <div class="weekday">Fri</div>
-                                <div class="weekday">Sat</div>
+                                <div class="weekday">CN</div>
+                                <div class="weekday">T2</div>
+                                <div class="weekday">T3</div>
+                                <div class="weekday">T4</div>
+                                <div class="weekday">T5</div>
+                                <div class="weekday">T6</div>
+                                <div class="weekday">T7</div>
                             </div>
 
                             <div class="calendar-days">
@@ -393,7 +393,7 @@
                                         <% if (dayObj) { %>
                                             <a href="/entries/<%= dayObj.date %>"
                                                 class="calendar-day <%= dayObj.status %>"
-                                                title="<%= dayObj.status === 'clean' ? 'Clean' : dayObj.status === 'slip' ? 'A Little Bit' : dayObj.status === 'failed' ? 'Totally Failed' : 'No entry' %><%= dayObj.entry && dayObj.entry.has_morning_wood ? ' + Tree of Life 🌳' : '' %>">
+                                                title="<%= dayObj.status === 'clean' ? 'Thanh tịnh' : dayObj.status === 'slip' ? 'Sơ suất' : dayObj.status === 'failed' ? 'Thất thủ' : 'Chưa ghi' %><%= dayObj.entry && dayObj.entry.has_morning_wood ? ' + Dấu hiệu hồi phục 🌳' : '' %>">
                                                 <div class="day-number">
                                                     <%= dayObj.day %>
                                                 </div>
@@ -422,7 +422,7 @@
                         <% } %>
 
                             <div style="text-align: center; color: #666; margin-top: 2rem;">
-                                <p>Click any day to view or edit the entry</p>
+                                <p>Nhấn vào bất kỳ ngày nào để xem hoặc chỉnh sửa</p>
                             </div>
         </div>
 

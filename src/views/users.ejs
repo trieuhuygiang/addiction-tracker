@@ -1,230 +1,228 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cultivation Center</title>
-    <%= title %>
-        </title>
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-        <script src="/js/theme-init.js"></script>
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link
-            href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=EB+Garamond:wght@400;500;600;700&family=Crimson+Text:wght@400;600;700&display=swap"
-            rel="stylesheet">
-        <link rel="stylesheet" href="/css/style.css">
-        <style>
-            .users-container {
-                max-width: 1000px;
-                margin: 2rem auto;
-                padding: 2rem;
-                background: var(--card-bg);
-                border-radius: 10px;
-                box-shadow: 0 2px 10px var(--shadow-color);
-            }
+    <title>Người dùng | Tông Môn Tu Tiên</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <script src="/js/theme-init.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=EB+Garamond:wght@400;500;600;700&family=Crimson+Text:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .users-container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 2px 10px var(--shadow-color);
+        }
 
-            .users-container h1 {
-                color: var(--info-color);
-                margin-bottom: 2rem;
-                border-bottom: 2px solid var(--info-color);
-                padding-bottom: 1rem;
-            }
+        .users-container h1 {
+            color: var(--info-color);
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--info-color);
+            padding-bottom: 1rem;
+        }
 
-            .users-table {
-                width: 100%;
-                border-collapse: collapse;
-                margin-bottom: 2rem;
-            }
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+        }
 
-            .users-table thead {
-                background: var(--bg-tertiary);
-            }
+        .users-table thead {
+            background: var(--bg-tertiary);
+        }
 
-            .users-table th,
-            .users-table td {
-                padding: 1rem;
-                text-align: left;
-                border-bottom: 1px solid var(--border-color);
-                color: var(--text-primary);
-            }
+        .users-table th,
+        .users-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
 
-            .users-table th {
-                font-weight: 600;
-                color: var(--text-primary);
-            }
+        .users-table th {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
 
-            .users-table tbody tr:hover {
-                background: var(--bg-tertiary);
-            }
+        .users-table tbody tr:hover {
+            background: var(--bg-tertiary);
+        }
 
-            .action-buttons {
-                display: flex;
-                gap: 0.5rem;
-            }
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
 
-            .btn {
-                padding: 0.5rem 1rem;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-                font-size: 0.9rem;
-                font-weight: 600;
-                text-decoration: none;
-                transition: all 0.3s;
-            }
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
 
-            .btn-edit {
-                background: #667eea;
-                color: white;
-            }
+        .btn-edit {
+            background: var(--info-color);
+            color: white;
+        }
 
-            .btn-edit:hover {
-                background: #5568d3;
-            }
+        .btn-edit:hover {
+            background: color-mix(in srgb, var(--info-color) 82%, black);
+        }
 
-            .btn-delete {
-                background: #dc3545;
-                color: white;
-            }
+        .btn-delete {
+            background: var(--danger-color);
+            color: white;
+        }
 
-            .btn-delete:hover {
-                background: #c82333;
-            }
+        .btn-delete:hover {
+            background: color-mix(in srgb, var(--danger-color) 82%, black);
+        }
 
-            .btn-primary {
-                background: #28a745;
-                color: white;
-                margin-bottom: 1.5rem;
-            }
+        .btn-primary {
+            background: var(--success-color);
+            color: white;
+            margin-bottom: 1.5rem;
+        }
 
-            .btn-primary:hover {
-                background: #218838;
-            }
+        .btn-primary:hover {
+            background: color-mix(in srgb, var(--success-color) 82%, black);
+        }
 
-            .create-user-form {
-                background: #f9f9f9;
-                padding: 1.5rem;
-                border-radius: 8px;
-                margin-bottom: 2rem;
-            }
+        .create-user-form {
+            background: var(--bg-tertiary);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
 
-            .form-group {
-                margin-bottom: 1rem;
-            }
+        .form-group {
+            margin-bottom: 1rem;
+        }
 
-            .form-group label {
-                display: block;
-                margin-bottom: 0.5rem;
-                color: #333;
-                font-weight: 600;
-            }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
 
-            .form-group input {
-                width: 100%;
-                padding: 0.75rem;
-                border: 1px solid #ddd;
-                border-radius: 5px;
-                font-size: 1rem;
-            }
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 1rem;
+        }
 
-            .form-group input:focus {
-                outline: none;
-                border-color: #667eea;
-                box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
-            }
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--info-color);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--info-color) 18%, transparent);
+        }
 
-            .error {
-                background-color: #f8d7da;
-                color: #721c24;
-                padding: 1rem;
-                border-radius: 5px;
-                margin-bottom: 1.5rem;
-                border: 1px solid #f5c6cb;
-            }
+        .error {
+            background: var(--card-bg);
+            color: var(--danger-color);
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1.5rem;
+            border: 1px solid color-mix(in srgb, var(--danger-color) 28%, transparent);
+        }
 
-            .success {
-                background-color: #d4edda;
-                color: #155724;
-                padding: 1rem;
-                border-radius: 5px;
-                margin-bottom: 1.5rem;
-                border: 1px solid #c3e6cb;
-            }
+        .success {
+            background: var(--card-bg);
+            color: var(--success-color);
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1.5rem;
+            border: 1px solid color-mix(in srgb, var(--success-color) 28%, transparent);
+        }
 
-            .no-users {
-                text-align: center;
-                padding: 2rem;
-                color: #999;
-                font-size: 1.1rem;
-            }
+        .no-users {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
 
-            .form-row {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 1rem;
-            }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
 
-            .modal {
-                display: none;
-                position: fixed;
-                z-index: 1000;
-                left: 0;
-                top: 0;
-                width: 100%;
-                height: 100%;
-                background-color: rgba(0, 0, 0, 0.5);
-            }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
 
-            .modal.show {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-            .modal-content {
-                background-color: white;
-                padding: 2rem;
-                border-radius: 10px;
-                max-width: 500px;
-                width: 90%;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-            }
+        .modal-content {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 4px 20px var(--shadow-color);
+        }
 
-            .modal-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 1.5rem;
-                padding-bottom: 1rem;
-                border-bottom: 2px solid #667eea;
-            }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--info-color);
+        }
 
-            .modal-header h2 {
-                margin: 0;
-                color: #667eea;
-            }
+        .modal-header h2 {
+            margin: 0;
+            color: var(--info-color);
+        }
 
-            .close-btn {
-                background: none;
-                border: none;
-                font-size: 1.5rem;
-                cursor: pointer;
-                color: #999;
-            }
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
 
-            .close-btn:hover {
-                color: #333;
-            }
-        </style>
+        .close-btn:hover {
+            color: var(--text-primary);
+        }
+    </style>
 </head>
 
 <body>
     <%- include('partials/header') %>
 
         <div class="users-container">
-            <h1>User Management</h1>
+            <h1>Quản lý người dùng</h1>
 
             <% if (success) { %>
                 <div class="success">
@@ -238,16 +236,16 @@
                         </div>
                         <% } %>
 
-                            <button class="btn btn-primary" onclick="openCreateModal()">+ Create New User</button>
+                            <button class="btn btn-primary" onclick="openCreateModal()">+ Tạo người dùng mới</button>
 
                             <% if (users && users.length> 0) { %>
                                 <table class="users-table">
                                     <thead>
                                         <tr>
                                             <th>Email</th>
-                                            <th>Username</th>
-                                            <th>Created At</th>
-                                            <th>Actions</th>
+                                            <th>Tên đăng nhập</th>
+                                            <th>Ngày tạo</th>
+                                            <th>Thao tác</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -260,16 +258,16 @@
                                                     <%= user.username || '-' %>
                                                 </td>
                                                 <td>
-                                                    <%= new Date(user.created_at).toLocaleDateString() %>
+                                                    <%= new Date(user.created_at).toLocaleDateString('vi-VN') %>
                                                 </td>
                                                 <td>
                                                     <div class="action-buttons">
                                                         <button class="btn btn-edit"
-                                                            onclick="openEditModal(<%= user.id %>, '<%= user.email %>', '<%= user.username || '' %>')">Edit</button>
+                                                            onclick="openEditModal(<%= user.id %>, '<%= user.email %>', '<%= user.username || '' %>')">Sửa</button>
                                                         <form method="POST" action="/users/<%= user.id %>/delete"
                                                             style="display: inline;"
-                                                            onsubmit="return confirm('Are you sure?');">
-                                                            <button type="submit" class="btn btn-delete">Delete</button>
+                                                            onsubmit="return confirm('Bạn chắc chắn muốn xoá?');">
+                                                            <button type="submit" class="btn btn-delete">Xoá</button>
                                                         </form>
                                                     </div>
                                                 </td>
@@ -279,7 +277,7 @@
                                 </table>
                                 <% } else { %>
                                     <div class="no-users">
-                                        No users found. Create one to get started!
+                                        Chưa có người dùng. Hãy tạo mới để bắt đầu!
                                     </div>
                                     <% } %>
         </div>
@@ -288,7 +286,7 @@
         <div id="createModal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2>Create New User</h2>
+                    <h2>Tạo người dùng mới</h2>
                     <button class="close-btn" onclick="closeCreateModal()">&times;</button>
                 </div>
                 <form method="POST" action="/users/create">
@@ -297,21 +295,21 @@
                         <input type="email" id="email" name="email" required>
                     </div>
                     <div class="form-group">
-                        <label for="username">Username (optional)</label>
+                        <label for="username">Tên đăng nhập (tuỳ chọn)</label>
                         <input type="text" id="username" name="username">
                     </div>
                     <div class="form-group">
-                        <label for="password">Password</label>
+                        <label for="password">Mật khẩu</label>
                         <input type="password" id="password" name="password" required minlength="6">
                     </div>
                     <div class="form-group">
-                        <label for="confirmPassword">Confirm Password</label>
+                        <label for="confirmPassword">Xác nhận mật khẩu</label>
                         <input type="password" id="confirmPassword" name="confirmPassword" required minlength="6">
                     </div>
                     <div class="form-row">
                         <button type="button" class="btn" onclick="closeCreateModal()"
-                            style="background: #999; color: white;">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Create User</button>
+                            style="background: var(--text-secondary); color: white;">Huỷ</button>
+                        <button type="submit" class="btn btn-primary">Tạo người dùng</button>
                     </div>
                 </form>
             </div>
@@ -321,7 +319,7 @@
         <div id="editModal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2>Edit User</h2>
+                    <h2>Sửa người dùng</h2>
                     <button class="close-btn" onclick="closeEditModal()">&times;</button>
                 </div>
                 <form method="POST" action="/users/update" id="editForm">
@@ -331,17 +329,17 @@
                         <input type="email" id="editEmail" name="email" required>
                     </div>
                     <div class="form-group">
-                        <label for="editUsername">Username (optional)</label>
+                        <label for="editUsername">Tên đăng nhập (tuỳ chọn)</label>
                         <input type="text" id="editUsername" name="username">
                     </div>
                     <div class="form-group">
-                        <label for="editPassword">New Password (leave empty to keep current)</label>
+                        <label for="editPassword">Mật khẩu mới (để trống nếu giữ nguyên)</label>
                         <input type="password" id="editPassword" name="password" minlength="6">
                     </div>
                     <div class="form-row">
                         <button type="button" class="btn" onclick="closeEditModal()"
-                            style="background: #999; color: white;">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Update User</button>
+                            style="background: var(--text-secondary); color: white;">Huỷ</button>
+                        <button type="submit" class="btn btn-primary">Cập nhật</button>
                     </div>
                 </form>
             </div>

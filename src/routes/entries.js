@@ -88,8 +88,8 @@ router.get('/entries/:date?', requireLogin, async (req, res) => {
     // Validate date format (YYYY-MM-DD)
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
       return res.status(400).render('entries', {
-        title: 'Log Entry',
-        error: 'Invalid date format',
+        title: 'Ghi chép',
+        error: 'Định dạng ngày không hợp lệ',
         entry: null,
         date: getTodayString(userTimezone)
       });
@@ -99,7 +99,7 @@ router.get('/entries/:date?', requireLogin, async (req, res) => {
     const entry = await Entry.findByUserAndDate(userId, date);
 
     res.render('entries', {
-      title: 'Log Entry',
+      title: 'Ghi chép',
       error: null,
       entry,
       date
@@ -107,8 +107,8 @@ router.get('/entries/:date?', requireLogin, async (req, res) => {
   } catch (error) {
     console.error('Get entry error:', error);
     res.status(500).render('entries', {
-      title: 'Log Entry',
-      error: 'Failed to load entry',
+      title: 'Ghi chép',
+      error: 'Không thể tải ghi chép',
       entry: null,
       date: getTodayString(req.timezone)
     });
@@ -124,8 +124,8 @@ router.post('/entries', requireLogin, async (req, res) => {
     // Validation
     if (!date) {
       return res.status(400).render('entries', {
-        title: 'Log Entry',
-        error: 'Date is required',
+        title: 'Ghi chép',
+        error: 'Vui lòng chọn ngày',
         entry: null,
         date
       });
@@ -134,8 +134,8 @@ router.post('/entries', requireLogin, async (req, res) => {
     // Check for failureLevel first (new format), fallback to hadSlip (old format)
     if (failureLevel === undefined && hadSlip === undefined) {
       return res.status(400).render('entries', {
-        title: 'Log Entry',
-        error: 'Please select a status',
+        title: 'Ghi chép',
+        error: 'Vui lòng chọn trạng thái',
         entry: null,
         date
       });
@@ -144,8 +144,8 @@ router.post('/entries', requireLogin, async (req, res) => {
     // Validate date format
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
       return res.status(400).render('entries', {
-        title: 'Log Entry',
-        error: 'Invalid date format',
+        title: 'Ghi chép',
+        error: 'Định dạng ngày không hợp lệ',
         entry: null,
         date
       });
@@ -176,17 +176,17 @@ router.post('/entries', requireLogin, async (req, res) => {
     }
 
     res.render('entries', {
-      title: 'Log Entry',
+      title: 'Ghi chép',
       error: null,
-      success: 'Entry saved successfully!',
+      success: 'Đã lưu ghi chép!',
       entry: savedEntry,
       date
     });
   } catch (error) {
     console.error('Save entry error:', error);
     res.status(500).render('entries', {
-      title: 'Log Entry',
-      error: 'Failed to save entry',
+      title: 'Ghi chép',
+      error: 'Không thể lưu ghi chép',
       entry: null,
       date: req.body.date || new Date().toISOString().split('T')[0]
     });
@@ -300,7 +300,7 @@ router.post('/entries/:date/morning-wood', requireLogin, async (req, res) => {
     res.json({ success: true });
   } catch (error) {
     console.error('Morning wood update error:', error);
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({ success: false, error: 'Không thể cập nhật trạng thái' });
   }
 });
 

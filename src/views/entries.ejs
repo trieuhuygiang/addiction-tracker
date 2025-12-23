@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>
-        <%= title || 'Cultivation Center' %>
-    </title>
+        Ghi chép | Tông Môn Tu Tiên
     </title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <script src="/js/theme-init.js"></script>
@@ -28,7 +27,7 @@
         }
 
         .entries-header h1 {
-            color: #667eea;
+            color: var(--info-color);
             font-size: 2rem;
             margin-bottom: 0.5rem;
         }
@@ -336,8 +335,8 @@
 
         <div class="entries-container">
             <div class="entries-header">
-                <h1>📝 Log Entry</h1>
-                <p>Track your daily progress</p>
+                <h1>📝 Ghi chép</h1>
+                <p>Ghi lại tiến độ tu luyện mỗi ngày</p>
             </div>
 
             <div class="entry-form">
@@ -355,12 +354,12 @@
 
                                 <form method="POST" action="/entries">
                                     <div class="form-group">
-                                        <label for="date">Date</label>
+                                        <label for="date">Ngày</label>
                                         <input type="date" id="date" name="date" value="<%= date %>" required>
                                     </div>
 
                                     <div class="form-group">
-                                        <label>Today's Status</label>
+                                        <label>Trạng thái hôm nay</label>
                                         <div class="radio-group">
                                             <div class="radio-option clean"
                                                 onclick="this.querySelector('input').checked = true; updateSelection()">
@@ -368,8 +367,8 @@
                                                     (!entry || (!entry.had_leakage && (!entry.failure_level ||
                                                     entry.failure_level===0))) { %>checked<% } %> required>
                                                     <label for="clean">
-                                                        ✅ Clean Day
-                                                        <div class="description">Completely clean today</div>
+                                                        ✅ Thanh tịnh
+                                                        <div class="description">Giữ vững tâm, không sa ngã</div>
                                                     </label>
                                             </div>
                                             <div class="radio-option slip"
@@ -378,8 +377,8 @@
                                                     && (entry.failure_level===1 || (entry.had_leakage &&
                                                     entry.failure_level !==2))) { %>checked<% } %> required>
                                                     <label for="slip">
-                                                        ⚠️ A Little Bit
-                                                        <div class="description">Had just a little bit today</div>
+                                                        ⚠️ Sơ suất
+                                                        <div class="description">Vấp một chút, cần chấn chỉnh</div>
                                                     </label>
                                             </div>
                                             <div class="radio-option failed"
@@ -387,17 +386,17 @@
                                                 <input type="radio" id="failed" name="failureLevel" value="2" <% if
                                                     (entry && entry.failure_level===2) { %>checked<% } %> required>
                                                     <label for="failed">
-                                                        💀 Totally Failed
-                                                        <div class="description">Complete failure today</div>
+                                                        💀 Thất thủ
+                                                        <div class="description">Sa ngã, ghi nhận để đứng dậy</div>
                                                     </label>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="note">Notes (optional)</label>
+                                        <label for="note">Ghi chú (tuỳ chọn)</label>
                                         <textarea id="note" name="note"
-                                            placeholder="Add any notes about your day..."><% if (entry && entry.note) { %><%= entry.note %><% } %></textarea>
+                                            placeholder="Ghi lại điều đáng nhớ trong ngày..."><% if (entry && entry.note) { %><%= entry.note %><% } %></textarea>
                                     </div>
 
                                     <div class="form-group">
@@ -405,19 +404,19 @@
                                             <input type="checkbox" name="hasMorningWood" <% if (entry &&
                                                 entry.has_morning_wood) { %>checked<% } %>
                                                 style="width: 20px; height: 20px; cursor: pointer;">
-                                                <span>🌳 Had Tree of Life Today</span>
+                                                <span>🌳 Dấu hiệu hồi phục (sáng)</span>
                                         </label>
                                         <div
-                                            style="color: #888; font-size: 0.85rem; margin-top: 5px; margin-left: 30px;">
-                                            Positive sign of recovery
+                                            style="color: var(--text-muted); font-size: 0.85rem; margin-top: 5px; margin-left: 30px;">
+                                            Tín hiệu tốt cho quá trình hồi phục
                                         </div>
                                     </div>
 
                                     <div class="form-buttons">
-                                        <button type="submit" class="submit-btn">💾 Save Entry</button>
+                                        <button type="submit" class="submit-btn">💾 Lưu ghi chép</button>
                                         <% if (entry && entry.id) { %>
                                             <button type="button" class="delete-btn" onclick="deleteEntry()">🗑️
-                                                Delete</button>
+                                                Xoá</button>
                                             <% } %>
                                     </div>
                                 </form>
@@ -429,14 +428,13 @@
 
                                         <div class="date-navigation">
                                             <a href="#" class="date-nav-btn" onclick="previousDay(); return false;">←
-                                                Previous
-                                                Day</a>
-                                            <a href="/entries" class="date-nav-btn">Today</a>
-                                            <a href="#" class="date-nav-btn" onclick="nextDay(); return false;">Next Day
+                                                Ngày trước</a>
+                                            <a href="/entries" class="date-nav-btn">Hôm nay</a>
+                                            <a href="#" class="date-nav-btn" onclick="nextDay(); return false;">Ngày sau
                                                 →</a>
                                         </div>
 
-                                        <a href="/dashboard" class="back-link">← Back to Dashboard</a>
+                                        <a href="/dashboard" class="back-link">← Về tổng quan</a>
             </div>
         </div>
 
@@ -489,7 +487,7 @@
                 }
 
                 function deleteEntry() {
-                    if (confirm('Are you sure you want to delete this entry?')) {
+                    if (confirm('Bạn chắc chắn muốn xoá ghi chép này?')) {
                         document.getElementById('deleteForm').submit();
                     }
                 }

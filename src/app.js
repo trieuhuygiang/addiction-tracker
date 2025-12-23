@@ -85,7 +85,7 @@ app.get('/', (req, res) => {
     return res.redirect('/dashboard');
   }
   res.render('index', {
-    title: 'Tông Môn Tu Tiên'
+    title: 'Cố Tinh Đạo Tông'
   });
 });
 

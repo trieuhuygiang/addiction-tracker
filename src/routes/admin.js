@@ -10,7 +10,7 @@ const { autoTrackClean } = require('../utils/scheduler');
 router.get('/admin', requireAdmin, async (req, res) => {
   try {
     const result = await query(
-      'SELECT id, email, username, is_admin, created_at FROM users ORDER BY created_at DESC'
+      'SELECT id, email, username, is_admin, created_at, clock_start FROM users ORDER BY created_at DESC'
     );
     const users = result.rows;
 

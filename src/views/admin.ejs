@@ -374,6 +374,7 @@
                                                 <th>Tên đăng nhập</th>
                                                 <th>Vai trò</th>
                                                 <th>Ghi chép</th>
+                                                <th>Bộ đếm</th>
                                                 <th>Ngày tạo</th>
                                                 <th>Thao tác</th>
                                             </tr>
@@ -399,6 +400,22 @@
                                                     </td>
                                                     <td>
                                                         <%= user.entry_count %>
+                                                    </td>
+                                                    <td>
+                                                        <% if (user.clock_start) { %>
+                                                            <% const start = new Date(user.clock_start);
+                                                               const diffSec = Math.max(0, Math.floor((Date.now() - start.getTime()) / 1000));
+                                                               const days = Math.floor(diffSec / 86400);
+                                                               const hours = Math.floor((diffSec % 86400) / 3600);
+                                                               const minutes = Math.floor((diffSec % 3600) / 60);
+                                                            %>
+                                                            <%= days %>d <%= hours %>h <%= minutes %>m
+                                                            <div style="color: var(--text-secondary); font-size: 0.8rem;">
+                                                                Bắt đầu: <%= start.toLocaleString('vi-VN') %>
+                                                            </div>
+                                                        <% } else { %>
+                                                            -
+                                                        <% } %>
                                                     </td>
                                                     <td>
                                                         <%= new Date(user.created_at).toLocaleDateString('vi-VN') %>
